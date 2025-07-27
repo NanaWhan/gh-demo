@@ -695,11 +695,9 @@
                     </div>
                   </div>
                   <input
-                    type="text"
-                    placeholder="When are you traveling?"
+                    type="date"
                     class="w-full pl-12 sm:pl-16 pr-4 sm:pr-6 py-4 sm:py-5 md:py-6 text-gray-800 placeholder-gray-600 focus:outline-none text-base md:text-lg lg:text-xl font-medium bg-transparent border-0 focus:border-accent transition-all duration-300"
                     id="hero-dates"
-                    readonly
                   />
                   <label
                     class="absolute left-12 sm:left-16 top-1 text-xs text-deep-blue font-semibold pointer-events-none"
@@ -2843,18 +2841,6 @@
 
         const dateInput = document.getElementById("hero-dates");
         const destinationInput = document.getElementById("hero-destination");
-
-        // Add date picker functionality
-        if (dateInput) {
-          dateInput.addEventListener("click", function () {
-            const today = new Date().toISOString().split("T")[0];
-            const nextMonth = new Date();
-            nextMonth.setMonth(nextMonth.getMonth() + 1);
-            const futureDate = nextMonth.toISOString().split("T")[0];
-
-            this.value = `${today} - ${futureDate}`;
-          });
-        }
 
         // Add enter key support
         [destinationInput, dateInput].forEach((input) => {
