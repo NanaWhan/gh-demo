@@ -17,5 +17,10 @@
   ],
   "env": {
     "NUXT_PUBLIC_SITE_URL": "@nuxt_public_site_url"
+  },
+  "functions": {
+    "app.js": {
+      "runtime": "nodejs20.x"
+    }
   }
 }

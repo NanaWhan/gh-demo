@@ -76,8 +76,8 @@ export default defineNuxtConfig({
         emailjsPublicKey: process.env.EMAILJS_PUBLIC_KEY,
 
         // Public keys (exposed to client-side)
-        public: {
-            siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
-        }
+        // public: {
+        //     siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
+        // }
     }
 }) 

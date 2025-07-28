@@ -63,12 +63,20 @@ EMAILJS_PUBLIC_KEY=your_public_key
 ## 📋 Pre-Deployment Checklist
 
 - [x] **FIXED:** Removed conflicting HTML files (moved to `legacy-html-backup/`)
+- [x] **FIXED:** Updated Node.js version to 20+ for deployment compatibility
 - [ ] Update domain URLs in `nuxt.config.ts` (line with `https://yourdomain.com`)
 - [ ] Update sitemap URLs in `public/sitemap.xml`
 - [ ] Update robots.txt domain in `public/robots.txt`
 - [ ] Set up environment variables
 - [ ] Test build locally: `npm run build` ✅ **WORKING**
 - [ ] Test preview locally: `npm run preview`
+
+## 🚨 Common Deployment Issues & Fixes
+
+### Node.js Version Error
+
+**Problem:** `npm warn EBADENGINE` or `Failed to load native binding`  
+**Solution:** ✅ **FIXED** - Updated to Node 20+ in `netlify.toml`, `vercel.json`, and `.nvmrc`
 
 ## 🛠 Build Commands
 
