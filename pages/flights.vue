@@ -1,156 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Flight Booking - Global Horizons Travel Services</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      /* Updated Custom colors incorporating both orange accent and deep blue */
-      .accent {
-        color: #ff7a59;
-      }
-      .bg-accent {
-        background-color: #ff7a59;
-      }
-      .deep-blue {
-        color: #1a365d;
-      }
-      .bg-deep-blue {
-        background-color: #1a365d;
-      }
-
-      /* Gradient backgrounds */
-      .bg-gradient-brand {
-        background-image: linear-gradient(135deg, #1a365d, #ff7a59);
-      }
-
-      /* Hover effects */
-      .hover-deep-blue:hover {
-        color: #1a365d;
-      }
-      .hover-bg-deep-blue:hover {
-        background-color: #1a365d;
-      }
-
-      /* Custom hover colors - Light Orange and Blue */
-      .hover-light-orange:hover {
-        background-color: #fff3e0 !important;
-        color: #e65100 !important;
-      }
-
-      .hover-light-blue:hover {
-        background-color: #e3f2fd !important;
-        color: #1565c0 !important;
-      }
-
-      .hover-light-orange-bg:hover {
-        background-color: #fff3e0 !important;
-      }
-
-      .hover-light-blue-bg:hover {
-        background-color: #e3f2fd !important;
-      }
-
-      .hover-light-orange-text:hover {
-        color: #e65100 !important;
-      }
-
-      .hover-light-blue-text:hover {
-        color: #1565c0 !important;
-      }
-    </style>
-  </head>
-  <body class="font-sans antialiased text-gray-800">
-    <!-- Navbar (Same structure but "Flight Booking" is highlighted) -->
-    <nav class="w-full bg-white shadow-md fixed top-0 z-50">
-      <div
-        class="max-w-7xl mx-auto px-4 py-0 flex items-center justify-between overflow-visible"
-      >
-        <a
-          href="index.html"
-          class="flex items-center py-0 -my-2 overflow-visible"
-        >
-          <img src="glo.png" alt="Global Horizons" class="h-14 md:h-16" />
-        </a>
-        <ul class="hidden md:flex space-x-6">
-          <li>
-            <a href="index.html" class="hover:text-accent font-medium">HOME</a>
-          </li>
-          <li>
-            <a href="visas.html" class="hover:text-accent font-medium">VISAS</a>
-          </li>
-          <li>
-            <a href="tours.html" class="hover:text-accent font-medium"
-              >TOUR PACKAGES</a
-            >
-          </li>
-          <li>
-            <a href="flights.html" class="text-accent font-medium">FLIGHTS</a>
-          </li>
-          <li>
-            <a href="hotels.html" class="hover:text-accent font-medium"
-              >HOTELS</a
-            >
-          </li>
-        </ul>
-        <a
-          href="booking.html"
-          class="hidden md:inline-block px-4 py-2 bg-accent text-white rounded-lg hover:bg-opacity-90 transition"
-          >Book Now</a
-        >
-        <button class="md:hidden focus:outline-none" id="mobile-menu-button">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-      </div>
-      <!-- Mobile menu, hidden by default -->
-      <div class="md:hidden hidden bg-white w-full pb-4 px-4" id="mobile-menu">
-        <ul class="space-y-2">
-          <li>
-            <a href="index.html" class="block py-2 hover:text-accent">HOME</a>
-          </li>
-          <li>
-            <a href="visas.html" class="block py-2 hover:text-accent">VISAS</a>
-          </li>
-          <li>
-            <a href="tours.html" class="block py-2 hover:text-accent"
-              >TOUR PACKAGES</a
-            >
-          </li>
-          <li>
-            <a href="flights.html" class="block py-2 text-accent">FLIGHTS</a>
-          </li>
-          <li>
-            <a href="hotels.html" class="block py-2 hover:text-accent"
-              >HOTELS</a
-            >
-          </li>
-          <li>
-            <a
-              href="booking.html"
-              class="block py-2 mt-4 text-center bg-accent text-white rounded-lg hover:bg-opacity-90 transition"
-              >Book Now</a
-            >
-          </li>
-        </ul>
-      </div>
-    </nav>
+<template>
+  <div class="font-sans antialiased text-gray-800">
+    <!-- Navbar -->
+    <NavBar />
 
     <!-- Page Header with Gradient Background -->
     <section class="relative pt-24 pb-16 bg-gradient-brand">
@@ -249,8 +100,11 @@
           >
             <div class="flex relative">
               <button
-                class="tab-button active flex-1 px-6 py-3 text-center font-semibold text-sm rounded-xl transition-all duration-300 relative z-10"
-                onclick="switchTab(this, 'return')"
+                :class="[
+                  'tab-button flex-1 px-6 py-3 text-center font-semibold text-sm rounded-xl transition-all duration-300 relative z-10',
+                  currentTab === 'return' ? 'active' : '',
+                ]"
+                @click="switchTab('return')"
               >
                 <span class="flex items-center justify-center">
                   <svg
@@ -271,8 +125,11 @@
                 </span>
               </button>
               <button
-                class="tab-button flex-1 px-6 py-3 text-center font-semibold text-sm rounded-xl transition-all duration-300 relative z-10"
-                onclick="switchTab(this, 'oneway')"
+                :class="[
+                  'tab-button flex-1 px-6 py-3 text-center font-semibold text-sm rounded-xl transition-all duration-300 relative z-10',
+                  currentTab === 'oneway' ? 'active' : '',
+                ]"
+                @click="switchTab('oneway')"
               >
                 <span class="flex items-center justify-center">
                   <svg
@@ -293,8 +150,11 @@
                 </span>
               </button>
               <button
-                class="tab-button flex-1 px-6 py-3 text-center font-semibold text-sm rounded-xl transition-all duration-300 relative z-10"
-                onclick="switchTab(this, 'multicity')"
+                :class="[
+                  'tab-button flex-1 px-6 py-3 text-center font-semibold text-sm rounded-xl transition-all duration-300 relative z-10',
+                  currentTab === 'multicity' ? 'active' : '',
+                ]"
+                @click="switchTab('multicity')"
               >
                 <span class="flex items-center justify-center">
                   <svg
@@ -316,12 +176,13 @@
               </button>
               <div
                 class="tab-indicator absolute top-0 left-0 h-full bg-accent rounded-xl transition-all duration-300 ease-out shadow-lg"
+                :style="{ width: '33.333%', left: tabIndicatorPosition }"
               ></div>
             </div>
           </div>
 
           <!-- Booking Request Form -->
-          <form class="p-6 pt-0" action="#" method="POST">
+          <form class="p-6 pt-0" @submit.prevent="submitForm">
             <!-- Personal Information Section -->
             <div class="mb-8">
               <h3
@@ -371,16 +232,16 @@
                     </div>
                     <input
                       type="text"
-                      id="fullName"
-                      name="fullName"
+                      v-model="formData.fullName"
                       required
                       class="modern-input w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 bg-white text-gray-900 font-medium"
                       placeholder="Enter your full name"
                     />
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Full Name *</label
                     >
+                      Full Name *
+                    </label>
                   </div>
                 </div>
 
@@ -411,16 +272,16 @@
                     </div>
                     <input
                       type="email"
-                      id="email"
-                      name="email"
+                      v-model="formData.email"
                       required
                       class="modern-input w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 bg-white text-gray-900 font-medium"
                       placeholder="Enter your email address"
                     />
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Email Address *</label
                     >
+                      Email Address *
+                    </label>
                   </div>
                 </div>
 
@@ -444,23 +305,23 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 001.21-.502l4.493 1.498a1 1 0 00.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                           />
                         </svg>
                       </div>
                     </div>
                     <input
                       type="tel"
-                      id="phone"
-                      name="phone"
+                      v-model="formData.phone"
                       required
                       class="modern-input w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 bg-white text-gray-900 font-medium"
                       placeholder="Enter your phone number"
                     />
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Phone Number *</label
                     >
+                      Phone Number *
+                    </label>
                   </div>
                 </div>
 
@@ -487,15 +348,15 @@
                     </div>
                     <input
                       type="tel"
-                      id="whatsapp"
-                      name="whatsapp"
+                      v-model="formData.whatsapp"
                       class="modern-input w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 bg-white text-gray-900 font-medium"
                       placeholder="WhatsApp number (optional)"
                     />
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >WhatsApp Number</label
                     >
+                      WhatsApp Number
+                    </label>
                   </div>
                 </div>
               </div>
@@ -551,8 +412,7 @@
                       </div>
                     </div>
                     <select
-                      id="from"
-                      name="from"
+                      v-model="formData.from"
                       required
                       class="modern-select w-full pl-16 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 appearance-none bg-white text-gray-900 font-medium"
                     >
@@ -571,8 +431,9 @@
                     </select>
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Departure From *</label
                     >
+                      Departure From *
+                    </label>
                     <div class="dropdown-arrow">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -617,8 +478,7 @@
                       </div>
                     </div>
                     <select
-                      id="to"
-                      name="to"
+                      v-model="formData.to"
                       required
                       class="modern-select w-full pl-16 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 appearance-none bg-white text-gray-900 font-medium"
                     >
@@ -638,8 +498,9 @@
                     </select>
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Destination To *</label
                     >
+                      Destination To *
+                    </label>
                     <div class="dropdown-arrow">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -690,20 +551,23 @@
                     </div>
                     <input
                       type="date"
-                      id="departure"
-                      name="departure"
+                      v-model="formData.departure"
                       required
                       class="modern-input w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 bg-white text-gray-900 font-medium"
                     />
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Departure Date *</label
                     >
+                      Departure Date *
+                    </label>
                   </div>
                 </div>
 
                 <!-- Return Date -->
-                <div class="relative group return-date-field">
+                <div
+                  v-show="currentTab === 'return'"
+                  class="relative group return-date-field"
+                >
                   <div class="modern-input-group">
                     <div
                       class="absolute left-4 top-1/2 transform -translate-y-1/2 z-10"
@@ -729,14 +593,14 @@
                     </div>
                     <input
                       type="date"
-                      id="return"
-                      name="return"
+                      v-model="formData.return"
                       class="modern-input w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 bg-white text-gray-900 font-medium"
                     />
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Return Date</label
                     >
+                      Return Date
+                    </label>
                   </div>
                 </div>
 
@@ -766,8 +630,7 @@
                       </div>
                     </div>
                     <select
-                      id="passengers"
-                      name="passengers"
+                      v-model="formData.passengers"
                       required
                       class="modern-select w-full pl-16 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 appearance-none bg-white text-gray-900 font-medium"
                     >
@@ -782,8 +645,9 @@
                     </select>
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Passengers *</label
                     >
+                      Passengers *
+                    </label>
                     <div class="dropdown-arrow">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -828,8 +692,7 @@
                       </div>
                     </div>
                     <select
-                      id="class"
-                      name="class"
+                      v-model="formData.class"
                       class="modern-select w-full pl-16 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 appearance-none bg-white text-gray-900 font-medium"
                     >
                       <option value="economy">Economy Class</option>
@@ -840,8 +703,9 @@
                     </select>
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Preferred Class</label
                     >
+                      Preferred Class
+                    </label>
                     <div class="dropdown-arrow">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -917,8 +781,7 @@
                       </div>
                     </div>
                     <select
-                      id="airline"
-                      name="airline"
+                      v-model="formData.airline"
                       class="modern-select w-full pl-16 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 appearance-none bg-white text-gray-900 font-medium"
                     >
                       <option value="">No preference</option>
@@ -933,8 +796,9 @@
                     </select>
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Preferred Airline</label
                     >
+                      Preferred Airline
+                    </label>
                     <div class="dropdown-arrow">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -979,8 +843,7 @@
                       </div>
                     </div>
                     <select
-                      id="budget"
-                      name="budget"
+                      v-model="formData.budget"
                       class="modern-select w-full pl-16 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 appearance-none bg-white text-gray-900 font-medium"
                     >
                       <option value="">Select budget range</option>
@@ -993,8 +856,9 @@
                     </select>
                     <label
                       class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                      >Budget Range</label
                     >
+                      Budget Range
+                    </label>
                     <div class="dropdown-arrow">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -1030,8 +894,7 @@
                     <input
                       type="checkbox"
                       class="sr-only peer"
-                      id="insurance"
-                      name="services[]"
+                      v-model="formData.services"
                       value="insurance"
                     />
                     <div
@@ -1052,8 +915,7 @@
                     <input
                       type="checkbox"
                       class="sr-only peer"
-                      id="directFlights"
-                      name="preferences[]"
+                      v-model="formData.preferences"
                       value="direct"
                     />
                     <div
@@ -1072,8 +934,7 @@
                     <input
                       type="checkbox"
                       class="sr-only peer"
-                      id="hotel"
-                      name="services[]"
+                      v-model="formData.services"
                       value="hotel"
                     />
                     <div
@@ -1094,8 +955,7 @@
                     <input
                       type="checkbox"
                       class="sr-only peer"
-                      id="transfers"
-                      name="services[]"
+                      v-model="formData.services"
                       value="transfers"
                     />
                     <div
@@ -1114,8 +974,7 @@
                     <input
                       type="checkbox"
                       class="sr-only peer"
-                      id="visa"
-                      name="services[]"
+                      v-model="formData.services"
                       value="visa"
                     />
                     <div
@@ -1136,8 +995,7 @@
                     <input
                       type="checkbox"
                       class="sr-only peer"
-                      id="assistance"
-                      name="services[]"
+                      v-model="formData.services"
                       value="assistance"
                     />
                     <div
@@ -1171,16 +1029,16 @@
                     </div>
                   </div>
                   <textarea
-                    id="comments"
-                    name="comments"
+                    v-model="formData.comments"
                     rows="4"
                     class="modern-input w-full pl-16 pr-4 py-4 pt-6 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all duration-300 bg-white text-gray-900 font-medium resize-none"
                     placeholder="Tell us about any special requirements, dietary needs, accessibility needs, or other preferences..."
                   ></textarea>
                   <label
                     class="modern-label absolute left-16 top-1 text-xs text-gray-500 font-medium"
-                    >Comments & Special Requests</label
                   >
+                    Comments & Special Requests
+                  </label>
                 </div>
               </div>
             </div>
@@ -1189,7 +1047,15 @@
             <div class="flex justify-center">
               <button
                 type="submit"
-                class="request-quote-btn group relative px-12 py-4 bg-gradient-to-r from-accent to-orange-500 hover:from-orange-500 hover:to-red-500 text-white font-bold text-lg rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl min-w-64"
+                class="request-quote-btn group relative px-12 py-4 bg-gradient-to-r from-blue-600 to-orange-500 hover:from-orange-500 hover:to-red-500 text-white font-bold text-lg rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl min-w-64"
+                style="
+                  background: linear-gradient(
+                    45deg,
+                    #2563eb,
+                    #f97316
+                  ) !important;
+                  color: white !important;
+                "
               >
                 <div class="flex items-center justify-center">
                   <svg
@@ -1387,12 +1253,12 @@
                     <p class="font-semibold">Oct - Mar</p>
                   </div>
                 </div>
-                <a
-                  href="#"
+                <button
+                  @click="scrollToForm"
                   class="block w-full px-4 py-2 bg-deep-blue text-white text-center rounded-lg hover:bg-accent transition"
-                  onclick="scrollToForm()"
-                  >Get Current Quote</a
                 >
+                  Get Current Quote
+                </button>
               </div>
             </div>
           </div>
@@ -1448,12 +1314,12 @@
                     <p class="font-semibold">Jun - Sep</p>
                   </div>
                 </div>
-                <a
-                  href="#"
+                <button
+                  @click="scrollToForm"
                   class="block w-full px-4 py-2 bg-deep-blue text-white text-center rounded-lg hover:bg-accent transition"
-                  onclick="scrollToForm()"
-                  >Get Current Quote</a
                 >
+                  Get Current Quote
+                </button>
               </div>
             </div>
           </div>
@@ -1511,12 +1377,12 @@
                     <p class="font-semibold">Jan - Mar</p>
                   </div>
                 </div>
-                <a
-                  href="#"
+                <button
+                  @click="scrollToForm"
                   class="block w-full px-4 py-2 bg-deep-blue text-white text-center rounded-lg hover:bg-accent transition"
-                  onclick="scrollToForm()"
-                  >Get Current Quote</a
                 >
+                  Get Current Quote
+                </button>
               </div>
             </div>
           </div>
@@ -1533,12 +1399,12 @@
               We handle bookings to any destination worldwide. Get your
               personalized quote today!
             </p>
-            <a
-              href="#"
+            <button
+              @click="scrollToForm"
               class="inline-block px-6 py-3 border border-deep-blue text-deep-blue rounded-lg hover:bg-deep-blue hover:text-white transition"
-              onclick="scrollToForm()"
-              >Request Custom Quote</a
             >
+              Request Custom Quote
+            </button>
           </div>
         </div>
       </div>
@@ -1942,585 +1808,6 @@
       </div>
     </section>
 
-    <style>
-      /* Floating plane animations */
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0px) rotate(0deg);
-        }
-        50% {
-          transform: translateY(-20px) rotate(5deg);
-        }
-      }
-
-      .floating-plane {
-        animation: float 6s ease-in-out infinite;
-        font-size: 1.5rem;
-      }
-
-      .floating-plane:nth-child(2) {
-        animation-delay: -2s;
-        animation-duration: 8s;
-      }
-
-      .floating-plane:nth-child(3) {
-        animation-delay: -4s;
-        animation-duration: 7s;
-      }
-
-      .floating-plane:nth-child(4) {
-        animation-delay: -1s;
-        animation-duration: 9s;
-      }
-
-      /* Airline logo containers */
-      .airline-logo-container {
-        perspective: 1000px;
-      }
-
-      .airline-logo-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 20px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        transform-style: preserve-3d;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
-
-      .airline-logo-card:hover {
-        transform: translateY(-8px) rotateX(5deg);
-        box-shadow: 0 20px 40px rgba(255, 122, 89, 0.3);
-        background: rgba(255, 255, 255, 1);
-      }
-
-      .airline-logo-card img {
-        transition: all 0.3s ease;
-        filter: brightness(1.1) contrast(1.1);
-      }
-
-      .airline-logo-card:hover img {
-        transform: scale(1.05);
-        filter: brightness(1.2) contrast(1.2);
-      }
-
-      /* Modern Flight Booking Form Styles */
-      .tab-button {
-        color: #6b7280;
-        background: transparent;
-      }
-
-      .tab-button.active {
-        color: #ffffff;
-        background: transparent;
-      }
-
-      .tab-indicator {
-        width: 33.333%;
-        background: linear-gradient(135deg, #ff7a59, #f97316);
-        box-shadow: 0 4px 15px rgba(255, 122, 89, 0.3);
-      }
-
-      .modern-input-group {
-        position: relative;
-      }
-
-      .modern-select,
-      .modern-input {
-        padding-top: 1.5rem;
-        font-size: 1rem;
-        line-height: 1.5;
-      }
-
-      .modern-select:focus + .modern-label,
-      .modern-input:focus + .modern-label,
-      .modern-select:not(:placeholder-shown) + .modern-label,
-      .modern-input:not(:placeholder-shown) + .modern-label {
-        transform: translateY(-0.125rem);
-        font-size: 0.75rem;
-        color: #ff7a59;
-      }
-
-      .modern-select:focus,
-      .modern-input:focus {
-        border-color: #ff7a59;
-        box-shadow: 0 0 0 4px rgba(255, 122, 89, 0.1);
-      }
-
-      .modern-input-group:hover .modern-select,
-      .modern-input-group:hover .modern-input {
-        border-color: #ff7a59;
-      }
-
-      .swap-button:hover {
-        transform: rotate(180deg);
-      }
-
-      .search-flights-btn {
-        background: linear-gradient(135deg, #ff7a59 0%, #f97316 100%);
-        box-shadow: 0 10px 30px rgba(255, 122, 89, 0.4);
-      }
-
-      .search-flights-btn:hover {
-        background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
-        box-shadow: 0 20px 40px rgba(255, 122, 89, 0.6);
-      }
-
-      .advanced-options {
-        transition: max-height 0.5s ease-in-out;
-      }
-
-      /* Custom checkbox styles */
-      .peer:checked ~ div {
-        background-color: #ff7a59;
-      }
-
-      .peer:focus ~ div {
-        box-shadow: 0 0 0 4px rgba(255, 122, 89, 0.2);
-      }
-
-      /* Enhanced form field focus states */
-      .modern-select:focus,
-      .modern-input:focus {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 122, 89, 0.15),
-          0 0 0 4px rgba(255, 122, 89, 0.1);
-      }
-
-      .modern-input-group:hover {
-        transform: translateY(-1px);
-      }
-
-      /* Enhanced Dropdown Styling */
-      .modern-select {
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        cursor: pointer;
-        position: relative;
-      }
-
-      .modern-select:hover {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        border-color: #ff7a59;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(255, 122, 89, 0.1);
-      }
-
-      .modern-select:focus {
-        background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
-        border-color: #ff7a59;
-        box-shadow: 0 8px 25px rgba(255, 122, 89, 0.15),
-          0 0 0 4px rgba(255, 122, 89, 0.1);
-      }
-
-      /* Custom Dropdown Arrow */
-      .modern-input-group .dropdown-arrow {
-        position: absolute;
-        right: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        pointer-events: none;
-        transition: all 0.3s ease;
-        background: linear-gradient(135deg, #ff7a59, #f97316);
-        border-radius: 50%;
-        width: 2rem;
-        height: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(255, 122, 89, 0.2);
-      }
-
-      .modern-input-group:hover .dropdown-arrow {
-        background: linear-gradient(135deg, #f97316, #ea580c);
-        transform: translateY(-50%) scale(1.05);
-        box-shadow: 0 4px 12px rgba(255, 122, 89, 0.3);
-      }
-
-      .modern-input-group .modern-select:focus ~ .dropdown-arrow {
-        background: linear-gradient(135deg, #ea580c, #dc2626);
-        transform: translateY(-50%) rotate(180deg);
-      }
-
-      .dropdown-arrow svg {
-        color: white;
-        width: 1rem;
-        height: 1rem;
-      }
-
-      /* Animate dropdown on interaction */
-      .modern-select option {
-        padding: 0.75rem 1rem;
-        background: white;
-        color: #374151;
-        border: none;
-      }
-
-      .modern-select option:hover {
-        background: #fef7f0;
-        color: #ff7a59;
-      }
-
-      /* Responsive adjustments */
-      @media (max-width: 1024px) {
-        .swap-button {
-          display: none;
-        }
-      }
-
-      /* Mobile Responsive Styles */
-      @media (max-width: 768px) {
-        .modern-input-group {
-          margin-bottom: 1rem;
-        }
-
-        .modern-select,
-        .modern-input {
-          padding: 1rem 1rem 1rem 3.5rem;
-          font-size: 1rem;
-        }
-
-        .modern-label {
-          left: 3.5rem !important;
-          font-size: 0.75rem;
-        }
-
-        .tab-button {
-          padding: 0.75rem 1rem;
-          font-size: 0.875rem;
-        }
-
-        .tab-button span {
-          flex-direction: column;
-          gap: 0.25rem;
-        }
-
-        .tab-button svg {
-          width: 1rem;
-          height: 1rem;
-          margin-right: 0;
-        }
-
-        .search-flights-btn {
-          width: 100%;
-          padding: 1rem;
-          font-size: 1.125rem;
-          min-width: auto;
-        }
-
-        .advanced-toggle {
-          justify-content: center;
-          padding: 1rem;
-          background: #f9fafb;
-          border-radius: 1rem;
-          border: 1px solid #e5e7eb;
-        }
-
-        /* Mobile-specific form layout */
-        .mobile-form-section {
-          padding: 1rem;
-        }
-
-        .mobile-swap-button {
-          display: flex;
-          justify-content: center;
-          margin: 0.5rem 0;
-        }
-
-        .mobile-swap-btn {
-          width: 2.5rem;
-          height: 2.5rem;
-          background: white;
-          border: 2px solid #e5e7eb;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          transition: all 0.3s ease;
-        }
-
-        .mobile-swap-btn:hover {
-          border-color: #ff7a59;
-          transform: rotate(180deg);
-        }
-
-        .mobile-swap-btn svg {
-          width: 1.25rem;
-          height: 1.25rem;
-          color: #6b7280;
-          transition: color 0.3s ease;
-        }
-
-        .mobile-swap-btn:hover svg {
-          color: #ff7a59;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .bg-white.rounded-3xl {
-          border-radius: 1.5rem;
-          margin: 0 0.5rem;
-        }
-
-        .modern-input-group {
-          margin-bottom: 1.5rem;
-        }
-
-        .modern-select,
-        .modern-input {
-          padding: 1.25rem 1rem 1rem 3rem;
-          font-size: 1rem;
-        }
-
-        .modern-label {
-          left: 3rem !important;
-          top: 0.25rem;
-          font-size: 0.75rem;
-        }
-
-        .tab-button {
-          padding: 0.875rem 0.75rem;
-          font-size: 0.8125rem;
-        }
-
-        .tab-button span {
-          text-align: center;
-        }
-
-        .search-flights-btn {
-          padding: 1.25rem 1rem;
-          font-size: 1.125rem;
-          border-radius: 1rem;
-        }
-
-        /* Smaller icons on mobile */
-        .modern-input-group > div:first-child {
-          left: 0.75rem;
-        }
-
-        .modern-input-group > div:first-child > div {
-          width: 1.75rem;
-          height: 1.75rem;
-        }
-
-        .modern-input-group > div:first-child svg {
-          width: 0.875rem;
-          height: 0.875rem;
-        }
-
-        /* Advanced options mobile styling */
-        .advanced-options .grid {
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-
-        .advanced-toggle {
-          font-size: 0.875rem;
-        }
-
-        /* Better spacing for mobile */
-        .p-6 {
-          padding: 1rem;
-        }
-
-        .m-6 {
-          margin: 1rem;
-        }
-
-        .mb-8 {
-          margin-bottom: 1.5rem;
-        }
-
-        .mb-6 {
-          margin-bottom: 1rem;
-        }
-
-        .gap-4 {
-          gap: 1rem;
-        }
-      }
-
-      /* Extra small screens */
-      @media (max-width: 480px) {
-        .tab-button span {
-          font-size: 0.75rem;
-        }
-
-        .tab-button svg {
-          width: 0.875rem;
-          height: 0.875rem;
-        }
-
-        .modern-select,
-        .modern-input {
-          padding: 1rem 0.75rem 0.75rem 2.75rem;
-          font-size: 0.9375rem;
-        }
-
-        .modern-label {
-          left: 2.75rem !important;
-          font-size: 0.6875rem;
-        }
-
-        .modern-input-group > div:first-child {
-          left: 0.5rem;
-        }
-
-        .modern-input-group > div:first-child > div {
-          width: 1.5rem;
-          height: 1.5rem;
-        }
-
-        .modern-input-group > div:first-child svg {
-          width: 0.75rem;
-          height: 0.75rem;
-        }
-
-        .search-flights-btn {
-          padding: 1rem 0.75rem;
-          font-size: 1rem;
-        }
-
-        .search-flights-btn svg {
-          width: 1.25rem;
-          height: 1.25rem;
-        }
-      }
-
-      /* Animation for form loading */
-      .modern-input-group {
-        animation: slideInUp 0.6s ease-out;
-      }
-
-      .modern-input-group:nth-child(1) {
-        animation-delay: 0.1s;
-      }
-      .modern-input-group:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-      .modern-input-group:nth-child(3) {
-        animation-delay: 0.3s;
-      }
-      .modern-input-group:nth-child(4) {
-        animation-delay: 0.4s;
-      }
-
-      @keyframes slideInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* Touch-friendly enhancements */
-      @media (max-width: 768px) {
-        .modern-input-group {
-          animation: none;
-        }
-
-        .modern-input-group:hover {
-          transform: none;
-        }
-
-        /* Larger touch targets */
-        .modern-select,
-        .modern-input,
-        .tab-button,
-        .mobile-swap-btn,
-        .advanced-toggle {
-          min-height: 3rem;
-          touch-action: manipulation;
-        }
-
-        /* Better focus states for mobile */
-        .modern-select:focus,
-        .modern-input:focus {
-          transform: none;
-          box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.2);
-        }
-
-        /* Prevent zoom on input focus */
-        .modern-select,
-        .modern-input {
-          font-size: 16px;
-        }
-
-        /* Ensure proper scrolling behavior */
-        .bg-white.rounded-3xl {
-          -webkit-overflow-scrolling: touch;
-        }
-
-        /* Better spacing for thumb interaction */
-        .tab-button {
-          margin: 0 2px;
-        }
-
-        /* Improved mobile form layout */
-        .grid.grid-cols-1.lg\\:grid-cols-2 {
-          gap: 1rem;
-        }
-
-        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 {
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-
-        .advanced-options .grid.grid-cols-1.md\\:grid-cols-2 {
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-      }
-
-      /* Landscape mobile optimization */
-      @media (max-width: 768px) and (orientation: landscape) {
-        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 {
-          grid-template-columns: 1fr 1fr;
-          gap: 0.75rem;
-        }
-
-        .modern-input-group {
-          margin-bottom: 0.75rem;
-        }
-
-        .search-flights-btn {
-          padding: 0.875rem 1rem;
-          font-size: 1rem;
-        }
-      }
-
-      /* Very small screens optimization */
-      @media (max-width: 375px) {
-        .bg-white.rounded-3xl {
-          margin: 0 0.25rem;
-          border-radius: 1rem;
-        }
-
-        .p-6 {
-          padding: 0.75rem;
-        }
-
-        .m-6 {
-          margin: 0.75rem;
-        }
-
-        .tab-button {
-          padding: 0.75rem 0.5rem;
-          font-size: 0.75rem;
-        }
-
-        .search-flights-btn {
-          padding: 1rem 0.5rem;
-          font-size: 0.9375rem;
-        }
-      }
-    </style>
-
     <!-- FAQ Section -->
     <section class="py-16 bg-gray-50">
       <div class="max-w-4xl mx-auto px-4">
@@ -2534,21 +1821,24 @@
 
         <div class="space-y-6">
           <div
+            v-for="(faq, index) in faqItems"
+            :key="index"
             class="faq-item bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-accent/30"
           >
             <button
+              @click="toggleFAQ(index)"
               class="faq-button flex items-center justify-between w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all duration-300"
-              onclick="toggleFAQ(this)"
             >
-              <span class="text-lg font-semibold text-gray-800 pr-4"
-                >How does your flight booking service work?</span
-              >
+              <span class="text-lg font-semibold text-gray-800 pr-4">{{
+                faq.question
+              }}</span>
               <div
                 class="faq-icon flex-shrink-0 w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center transition-all duration-300"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="h-5 w-5 text-accent transition-transform duration-300"
+                  :class="{ 'rotate-45': openFaqIndex === index }"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -2563,295 +1853,22 @@
               </div>
             </button>
             <div
-              class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out"
+              class="faq-content overflow-hidden transition-all duration-500 ease-in-out"
+              :class="{
+                'max-h-96': openFaqIndex === index,
+                'max-h-0': openFaqIndex !== index,
+              }"
             >
               <div class="px-6 pb-6 text-gray-600 leading-relaxed">
                 <div
                   class="bg-gradient-to-r from-accent/5 to-transparent p-4 rounded-lg border-l-4 border-accent"
                 >
-                  <p class="mb-3">
-                    Simply submit your travel details through our quote form,
-                    and our expert team will find you the best flight options
-                    available. We search multiple airlines and consolidators to
-                    ensure you get the <strong>best possible price</strong>.
-                  </p>
-                  <p>
-                    Once you approve the booking, we handle all the details
-                    including seat selection, special requests, and provide you
-                    with your tickets and itinerary. We're with you every step
-                    of the way!
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="faq-item bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-accent/30"
-          >
-            <button
-              class="faq-button flex items-center justify-between w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all duration-300"
-              onclick="toggleFAQ(this)"
-            >
-              <span class="text-lg font-semibold text-gray-800 pr-4"
-                >How quickly will I receive my flight quote?</span
-              >
-              <div
-                class="faq-icon flex-shrink-0 w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center transition-all duration-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-accent transition-transform duration-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </div>
-            </button>
-            <div
-              class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out"
-            >
-              <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                <div
-                  class="bg-gradient-to-r from-accent/5 to-transparent p-4 rounded-lg border-l-4 border-accent"
-                >
-                  <p class="mb-3">
-                    Most quote requests are processed within
-                    <strong>2 hours during business hours</strong>. For urgent
-                    travel (within 48 hours), we prioritize your request and
-                    respond within 30 minutes.
-                  </p>
-                  <p>
-                    Complex itineraries or group bookings may take up to 24
-                    hours as we work to secure the best deals and coordinate
-                    multiple bookings for your party.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="faq-item bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-accent/30"
-          >
-            <button
-              class="faq-button flex items-center justify-between w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all duration-300"
-              onclick="toggleFAQ(this)"
-            >
-              <span class="text-lg font-semibold text-gray-800 pr-4"
-                >Do you really guarantee the best price?</span
-              >
-              <div
-                class="faq-icon flex-shrink-0 w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center transition-all duration-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-accent transition-transform duration-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </div>
-            </button>
-            <div
-              class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out"
-            >
-              <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                <div
-                  class="bg-gradient-to-r from-accent/5 to-transparent p-4 rounded-lg border-l-4 border-accent"
-                >
-                  <p class="mb-3">
-                    Absolutely! If you find a lower published fare for the same
-                    flight within 24 hours of our quote, we'll
-                    <strong
-                      >match that price and give you an additional 5%
-                      discount</strong
-                    >.
-                  </p>
-                  <p>
-                    Our access to consolidator fares and bulk purchasing
-                    agreements often allows us to offer prices below what you'll
-                    find on airline websites or other booking platforms.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="faq-item bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-accent/30"
-          >
-            <button
-              class="faq-button flex items-center justify-between w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all duration-300"
-              onclick="toggleFAQ(this)"
-            >
-              <span class="text-lg font-semibold text-gray-800 pr-4"
-                >Can I make changes to my booking after it's confirmed?</span
-              >
-              <div
-                class="faq-icon flex-shrink-0 w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center transition-all duration-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-accent transition-transform duration-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </div>
-            </button>
-            <div
-              class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out"
-            >
-              <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                <div
-                  class="bg-gradient-to-r from-accent/5 to-transparent p-4 rounded-lg border-l-4 border-accent"
-                >
-                  <p class="mb-3">
-                    Yes! We handle all change requests on your behalf. While
-                    airline change fees may apply, we
-                    <strong>never charge additional service fees</strong> for
-                    processing changes or cancellations.
-                  </p>
-                  <p>
-                    Our team will work with the airline to minimize costs and
-                    find the most convenient options for your new travel dates
-                    or destinations.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="faq-item bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-accent/30"
-          >
-            <button
-              class="faq-button flex items-center justify-between w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all duration-300"
-              onclick="toggleFAQ(this)"
-            >
-              <span class="text-lg font-semibold text-gray-800 pr-4"
-                >What payment methods do you accept and when do I pay?</span
-              >
-              <div
-                class="faq-icon flex-shrink-0 w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center transition-all duration-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-accent transition-transform duration-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </div>
-            </button>
-            <div
-              class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out"
-            >
-              <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                <div
-                  class="bg-gradient-to-r from-accent/5 to-transparent p-4 rounded-lg border-l-4 border-accent"
-                >
-                  <p class="mb-3">
-                    We accept all major credit cards, debit cards, bank
-                    transfers, and mobile money. Payment is only required
-                    <strong>after you approve our quote</strong> and are
-                    satisfied with the flight options.
-                  </p>
-                  <p>
-                    For bookings over $1,000, we offer payment plans with a
-                    small deposit to secure your booking and the balance due
-                    before travel. All transactions are secured with 256-bit SSL
-                    encryption.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="faq-item bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-accent/30"
-          >
-            <button
-              class="faq-button flex items-center justify-between w-full text-left p-6 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all duration-300"
-              onclick="toggleFAQ(this)"
-            >
-              <span class="text-lg font-semibold text-gray-800 pr-4"
-                >Do you provide support during my travel?</span
-              >
-              <div
-                class="faq-icon flex-shrink-0 w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center transition-all duration-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-accent transition-transform duration-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </div>
-            </button>
-            <div
-              class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out"
-            >
-              <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                <div
-                  class="bg-gradient-to-r from-accent/5 to-transparent p-4 rounded-lg border-l-4 border-accent"
-                >
-                  <p class="mb-3">
-                    Yes! Our <strong>24/7 emergency support line</strong> is
-                    available throughout your journey. Whether you face flight
-                    delays, cancellations, or need to make emergency changes,
-                    we're here to help.
-                  </p>
-                  <p>
-                    We also provide WhatsApp support for quick communications
-                    and can assist with rebooking, accommodation if needed, and
-                    coordination with airlines for any issues that arise during
-                    travel.
-                  </p>
+                  <p>{{ faq.answer }}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="text-center mt-12"></div>
       </div>
     </section>
 
@@ -2884,9 +1901,8 @@
           class="flex flex-col sm:flex-row gap-6 justify-center items-center"
         >
           <!-- Primary CTA Button -->
-          <a
-            href="#"
-            onclick="scrollToForm()"
+          <button
+            @click="scrollToForm"
             class="group relative px-8 py-4 bg-accent hover:bg-orange-500 text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl overflow-hidden"
           >
             <div
@@ -2927,11 +1943,11 @@
                 </svg>
               </div>
             </div>
-          </a>
+          </button>
 
           <!-- Secondary CTA Button -->
-          <a
-            href="contact.html"
+          <nuxt-link
+            to="/contact"
             class="group relative px-8 py-4 border-2 border-accent text-white font-bold rounded-2xl hover:bg-accent hover:border-accent transition-all duration-300 transform hover:scale-105 hover:shadow-2xl backdrop-blur-sm bg-accent/10"
           >
             <div
@@ -2976,7 +1992,34 @@
                 </svg>
               </div>
             </div>
-          </a>
+          </nuxt-link>
+        </div>
+
+        <!-- Flight Booking Link -->
+        <div class="mt-8 text-center">
+          <p class="text-white/80 text-lg mb-4">
+            Or go directly to our comprehensive flight booking request:
+          </p>
+          <nuxt-link
+            to="/flight-booking"
+            class="inline-flex items-center px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              />
+            </svg>
+            Complete Flight Booking Request
+          </nuxt-link>
         </div>
 
         <!-- Additional interactive elements -->
@@ -3006,405 +2049,195 @@
     </section>
 
     <!-- Footer -->
-    <footer id="contact" class="bg-gray-900 text-white py-16">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <div class="flex items-center mb-4">
-              <img src="glo.png" alt="Global Horizons Logo" class="h-10 mr-3" />
-              <h3 class="text-xl font-bold">Global Horizons</h3>
-            </div>
-            <p class="text-gray-400 mb-4">
-              Your trusted partner for global travel and visa solutions.
-            </p>
-            <div class="flex space-x-4">
-              <a href="#" class="text-gray-400 hover:text-white transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-                  />
-                </svg>
-              </a>
-              <a href="#" class="text-gray-300 hover:text-accent transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.1 10.1 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085a4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63a9.936 9.936 0 002.46-2.548l-.047-.02z"
-                  />
-                </svg>
-              </a>
-              <a href="#" class="text-gray-300 hover:text-accent transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"
-                  />
-                </svg>
-              </a>
-            </div>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul class="space-y-2">
-              <li>
-                <a
-                  href="index.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >HOME</a
-                >
-              </li>
-              <li>
-                <a
-                  href="visas.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >VISAS</a
-                >
-              </li>
-              <li>
-                <a
-                  href="tours.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >TOUR PACKAGES</a
-                >
-              </li>
-              <li>
-                <a
-                  href="flights.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >FLIGHTS</a
-                >
-              </li>
-              <li>
-                <a
-                  href="hotels.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >HOTELS</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
-            <ul class="space-y-2 text-gray-400">
-              <li class="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mr-2 mt-0.5 text-accent"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span
-                  >5 Cormorant Cl, Community 11, Tema, Accra, Greater Accra
-                  Region, Ghana</span
-                >
-              </li>
-              <li class="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mr-2 mt-0.5 text-accent"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>info@glohorizonsgh.com</span>
-              </li>
-              <li class="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mr-2 mt-0.5 text-accent"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                <span>+233 (0)20 507 8908</span>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Business Hours</h4>
-            <ul class="space-y-2 text-gray-400">
-              <li>Monday - Friday: 9:00 AM - 6:00 PM</li>
-              <li>Saturday: 10:00 AM - 4:00 PM</li>
-              <li>Sunday: Closed</li>
-            </ul>
-          </div>
-        </div>
-        <div
-          class="border-t border-gray-800 mt-10 pt-6 text-center text-sm text-gray-400"
-        >
-          <p>&copy; Global Horizons. All rights reserved.</p>
-          <p class="mt-2">
-            Designed by
-            <a
-              href="https://devseinty.netlify.app/"
-              target="_blank"
-              class="hover:opacity-80 transition-all"
-            >
-              <span style="color: #ff7a59; font-weight: bold">Zedi</span
-              ><span class="text-blue-400 font-bold">Tech</span>
-            </a>
-          </p>
-        </div>
-      </div>
-    </footer>
+    <FooterSection />
+  </div>
+</template>
 
-    <!-- JavaScript for Mobile Menu Toggle -->
-    <script>
-      document
-        .getElementById("mobile-menu-button")
-        .addEventListener("click", function () {
-          const mobileMenu = document.getElementById("mobile-menu");
-          mobileMenu.classList.toggle("hidden");
-        });
+<script setup>
+import { ref, reactive, computed } from "vue";
 
-      // Form scroll function
-      function scrollToForm() {
-        const form = document.querySelector("form");
-        if (form) {
-          form.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-          // Focus on the first input after scrolling
-          setTimeout(() => {
-            const firstInput = form.querySelector("input, select");
-            if (firstInput) {
-              firstInput.focus();
-            }
-          }, 800);
-        }
+// Tab state
+const currentTab = ref("return");
+
+// FAQ state
+const openFaqIndex = ref(-1);
+
+// FAQ data
+const faqItems = ref([
+  {
+    question: "How does your flight booking service work?",
+    answer:
+      "Simply submit your travel details through our quote form, and our expert team will find you the best flight options available. We search multiple airlines and consolidators to ensure you get the best possible price. Once you approve the booking, we handle all the details including seat selection, special requests, and provide you with your tickets and itinerary. We're with you every step of the way!",
+  },
+  {
+    question: "How quickly will I receive my flight quote?",
+    answer:
+      "Most quote requests are processed within 2 hours during business hours. For urgent travel (within 48 hours), we prioritize your request and respond within 30 minutes. Complex itineraries or group bookings may take up to 24 hours as we work to secure the best deals and coordinate multiple bookings for your party.",
+  },
+  {
+    question: "Do you really guarantee the best price?",
+    answer:
+      "Absolutely! If you find a lower published fare for the same flight within 24 hours of our quote, we'll match that price and give you an additional 5% discount. Our access to consolidator fares and bulk purchasing agreements often allows us to offer prices below what you'll find on airline websites or other booking platforms.",
+  },
+  {
+    question: "Can I make changes to my booking after it's confirmed?",
+    answer:
+      "Yes! We handle all change requests on your behalf. While airline change fees may apply, we never charge additional service fees for processing changes or cancellations. Our team will work with the airline to minimize costs and find the most convenient options for your new travel dates or destinations.",
+  },
+  {
+    question: "What payment methods do you accept and when do I pay?",
+    answer:
+      "We accept all major credit cards, debit cards, bank transfers, and mobile money. Payment is only required after you approve our quote and are satisfied with the flight options. For bookings over $1,000, we offer payment plans with a small deposit to secure your booking and the balance due before travel. All transactions are secured with 256-bit SSL encryption.",
+  },
+  {
+    question: "Do you provide support during my travel?",
+    answer:
+      "Yes! Our 24/7 emergency support line is available throughout your journey. Whether you face flight delays, cancellations, or need to make emergency changes, we're here to help. We also provide WhatsApp support for quick communications and can assist with rebooking, accommodation if needed, and coordination with airlines for any issues that arise during travel.",
+  },
+]);
+
+// Form data
+const formData = reactive({
+  fullName: "",
+  email: "",
+  phone: "",
+  whatsapp: "",
+  from: "",
+  to: "",
+  departure: "",
+  return: "",
+  passengers: "",
+  class: "economy",
+  airline: "",
+  budget: "",
+  services: [],
+  preferences: [],
+  comments: "",
+});
+
+// Tab indicator position
+const tabIndicatorPosition = computed(() => {
+  switch (currentTab.value) {
+    case "return":
+      return "0%";
+    case "oneway":
+      return "33.333%";
+    case "multicity":
+      return "66.666%";
+    default:
+      return "0%";
+  }
+});
+
+// Switch tab function
+const switchTab = (tabType) => {
+  currentTab.value = tabType;
+};
+
+// Toggle FAQ function
+const toggleFAQ = (index) => {
+  openFaqIndex.value = openFaqIndex.value === index ? -1 : index;
+};
+
+// Scroll to form function
+const scrollToForm = () => {
+  const form = document.querySelector("form");
+  if (form) {
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+    setTimeout(() => {
+      const firstInput = form.querySelector("input, select");
+      if (firstInput) {
+        firstInput.focus();
       }
+    }, 800);
+  }
+};
 
-      // Tab switching functionality
-      function switchTab(button, tabType) {
-        // Remove active class from all tabs
-        document.querySelectorAll(".tab-button").forEach((tab) => {
-          tab.classList.remove("active");
-        });
+// Submit form function
+const submitForm = () => {
+  console.log("Form submitted:", formData);
+  alert(
+    "Thank you for your flight booking request! Our team will contact you within 2 hours with your personalized quote."
+  );
+};
 
-        // Add active class to clicked tab
-        button.classList.add("active");
+// Meta data for SEO
+useHead({
+  title: "Flight Booking - Global Horizons Travel",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Expert flight booking service with guaranteed best prices and personalized travel assistance. Get your flight quote today!",
+    },
+    {
+      name: "keywords",
+      content:
+        "flight booking, cheap flights, airline tickets, travel assistance, best price guarantee",
+    },
+  ],
+});
+</script>
 
-        // Move the indicator
-        const indicator = document.querySelector(".tab-indicator");
-        const tabs = document.querySelectorAll(".tab-button");
-        const tabIndex = Array.from(tabs).indexOf(button);
-        const tabWidth = 100 / tabs.length;
-        indicator.style.left = `${tabIndex * tabWidth}%`;
+<style scoped>
+/* Custom colors and styles to match original */
+.deep-blue {
+  color: #1a365d;
+}
 
-        // Show/hide return date field based on tab
-        const returnField = document.querySelector(".return-date-field");
-        const returnInput = document.querySelector("#return");
+.bg-deep-blue {
+  background-color: #1a365d;
+}
 
-        if (tabType === "oneway") {
-          returnField.style.display = "none";
-          returnInput.required = false;
-        } else {
-          returnField.style.display = "block";
-          if (tabType === "return") {
-            returnInput.required = true;
-          }
-        }
-      }
+.bg-gradient-brand {
+  background-image: linear-gradient(135deg, #1a365d, #ff7a59);
+}
 
-      // FAQ Toggle Functionality
-      function toggleFAQ(button) {
-        const faqItem = button.closest(".faq-item");
-        const content = faqItem.querySelector(".faq-content");
-        const icon = faqItem.querySelector(".faq-icon svg");
-        const iconContainer = faqItem.querySelector(".faq-icon");
-        const isOpen =
-          content.style.maxHeight && content.style.maxHeight !== "0px";
+/* Tab styles */
+.tab-button {
+  color: #6b7280;
+  background: transparent;
+}
 
-        // Close all other FAQ items
-        document.querySelectorAll(".faq-item").forEach((item) => {
-          if (item !== faqItem) {
-            const otherContent = item.querySelector(".faq-content");
-            const otherIcon = item.querySelector(".faq-icon svg");
-            const otherIconContainer = item.querySelector(".faq-icon");
+.tab-button.active {
+  color: #ffffff;
+  background: transparent;
+}
 
-            otherContent.style.maxHeight = "0px";
-            otherIcon.style.transform = "rotate(0deg)";
-            otherIconContainer.style.backgroundColor =
-              "rgba(255, 122, 89, 0.1)";
-            item.style.borderColor = "rgba(229, 231, 235, 1)";
-          }
-        });
+.tab-indicator {
+  background: linear-gradient(135deg, #ff7a59, #f97316);
+  box-shadow: 0 4px 15px rgba(255, 122, 89, 0.3);
+}
 
-        if (isOpen) {
-          // Close current item
-          content.style.maxHeight = "0px";
-          icon.style.transform = "rotate(0deg)";
-          iconContainer.style.backgroundColor = "rgba(255, 122, 89, 0.1)";
-          faqItem.style.borderColor = "rgba(229, 231, 235, 1)";
-        } else {
-          // Open current item
-          content.style.maxHeight = content.scrollHeight + "px";
-          icon.style.transform = "rotate(45deg)";
-          iconContainer.style.backgroundColor = "rgba(255, 122, 89, 0.2)";
-          faqItem.style.borderColor = "rgba(255, 122, 89, 0.3)";
-        }
-      }
+/* Modern input styles */
+.modern-input-group {
+  position: relative;
+}
 
-      // Form submission handling
-      document.addEventListener("DOMContentLoaded", function () {
-        const form = document.querySelector("form");
-        if (form) {
-          form.addEventListener("submit", function (e) {
-            e.preventDefault();
+.modern-select,
+.modern-input {
+  padding-top: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
 
-            // Get form data
-            const formData = new FormData(form);
+.modern-select:focus + .modern-label,
+.modern-input:focus + .modern-label,
+.modern-select:not(:placeholder-shown) + .modern-label,
+.modern-input:not(:placeholder-shown) + .modern-label {
+  transform: translateY(-0.125rem);
+  font-size: 0.75rem;
+  color: #ff7a59;
+}
 
-            // Show success message (you can replace this with actual form submission)
-            alert(
-              "Thank you for your flight booking request! Our team will contact you within 2 hours with your personalized quote."
-            );
+.modern-select:focus,
+.modern-input:focus {
+  border-color: #ff7a59;
+  box-shadow: 0 0 0 4px rgba(255, 122, 89, 0.1);
+}
 
-            // Optional: Reset form
-            // form.reset();
-          });
-        }
-
-        // Set minimum date to today
-        const today = new Date().toISOString().split("T")[0];
-        const departureInput = document.getElementById("departure");
-        const returnInput = document.getElementById("return");
-
-        if (departureInput) {
-          departureInput.min = today;
-
-          // Update return date minimum when departure changes
-          departureInput.addEventListener("change", function () {
-            if (returnInput) {
-              returnInput.min = this.value;
-            }
-          });
-        }
-
-        // Initialize tab indicator position
-        const firstTab = document.querySelector(".tab-button.active");
-        if (firstTab) {
-          const indicator = document.querySelector(".tab-indicator");
-          indicator.style.left = "0%";
-        }
-      });
-
-      // Advanced options toggle
-      function toggleAdvanced() {
-        const advancedOptions = document.querySelector(".advanced-options");
-        const toggleButton = document.querySelector(".advanced-toggle svg");
-
-        if (
-          advancedOptions.style.maxHeight &&
-          advancedOptions.style.maxHeight !== "0px"
-        ) {
-          advancedOptions.style.maxHeight = "0px";
-          toggleButton.style.transform = "rotate(0deg)";
-        } else {
-          advancedOptions.style.maxHeight = advancedOptions.scrollHeight + "px";
-          toggleButton.style.transform = "rotate(180deg)";
-        }
-      }
-
-      // Swap locations function
-      function swapLocations() {
-        const fromSelect = document.getElementById("from");
-        const toSelect = document.getElementById("to");
-
-        if (fromSelect && toSelect) {
-          const tempValue = fromSelect.value;
-          fromSelect.value = toSelect.value;
-          toSelect.value = tempValue;
-
-          // Add visual feedback
-          fromSelect.style.transform = "scale(1.05)";
-          toSelect.style.transform = "scale(1.05)";
-
-          setTimeout(() => {
-            fromSelect.style.transform = "scale(1)";
-            toSelect.style.transform = "scale(1)";
-          }, 200);
-        }
-      }
-
-      // Enhanced form interactions
-      document.addEventListener("DOMContentLoaded", function () {
-        // Add smooth transitions to form elements
-        const formElements = document.querySelectorAll(
-          ".modern-input, .modern-select"
-        );
-        formElements.forEach((element) => {
-          element.addEventListener("focus", function () {
-            this.closest(".modern-input-group").style.transform =
-              "translateY(-2px)";
-          });
-
-          element.addEventListener("blur", function () {
-            this.closest(".modern-input-group").style.transform =
-              "translateY(0)";
-          });
-        });
-
-        // Real-time validation feedback
-        const requiredFields = document.querySelectorAll("[required]");
-        requiredFields.forEach((field) => {
-          field.addEventListener("blur", function () {
-            if (this.value.trim() === "") {
-              this.style.borderColor = "#ef4444";
-            } else {
-              this.style.borderColor = "#10b981";
-            }
-          });
-
-          field.addEventListener("input", function () {
-            if (this.value.trim() !== "") {
-              this.style.borderColor = "#10b981";
-            }
-          });
-        });
-      });
-    </script>
-  </body>
-</html>
+.modern-input-group:hover .modern-select,
+.modern-input-group:hover .modern-input {
+  border-color: #ff7a59;
+}
+</style>

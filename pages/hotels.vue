@@ -1,156 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hotel Booking - Global Horizons Travel Services</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      /* Updated Custom colors incorporating both orange accent and deep blue */
-      .accent {
-        color: #ff7a59;
-      }
-      .bg-accent {
-        background-color: #ff7a59;
-      }
-      .deep-blue {
-        color: #1a365d;
-      }
-      .bg-deep-blue {
-        background-color: #1a365d;
-      }
+<template>
+  <div>
+    <!-- SEO Meta Tags -->
+    <Head>
+      <title>Hotel Booking - Global Horizons Travel Services</title>
+      <meta
+        name="description"
+        content="Worldwide hotel booking service with guaranteed best rates and personalized accommodation assistance across all continents"
+      />
+    </Head>
 
-      /* Gradient backgrounds */
-      .bg-gradient-brand {
-        background-image: linear-gradient(135deg, #1a365d, #ff7a59);
-      }
-
-      /* Hover effects */
-      .hover-deep-blue:hover {
-        color: #1a365d;
-      }
-      .hover-bg-deep-blue:hover {
-        background-color: #1a365d;
-      }
-
-      /* Custom hover colors - Light Orange and Blue */
-      .hover-light-orange:hover {
-        background-color: #fff3e0 !important;
-        color: #e65100 !important;
-      }
-
-      .hover-light-blue:hover {
-        background-color: #e3f2fd !important;
-        color: #1565c0 !important;
-      }
-
-      .hover-light-orange-bg:hover {
-        background-color: #fff3e0 !important;
-      }
-
-      .hover-light-blue-bg:hover {
-        background-color: #e3f2fd !important;
-      }
-
-      .hover-light-orange-text:hover {
-        color: #e65100 !important;
-      }
-
-      .hover-light-blue-text:hover {
-        color: #1565c0 !important;
-      }
-    </style>
-  </head>
-  <body class="font-sans antialiased text-gray-800">
-    <!-- Navbar (Same structure but "Hotels" is highlighted) -->
-    <nav class="w-full bg-white shadow-md fixed top-0 z-50">
-      <div
-        class="max-w-7xl mx-auto px-4 py-0 flex items-center justify-between overflow-visible"
-      >
-        <a
-          href="index.html"
-          class="flex items-center py-0 -my-2 overflow-visible"
-        >
-          <img src="glo.png" alt="Global Horizons" class="h-14 md:h-16" />
-        </a>
-        <ul class="hidden md:flex space-x-6">
-          <li>
-            <a href="index.html" class="hover:text-accent font-medium">HOME</a>
-          </li>
-          <li>
-            <a href="visas.html" class="hover:text-accent font-medium">VISAS</a>
-          </li>
-          <li>
-            <a href="tours.html" class="hover:text-accent font-medium"
-              >TOUR PACKAGES</a
-            >
-          </li>
-          <li>
-            <a href="flights.html" class="hover:text-accent font-medium"
-              >FLIGHTS</a
-            >
-          </li>
-          <li>
-            <a href="hotels.html" class="text-accent font-medium">HOTELS</a>
-          </li>
-        </ul>
-        <a
-          href="contact.html"
-          class="hidden md:inline-block px-4 py-2 bg-accent text-white rounded-lg hover:bg-opacity-90 transition"
-          >Book Now</a
-        >
-        <button class="md:hidden focus:outline-none" id="mobile-menu-button">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-      </div>
-      <!-- Mobile menu, hidden by default -->
-      <div class="md:hidden hidden bg-white w-full pb-4 px-4" id="mobile-menu">
-        <ul class="space-y-2">
-          <li>
-            <a href="index.html" class="block py-2 hover:text-accent">HOME</a>
-          </li>
-          <li>
-            <a href="visas.html" class="block py-2 hover:text-accent">VISAS</a>
-          </li>
-          <li>
-            <a href="tours.html" class="block py-2 hover:text-accent"
-              >TOUR PACKAGES</a
-            >
-          </li>
-          <li>
-            <a href="flights.html" class="block py-2 hover:text-accent"
-              >FLIGHTS</a
-            >
-          </li>
-          <li>
-            <a href="hotels.html" class="block py-2 text-accent">HOTELS</a>
-          </li>
-          <li>
-            <a
-              href="contact.html"
-              class="block py-2 mt-4 text-center bg-accent text-white rounded-lg hover:bg-opacity-90 transition"
-              >Book Now</a
-            >
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <!-- Navigation -->
+    <NavBar current-page="hotels" />
 
     <!-- Page Header with Gradient Background -->
     <section class="relative pt-24 pb-16 bg-gradient-brand">
@@ -247,8 +107,9 @@
         </div>
 
         <form
+          @submit.prevent="handleFormSubmit"
           class="bg-white rounded-lg shadow-lg p-6 md:p-8 border border-gray-100"
-          id="hotel-quote-form"
+          ref="hotelQuoteForm"
         >
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Personal Information -->
@@ -270,7 +131,7 @@
               <input
                 type="text"
                 id="fullName"
-                name="fullName"
+                v-model="formData.fullName"
                 required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 placeholder="Your full name"
@@ -287,7 +148,7 @@
               <input
                 type="email"
                 id="email"
-                name="email"
+                v-model="formData.email"
                 required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 placeholder="your.email@example.com"
@@ -304,7 +165,7 @@
               <input
                 type="tel"
                 id="phone"
-                name="phone"
+                v-model="formData.phone"
                 required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 placeholder="+233 XX XXX XXXX"
@@ -320,7 +181,7 @@
               </label>
               <select
                 id="guests"
-                name="guests"
+                v-model="formData.guests"
                 required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
               >
@@ -353,7 +214,7 @@
               <input
                 type="text"
                 id="destination"
-                name="destination"
+                v-model="formData.destination"
                 required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 placeholder="City or specific area"
@@ -370,9 +231,10 @@
               <input
                 type="text"
                 id="dates"
-                name="dates"
+                v-model="formData.dates"
                 required
                 readonly
+                @click="handleDateSelection"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors cursor-pointer"
                 placeholder="Select your dates"
               />
@@ -387,7 +249,7 @@
               </label>
               <select
                 id="rooms"
-                name="rooms"
+                v-model="formData.rooms"
                 required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
               >
@@ -410,7 +272,7 @@
               </label>
               <select
                 id="budget"
-                name="budget"
+                v-model="formData.budget"
                 required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
               >
@@ -445,7 +307,7 @@
               </label>
               <select
                 id="starRating"
-                name="starRating"
+                v-model="formData.starRating"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
               >
                 <option value="">No preference</option>
@@ -465,7 +327,7 @@
               </label>
               <select
                 id="amenities"
-                name="amenities"
+                v-model="formData.amenities"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
               >
                 <option value="">No specific requirements</option>
@@ -490,7 +352,7 @@
                 <label class="flex items-center">
                   <input
                     type="checkbox"
-                    name="services"
+                    v-model="formData.services"
                     value="airport-transfer"
                     class="w-4 h-4 text-accent border-gray-300 rounded focus:ring-accent"
                   />
@@ -499,7 +361,7 @@
                 <label class="flex items-center">
                   <input
                     type="checkbox"
-                    name="services"
+                    v-model="formData.services"
                     value="tours"
                     class="w-4 h-4 text-accent border-gray-300 rounded focus:ring-accent"
                   />
@@ -508,7 +370,7 @@
                 <label class="flex items-center">
                   <input
                     type="checkbox"
-                    name="services"
+                    v-model="formData.services"
                     value="car-rental"
                     class="w-4 h-4 text-accent border-gray-300 rounded focus:ring-accent"
                   />
@@ -517,7 +379,7 @@
                 <label class="flex items-center">
                   <input
                     type="checkbox"
-                    name="services"
+                    v-model="formData.services"
                     value="travel-insurance"
                     class="w-4 h-4 text-accent border-gray-300 rounded focus:ring-accent"
                   />
@@ -536,7 +398,7 @@
               </label>
               <textarea
                 id="requirements"
-                name="requirements"
+                v-model="formData.requirements"
                 rows="4"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 placeholder="Any special requests, accessibility needs, dietary requirements, or other important details..."
@@ -547,9 +409,10 @@
           <div class="mt-8 text-center">
             <button
               type="submit"
-              class="bg-accent hover:bg-orange-600 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg"
+              :disabled="isSubmitting"
+              class="bg-accent hover:bg-orange-600 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg disabled:opacity-50"
             >
-              Get Hotel Quote
+              {{ isSubmitting ? "Sending..." : "Get Hotel Quote" }}
             </button>
             <p class="text-sm text-gray-600 mt-2">
               We'll respond within 2 hours with personalized hotel
@@ -557,6 +420,44 @@
             </p>
           </div>
         </form>
+
+        <!-- Success Message -->
+        <div
+          v-if="showSuccess"
+          class="mt-8 p-6 bg-green-50 border border-green-200 rounded-lg"
+        >
+          <div class="flex items-center">
+            <svg
+              class="h-6 w-6 text-green-600 mr-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <div>
+              <h3 class="text-lg font-medium text-green-800">
+                Hotel Quote Request Sent!
+              </h3>
+              <p class="text-green-700 mt-1">
+                Thank you for your hotel quote request! We'll respond within 2
+                hours with personalized recommendations. Reference:
+                {{ referenceNumber }}
+              </p>
+              <nuxt-link
+                to="/track-booking"
+                class="inline-block mt-3 text-green-600 hover:text-green-500 underline"
+              >
+                Track your request →
+              </nuxt-link>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Popular Hotel Examples -->
@@ -618,7 +519,7 @@
                 <li>• Burj Khalifa & Mall proximity</li>
               </ul>
               <button
-                onclick="scrollToForm()"
+                @click="scrollToForm"
                 class="w-full bg-deep-blue hover:bg-blue-800 text-white py-2 px-4 rounded-lg transition-colors"
               >
                 Get Current Quote
@@ -677,7 +578,7 @@
                 <li>• Royal attraction proximity</li>
               </ul>
               <button
-                onclick="scrollToForm()"
+                @click="scrollToForm"
                 class="w-full bg-deep-blue hover:bg-blue-800 text-white py-2 px-4 rounded-lg transition-colors"
               >
                 Get Current Quote
@@ -685,7 +586,7 @@
             </div>
           </div>
 
-          <!-- Kumasi Hotels -->
+          <!-- Tokyo Hotels -->
           <div
             class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
           >
@@ -728,7 +629,7 @@
                 <li>• Temple & culture district access</li>
               </ul>
               <button
-                onclick="scrollToForm()"
+                @click="scrollToForm"
                 class="w-full bg-deep-blue hover:bg-blue-800 text-white py-2 px-4 rounded-lg transition-colors"
               >
                 Get Current Quote
@@ -736,7 +637,7 @@
             </div>
           </div>
 
-          <!-- Tamale Hotels -->
+          <!-- New York City Hotels -->
           <div
             class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
           >
@@ -781,7 +682,7 @@
                 <li>• 24/7 concierge services</li>
               </ul>
               <button
-                onclick="scrollToForm()"
+                @click="scrollToForm"
                 class="w-full bg-deep-blue hover:bg-blue-800 text-white py-2 px-4 rounded-lg transition-colors"
               >
                 Get Current Quote
@@ -789,7 +690,7 @@
             </div>
           </div>
 
-          <!-- Elmina Beach Hotels -->
+          <!-- Thailand Beach Resorts -->
           <div
             class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
           >
@@ -832,7 +733,7 @@
                 <li>• Island hopping tours</li>
               </ul>
               <button
-                onclick="scrollToForm()"
+                @click="scrollToForm"
                 class="w-full bg-deep-blue hover:bg-blue-800 text-white py-2 px-4 rounded-lg transition-colors"
               >
                 Get Current Quote
@@ -887,7 +788,7 @@
                 <li>• Celebrity & designer properties</li>
               </ul>
               <button
-                onclick="scrollToForm()"
+                @click="scrollToForm"
                 class="w-full bg-deep-blue hover:bg-blue-800 text-white py-2 px-4 rounded-lg transition-colors"
               >
                 Get Current Quote
@@ -1008,230 +909,104 @@
     </div>
 
     <!-- Footer -->
-    <footer id="contact" class="bg-gray-900 text-white py-16">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <div class="flex items-center mb-4">
-              <img src="glo.png" alt="Global Horizons Logo" class="h-10 mr-3" />
-              <h3 class="text-xl font-bold">Global Horizons</h3>
-            </div>
-            <p class="text-gray-400 mb-4">
-              Your trusted partner for global travel and visa solutions.
-            </p>
-            <div class="flex space-x-4">
-              <a href="#" class="text-gray-400 hover:text-white transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-                  />
-                </svg>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-white transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.1 10.1 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63a9.936 9.936 0 002.46-2.548l-.047-.02z"
-                  />
-                </svg>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-white transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"
-                  />
-                </svg>
-              </a>
-            </div>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul class="space-y-2">
-              <li>
-                <a
-                  href="index.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >HOME</a
-                >
-              </li>
-              <li>
-                <a
-                  href="visas.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >VISAS</a
-                >
-              </li>
-              <li>
-                <a
-                  href="tours.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >TOUR PACKAGES</a
-                >
-              </li>
-              <li>
-                <a
-                  href="flights.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >FLIGHTS</a
-                >
-              </li>
-              <li>
-                <a
-                  href="hotels.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >HOTELS</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
-            <ul class="space-y-2 text-gray-400">
-              <li class="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mr-2 mt-0.5 text-accent"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span
-                  >5 Cormorant Cl, Community 11, Tema, Accra, Greater Accra
-                  Region, Ghana</span
-                >
-              </li>
-              <li class="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mr-2 mt-0.5 text-accent"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>info@glohorizonsgh.com</span>
-              </li>
-              <li class="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mr-2 mt-0.5 text-accent"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                <span>+233 (0)20 507 8908</span>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Business Hours</h4>
-            <ul class="space-y-2 text-gray-400">
-              <li>Monday - Friday: 9:00 AM - 6:00 PM</li>
-              <li>Saturday: 10:00 AM - 4:00 PM</li>
-              <li>Sunday: Closed</li>
-            </ul>
-          </div>
-        </div>
-        <div
-          class="border-t border-gray-800 mt-10 pt-6 text-center text-sm text-gray-400"
-        >
-          <p>&copy; Global Horizons. All rights reserved.</p>
-          <p class="mt-2">
-            Designed by
-            <a
-              href="https://devseinty.netlify.app/"
-              target="_blank"
-              class="hover:opacity-80 transition-all"
-            >
-              <span style="color: #ff7a59; font-weight: bold">Zedi</span
-              ><span class="text-blue-400 font-bold">Tech</span>
-            </a>
-          </p>
-        </div>
-      </div>
-    </footer>
+    <FooterSection />
+  </div>
+</template>
 
-    <!-- JavaScript -->
-    <script>
-      // Mobile menu toggle
-      document.addEventListener("DOMContentLoaded", function () {
-        const mobileMenuButton = document.getElementById("mobile-menu-button");
-        const mobileMenu = document.getElementById("mobile-menu");
+<script setup>
+import { ref } from "vue";
 
-        mobileMenuButton.addEventListener("click", function () {
-          mobileMenu.classList.toggle("hidden");
-        });
+// Form data
+const formData = ref({
+  fullName: "",
+  email: "",
+  phone: "",
+  guests: "",
+  destination: "",
+  dates: "",
+  rooms: "",
+  budget: "",
+  starRating: "",
+  amenities: "",
+  services: [],
+  requirements: "",
+});
 
-        // Date picker simulation
-        const dateInput = document.getElementById("dates");
-        dateInput.addEventListener("click", function () {
-          // In a real implementation, you would integrate with a date picker library
-          const startDate = prompt("Enter check-in date (YYYY-MM-DD):");
-          const endDate = prompt("Enter check-out date (YYYY-MM-DD):");
-          if (startDate && endDate) {
-            this.value = `${startDate} to ${endDate}`;
-          }
-        });
+// Form states
+const isSubmitting = ref(false);
+const showSuccess = ref(false);
+const referenceNumber = ref("");
 
-        // Form submission
-        const form = document.getElementById("hotel-quote-form");
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
-          alert(
-            "Thank you for your hotel quote request! We'll respond within 2 hours with personalized recommendations."
-          );
-          // In a real implementation, you would send this data to your server
-        });
-      });
+// Generate reference number
+const generateReferenceNumber = () => {
+  const prefix = "HTL";
+  const timestamp = Date.now().toString().slice(-6);
+  const random = Math.floor(Math.random() * 1000)
+    .toString()
+    .padStart(3, "0");
+  return `${prefix}${timestamp}${random}`;
+};
 
-      // Scroll to form function
-      function scrollToForm() {
-        const form = document.getElementById("hotel-quote-form");
-        form.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
-    </script>
-  </body>
-</html>
+// Handle date selection (placeholder functionality)
+const handleDateSelection = () => {
+  const startDate = prompt("Enter check-in date (YYYY-MM-DD):");
+  const endDate = prompt("Enter check-out date (YYYY-MM-DD):");
+  if (startDate && endDate) {
+    formData.value.dates = `${startDate} to ${endDate}`;
+  }
+};
+
+// Handle form submission
+const handleFormSubmit = async () => {
+  isSubmitting.value = true;
+
+  try {
+    // Generate reference number
+    referenceNumber.value = generateReferenceNumber();
+
+    // Simulate form submission delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Reset form
+    formData.value = {
+      fullName: "",
+      email: "",
+      phone: "",
+      guests: "",
+      destination: "",
+      dates: "",
+      rooms: "",
+      budget: "",
+      starRating: "",
+      amenities: "",
+      services: [],
+      requirements: "",
+    };
+
+    // Show success message
+    showSuccess.value = true;
+
+    // Hide success message after 10 seconds
+    setTimeout(() => {
+      showSuccess.value = false;
+    }, 10000);
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    alert("There was an error submitting your request. Please try again.");
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+// Scroll to form
+const scrollToForm = () => {
+  const form = document.querySelector("form");
+  if (form) {
+    form.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
+</script>
+ 

@@ -1,137 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Contact Us - Global Horizons Travel Services</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      /* Custom accent color */
-      .accent {
-        color: #ff7a59;
-      }
-      .bg-accent {
-        background-color: #ff7a59;
-      }
+<template>
+  <div>
+    <!-- SEO Meta Tags -->
+    <Head>
+      <title>Contact Us - Global Horizons Travel Services</title>
+      <meta
+        name="description"
+        content="Get in touch with our team for personalized travel assistance. Visit our office in Tema, Ghana or contact us via phone, email or our contact form."
+      />
+    </Head>
 
-      /* Custom hover colors - Light Orange and Blue */
-      .hover-light-orange:hover {
-        background-color: #fff3e0 !important;
-        color: #e65100 !important;
-      }
-
-      .hover-light-blue:hover {
-        background-color: #e3f2fd !important;
-        color: #1565c0 !important;
-      }
-
-      .hover-light-orange-bg:hover {
-        background-color: #fff3e0 !important;
-      }
-
-      .hover-light-blue-bg:hover {
-        background-color: #e3f2fd !important;
-      }
-
-      .hover-light-orange-text:hover {
-        color: #e65100 !important;
-      }
-
-      .hover-light-blue-text:hover {
-        color: #1565c0 !important;
-      }
-    </style>
-  </head>
-  <body class="font-sans antialiased text-gray-800">
-    <!-- Navbar (Same structure but "Contact" is highlighted) -->
-    <nav class="w-full bg-white shadow-md fixed top-0 z-50">
-      <div
-        class="max-w-7xl mx-auto px-4 py-0 flex items-center justify-between overflow-visible"
-      >
-        <a
-          href="index.html"
-          class="flex items-center py-0 -my-2 overflow-visible"
-        >
-          <img src="glo.png" alt="Global Horizons" class="h-14 md:h-16" />
-        </a>
-        <ul class="hidden md:flex space-x-6">
-          <li>
-            <a href="index.html" class="hover:text-accent font-medium">HOME</a>
-          </li>
-          <li>
-            <a href="visas.html" class="hover:text-accent font-medium">VISAS</a>
-          </li>
-          <li>
-            <a href="tours.html" class="hover:text-accent font-medium"
-              >TOUR PACKAGES</a
-            >
-          </li>
-          <li>
-            <a href="flights.html" class="hover:text-accent font-medium"
-              >FLIGHTS</a
-            >
-          </li>
-          <li>
-            <a href="hotels.html" class="text-accent font-medium">HOTELS</a>
-          </li>
-        </ul>
-        <a
-          href="booking.html"
-          class="hidden md:inline-block px-4 py-2 bg-accent text-white rounded-lg hover:bg-opacity-90 transition"
-          >Book Now</a
-        >
-        <button class="md:hidden focus:outline-none" id="mobile-menu-button">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-      </div>
-      <!-- Mobile menu, hidden by default -->
-      <div class="md:hidden hidden bg-white w-full pb-4 px-4" id="mobile-menu">
-        <ul class="space-y-2">
-          <li>
-            <a href="index.html" class="block py-2 hover:text-accent">HOME</a>
-          </li>
-          <li>
-            <a href="visas.html" class="block py-2 hover:text-accent">VISAS</a>
-          </li>
-          <li>
-            <a href="tours.html" class="block py-2 hover:text-accent"
-              >TOUR PACKAGES</a
-            >
-          </li>
-          <li>
-            <a href="flights.html" class="block py-2 hover:text-accent"
-              >FLIGHTS</a
-            >
-          </li>
-          <li>
-            <a href="hotels.html" class="block py-2 text-accent">HOTELS</a>
-          </li>
-          <li>
-            <a
-              href="booking.html"
-              class="block py-2 mt-4 text-center bg-accent text-white rounded-lg hover:bg-opacity-90 transition"
-              >Book Now</a
-            >
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <!-- Navigation -->
+    <NavBar current-page="contact" />
 
     <!-- Page Header -->
     <section
@@ -348,21 +227,22 @@
 
           <!-- Contact Form -->
           <div
-            class="col-span-1 md:col-span-2 bg-white p-8 rounded-2xl shadow-lg"
+            class="col-span-1 md:col-span-2 bg-white p-8 rounded-2xl shadow-lg contact-form"
           >
             <h2 class="text-2xl font-bold mb-6">Send Us a Message</h2>
-            <form>
+            <form @submit.prevent="handleFormSubmit">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label
                     for="fullName"
                     class="block text-gray-700 font-medium mb-2"
-                    >Full Name</label
                   >
+                    Full Name *
+                  </label>
                   <input
                     type="text"
                     id="fullName"
-                    name="fullName"
+                    v-model="formData.fullName"
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="Your full name"
                     required
@@ -372,12 +252,13 @@
                   <label
                     for="email"
                     class="block text-gray-700 font-medium mb-2"
-                    >Email Address</label
                   >
+                    Email Address *
+                  </label>
                   <input
                     type="email"
                     id="email"
-                    name="email"
+                    v-model="formData.email"
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="Your email address"
                     required
@@ -387,12 +268,13 @@
                   <label
                     for="phone"
                     class="block text-gray-700 font-medium mb-2"
-                    >Phone Number</label
                   >
+                    Phone Number
+                  </label>
                   <input
                     type="tel"
                     id="phone"
-                    name="phone"
+                    v-model="formData.phone"
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="Your phone number"
                   />
@@ -401,11 +283,12 @@
                   <label
                     for="subject"
                     class="block text-gray-700 font-medium mb-2"
-                    >Subject</label
                   >
+                    Subject *
+                  </label>
                   <select
                     id="subject"
-                    name="subject"
+                    v-model="formData.subject"
                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                     required
                   >
@@ -426,11 +309,12 @@
                 <label
                   for="message"
                   class="block text-gray-700 font-medium mb-2"
-                  >Message</label
                 >
+                  Message *
+                </label>
                 <textarea
                   id="message"
-                  name="message"
+                  v-model="formData.message"
                   rows="5"
                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="How can we help you?"
@@ -439,11 +323,43 @@
               </div>
               <button
                 type="submit"
-                class="px-6 py-3 bg-accent text-white font-semibold rounded-lg hover:bg-opacity-90 transition w-full md:w-auto"
+                :disabled="isSubmitting"
+                class="px-6 py-3 bg-accent text-white font-semibold rounded-lg hover:bg-opacity-90 transition w-full md:w-auto disabled:opacity-50"
               >
-                Send Message
+                {{ isSubmitting ? "Sending..." : "Send Message" }}
               </button>
             </form>
+
+            <!-- Success Message -->
+            <div
+              v-if="showSuccess"
+              class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg"
+            >
+              <div class="flex items-center">
+                <svg
+                  class="h-6 w-6 text-green-600 mr-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <div>
+                  <h3 class="text-lg font-medium text-green-800">
+                    Message Sent Successfully!
+                  </h3>
+                  <p class="text-green-700 mt-1">
+                    Thank you for contacting us! We'll get back to you within 24
+                    hours.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -460,7 +376,6 @@
         </div>
 
         <div class="bg-white p-4 rounded-2xl shadow-lg">
-          <!-- Replace with actual map embed code -->
           <div
             class="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center"
           >
@@ -490,12 +405,14 @@
         <div class="space-y-4">
           <div class="bg-white p-4 rounded-lg shadow">
             <button
+              @click="toggleFaq(0)"
               class="flex items-center justify-between w-full text-left font-semibold focus:outline-none"
             >
               <span>What are your business hours?</span>
               <svg
+                :class="{ 'rotate-180': openFaq === 0 }"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 text-accent"
+                class="h-5 w-5 text-accent transition-transform"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -508,7 +425,7 @@
                 />
               </svg>
             </button>
-            <div class="mt-2 text-gray-600">
+            <div v-show="openFaq === 0" class="mt-2 text-gray-600">
               <p>
                 Our office is open Monday through Friday from 9:00 AM to 6:00
                 PM, and Saturdays from 10:00 AM to 4:00 PM. We are closed on
@@ -519,12 +436,14 @@
 
           <div class="bg-white p-4 rounded-lg shadow">
             <button
+              @click="toggleFaq(1)"
               class="flex items-center justify-between w-full text-left font-semibold focus:outline-none"
             >
               <span>How quickly can you process a visa application?</span>
               <svg
+                :class="{ 'rotate-180': openFaq === 1 }"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 text-accent"
+                class="h-5 w-5 text-accent transition-transform"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -537,7 +456,7 @@
                 />
               </svg>
             </button>
-            <div class="mt-2 text-gray-600">
+            <div v-show="openFaq === 1" class="mt-2 text-gray-600">
               <p>
                 Processing times vary by country and visa type. We can typically
                 prepare your application within 3-5 business days, but embassy
@@ -549,14 +468,16 @@
 
           <div class="bg-white p-4 rounded-lg shadow">
             <button
+              @click="toggleFaq(2)"
               class="flex items-center justify-between w-full text-left font-semibold focus:outline-none"
             >
               <span
                 >Do you offer consultations before I book your services?</span
               >
               <svg
+                :class="{ 'rotate-180': openFaq === 2 }"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 text-accent"
+                class="h-5 w-5 text-accent transition-transform"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -569,7 +490,7 @@
                 />
               </svg>
             </button>
-            <div class="mt-2 text-gray-600">
+            <div v-show="openFaq === 2" class="mt-2 text-gray-600">
               <p>
                 Yes, we offer free 15-minute initial consultations to discuss
                 your travel needs and determine how we can best assist you.
@@ -580,12 +501,14 @@
 
           <div class="bg-white p-4 rounded-lg shadow">
             <button
+              @click="toggleFaq(3)"
               class="flex items-center justify-between w-full text-left font-semibold focus:outline-none"
             >
               <span>What payment methods do you accept?</span>
               <svg
+                :class="{ 'rotate-180': openFaq === 3 }"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 text-accent"
+                class="h-5 w-5 text-accent transition-transform"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -598,7 +521,7 @@
                 />
               </svg>
             </button>
-            <div class="mt-2 text-gray-600">
+            <div v-show="openFaq === 3" class="mt-2 text-gray-600">
               <p>
                 We accept cash, credit/debit cards (Visa, Mastercard, American
                 Express), bank transfers, and mobile money payments (MTN Mobile
@@ -610,282 +533,67 @@
       </div>
     </section>
 
-    <!-- Newsletter -->
-    <section class="py-16 bg-accent">
-      <div class="max-w-4xl mx-auto px-4 text-center text-white">
-        <h2 class="text-3xl font-bold mb-2">Stay Updated</h2>
-        <p class="mb-6">
-          Subscribe to our newsletter for travel deals, visa updates, and expert
-          tips.
-        </p>
-        <form class="max-w-lg mx-auto">
-          <!-- Contact Method Toggle -->
-          <div class="flex justify-center mb-4">
-            <div class="bg-white/20 rounded-lg p-1 inline-flex">
-              <button
-                type="button"
-                id="emailToggle"
-                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 contact-method-btn active"
-                onclick="toggleContactMethod('email')"
-              >
-                Email
-              </button>
-              <button
-                type="button"
-                id="phoneToggle"
-                class="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 contact-method-btn"
-                onclick="toggleContactMethod('phone')"
-              >
-                Phone
-              </button>
-            </div>
-          </div>
+    <!-- Newsletter Section -->
+    <NewsletterSection />
 
-          <div class="flex flex-col md:flex-row gap-2">
-            <input
-              type="email"
-              id="contactInput"
-              placeholder="Your email address"
-              class="px-4 py-3 rounded-lg flex-grow text-gray-700 focus:outline-none focus:ring-2 focus:ring-white/50"
-            />
-            <button
-              type="submit"
-              class="px-6 py-3 font-semibold rounded-lg transition-all duration-200 hover:transform hover:scale-105"
-              style="background-color: #1a365d; color: white"
-              onmouseover="this.style.backgroundColor='#2A4A6B'"
-              onmouseout="this.style.backgroundColor='#1A365D'"
-            >
-              Subscribe
-            </button>
-          </div>
-        </form>
-      </div>
-    </section>
+    <!-- Footer -->
+    <FooterSection />
+  </div>
+</template>
 
-    <style>
-      .contact-method-btn {
-        color: white;
-      }
-      .contact-method-btn.active {
-        background-color: white;
-        color: #ff7a59;
-      }
-    </style>
+<script setup>
+import { ref } from "vue";
 
-    <script>
-      function toggleContactMethod(method) {
-        const emailBtn = document.getElementById("emailToggle");
-        const phoneBtn = document.getElementById("phoneToggle");
-        const input = document.getElementById("contactInput");
+// Form data
+const formData = ref({
+  fullName: "",
+  email: "",
+  phone: "",
+  subject: "",
+  message: "",
+});
 
-        // Reset active states
-        emailBtn.classList.remove("active");
-        phoneBtn.classList.remove("active");
+// Form states
+const isSubmitting = ref(false);
+const showSuccess = ref(false);
 
-        if (method === "email") {
-          emailBtn.classList.add("active");
-          input.type = "email";
-          input.placeholder = "Your email address";
-        } else {
-          phoneBtn.classList.add("active");
-          input.type = "tel";
-          input.placeholder = "Your phone number";
-        }
-      }
-    </script>
+// FAQ state
+const openFaq = ref(null);
 
-    <!-- Footer - Same as other pages -->
-    <footer id="contact" class="bg-gray-900 text-white py-16">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <div class="flex items-center mb-4">
-              <img src="glo.png" alt="Global Horizons Logo" class="h-10 mr-3" />
-              <h3 class="text-xl font-bold">Global Horizons</h3>
-            </div>
-            <p class="text-gray-400 mb-4">
-              Your trusted partner for global travel and visa solutions.
-            </p>
-            <div class="flex space-x-4">
-              <a href="#" class="text-gray-400 hover:text-white transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-                  />
-                </svg>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-white transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.1 10.1 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085a4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63a9.936 9.936 0 002.46-2.548l-.047-.02z"
-                  />
-                </svg>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-white transition">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"
-                  />
-                </svg>
-              </a>
-            </div>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul class="space-y-2">
-              <li>
-                <a
-                  href="index.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >HOME</a
-                >
-              </li>
-              <li>
-                <a
-                  href="visas.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >VISAS</a
-                >
-              </li>
-              <li>
-                <a
-                  href="tours.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >TOUR PACKAGES</a
-                >
-              </li>
-              <li>
-                <a
-                  href="flights.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >FLIGHTS</a
-                >
-              </li>
-              <li>
-                <a
-                  href="hotels.html"
-                  class="text-gray-400 hover:text-white transition"
-                  >HOTELS</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
-            <ul class="space-y-2 text-gray-400">
-              <li class="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mr-2 mt-0.5 text-accent"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span
-                  >5 Cormorant Cl, Community 11, Tema, Accra, Greater Accra
-                  Region, Ghana</span
-                >
-              </li>
-              <li class="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mr-2 mt-0.5 text-accent"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>info@glohorizonsgh.com</span>
-              </li>
-              <li class="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 mr-2 mt-0.5 text-accent"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                <span>+233 (0)20 507 8908</span>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold mb-4">Business Hours</h4>
-            <ul class="space-y-2 text-gray-400">
-              <li>Monday - Friday: 9:00 AM - 6:00 PM</li>
-              <li>Saturday: 10:00 AM - 4:00 PM</li>
-              <li>Sunday: Closed</li>
-            </ul>
-          </div>
-        </div>
-        <div
-          class="border-t border-gray-800 mt-10 pt-6 text-center text-sm text-gray-400"
-        >
-          <p>&copy; 2025 Global Horizons. All rights reserved.</p>
-          <p class="mt-2">
-            Designed by
-            <a
-              href="https://devseinty.netlify.app/"
-              target="_blank"
-              class="hover:opacity-80 transition-all"
-            >
-              <span style="color: #ff7a59; font-weight: bold">Zedi</span
-              ><span class="text-blue-400 font-bold">Tech</span>
-            </a>
-          </p>
-        </div>
-      </div>
-    </footer>
+// Handle form submission
+const handleFormSubmit = async () => {
+  isSubmitting.value = true;
 
-    <!-- JavaScript for Mobile Menu Toggle -->
-    <script>
-      document
-        .getElementById("mobile-menu-button")
-        .addEventListener("click", function () {
-          const mobileMenu = document.getElementById("mobile-menu");
-          mobileMenu.classList.toggle("hidden");
-        });
-    </script>
-  </body>
-</html>
+  try {
+    // Simulate form submission delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Reset form
+    formData.value = {
+      fullName: "",
+      email: "",
+      phone: "",
+      subject: "",
+      message: "",
+    };
+
+    // Show success message
+    showSuccess.value = true;
+
+    // Hide success message after 8 seconds
+    setTimeout(() => {
+      showSuccess.value = false;
+    }, 8000);
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    alert("There was an error sending your message. Please try again.");
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+// Toggle FAQ
+const toggleFaq = (index) => {
+  openFaq.value = openFaq.value === index ? null : index;
+};
+</script>

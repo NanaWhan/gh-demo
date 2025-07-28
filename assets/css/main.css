@@ -1,0 +1,2081 @@
+/* Custom accent color */
+.accent {
+  color: #ff7a59;
+}
+.bg-accent {
+  background-color: #ff7a59;
+}
+
+/* Custom hover colors - Light Orange and Blue */
+.hover-light-orange:hover {
+  background-color: #fff3e0 !important;
+  color: #e65100 !important;
+}
+
+.hover-light-blue:hover {
+  background-color: #e3f2fd !important;
+  color: #1565c0 !important;
+}
+
+.hover-light-orange-bg:hover {
+  background-color: #fff3e0 !important;
+}
+
+.hover-light-blue-bg:hover {
+  background-color: #e3f2fd !important;
+}
+
+.hover-light-orange-text:hover {
+  color: #e65100 !important;
+}
+
+.hover-light-blue-text:hover {
+  color: #1565c0 !important;
+}
+
+/* Modern Navbar Styles */
+/* Glassmorphism 2.0 */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-nav.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover micro-interactions for nav links */
+.nav-link {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  transform: scale(1.03);
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff7a59, #ff4f37);
+  transition: width 0.3s cubic-bezier(0.58, 0.3, 0.005, 1);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Book Now button glow effect */
+.book-now-btn {
+  position: relative;
+  transition: all 0.3s ease;
+  background: linear-gradient(90deg, #ff7a59, #ff4f37);
+}
+
+.book-now-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 122, 89, 0.4);
+}
+
+/* Mobile menu animations */
+.hamburger-icon {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  cursor: pointer;
+  transform: rotate(0deg);
+  transition: 0.3s ease-in-out;
+}
+
+.hamburger-icon span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: #333;
+  border-radius: 3px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: 0.25s ease-in-out;
+}
+
+.hamburger-icon span:nth-child(1) {
+  top: 0px;
+}
+
+.hamburger-icon span:nth-child(2),
+.hamburger-icon span:nth-child(3) {
+  top: 8px;
+}
+
+.hamburger-icon span:nth-child(4) {
+  top: 16px;
+}
+
+.hamburger-icon.open span:nth-child(1) {
+  top: 8px;
+  width: 0%;
+  left: 50%;
+}
+
+.hamburger-icon.open span:nth-child(2) {
+  transform: rotate(45deg);
+}
+
+.hamburger-icon.open span:nth-child(3) {
+  transform: rotate(-45deg);
+}
+
+.hamburger-icon.open span:nth-child(4) {
+  top: 8px;
+  width: 0%;
+  left: 50%;
+}
+
+/* Hero slider styles */
+.hero-dot.active {
+  background-color: #ff7a59 !important;
+  transform: scale(1.2);
+}
+
+.hero-slide {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-slide.active {
+  opacity: 1;
+}
+
+.hero-nav {
+  transition: all 0.3s ease;
+}
+
+/* Hide hero navigation dots on mobile to prevent interference with Get Consultation button */
+.hero-dot {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .hero-nav {
+    display: none;
+  }
+
+  .hero-dot {
+    display: none;
+  }
+}
+
+/* Enhanced mobile hero content positioning */
+.hero-slider::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.2) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (min-width: 768px) {
+  .hero-slider::after {
+    height: 300px;
+  }
+}
+
+/* Hero section adjustments */
+@media (max-width: 767px) {
+  .hero-slider {
+    min-height: 100vh;
+  }
+
+  /* Hero text improvements */
+  .hero-title {
+    font-size: 2rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    line-height: 1.4;
+    margin-bottom: 2rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .hero-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+}
+
+/* Hero dots positioning */
+.hero-dot {
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .hero-nav {
+    opacity: 0.8;
+  }
+
+  .hero-nav:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .hero-dot {
+    cursor: pointer;
+  }
+
+  .hero-dot:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* Hero section mobile fixes */
+.hero-slider {
+  position: relative;
+}
+
+/* Better mobile hero overlay */
+@media (max-width: 767px) {
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.3) 0%,
+      rgba(0, 0, 0, 0.5) 100%
+    );
+  }
+}
+
+/* Hide navigation elements on small screens */
+@media (max-width: 640px) {
+  .hero-dot {
+    display: none !important;
+  }
+
+  .hero-nav {
+    display: none !important;
+  }
+}
+
+/* Hero Search Bar - Glassmorphism Aesthetic */
+.hero-search-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.hero-search-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.hero-search-container:hover::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+/* Enhanced input styling */
+.destination-input input:focus,
+.date-input input:focus {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #ff7a59;
+  box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.1);
+}
+
+/* Search button enhancement */
+.search-btn {
+  background: linear-gradient(135deg, #ff7a59 0%, #ff4f37 100%);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.search-btn:hover {
+  background: linear-gradient(135deg, #ff4f37 0%, #e53e3e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 122, 89, 0.4);
+}
+
+.search-btn:focus {
+  outline: 3px solid rgba(255, 122, 89, 0.4);
+  outline-offset: 2px;
+}
+
+/* Mobile Responsive - Keeping better mobile UX */
+@media (max-width: 1023px) {
+  .hero-search-container {
+    margin: 0 1rem;
+    border-radius: 1.5rem;
+  }
+
+  .destination-input input,
+  .date-input input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1.25rem 1rem 0.5rem 3rem;
+    min-height: 64px;
+  }
+
+  .destination-input label,
+  .date-input label {
+    left: 3rem;
+    top: 0.25rem;
+    font-size: 0.75rem;
+  }
+
+  .destination-input div,
+  .date-input div {
+    left: 1rem;
+  }
+
+  .search-btn {
+    border-radius: 0 0 1.5rem 1.5rem !important;
+    min-height: 56px;
+    font-size: 18px;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  .hero-search-container {
+    border-radius: 1.5rem;
+  }
+}
+
+/* Enhanced hover states */
+.destination-input input:focus + label,
+.date-input input:focus + label {
+  color: #ff7a59;
+  font-weight: 600;
+  transform: translateY(-2px);
+}
+
+/* Custom scaling for hover */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
+}
+
+/* ===== NEW MOBILE OPTIMIZATIONS ===== */
+
+/* Tours Page - Pricing Calculator Mobile Optimization */
+@media (max-width: 640px) {
+  /* Make pricing calculator more mobile-friendly */
+  .pricing-calculator {
+    padding: 1rem !important;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .quantity-selector {
+    justify-content: space-between !important;
+  }
+
+  .quantity-buttons {
+    min-width: 120px !important;
+  }
+
+  .quantity-buttons button {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+  }
+
+  .quantity-buttons span {
+    width: 48px !important;
+    height: 36px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+  }
+
+  .total-price {
+    padding: 1rem !important;
+    border-radius: 0.75rem !important;
+    background: rgba(255, 122, 89, 0.1) !important;
+  }
+
+  .total-price-text {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Tours Search Filters Mobile */
+@media (max-width: 768px) {
+  .tours-search-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .tours-search-select {
+    min-height: 48px !important;
+    font-size: 16px !important;
+  }
+
+  .tours-search-button {
+    margin-top: 0.5rem !important;
+    min-height: 48px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* Card Grid Mobile Optimization */
+@media (max-width: 640px) {
+  .card-grid-mobile {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  .tour-card-mobile {
+    margin: 0 0.5rem !important;
+  }
+
+  .tour-card-content {
+    padding: 1.25rem !important;
+  }
+
+  .tour-card-title {
+    font-size: 1.125rem !important;
+  }
+
+  .tour-card-description {
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .tour-card-button {
+    font-size: 0.9rem !important;
+    padding: 0.75rem 1.5rem !important;
+  }
+}
+
+/* Visas Page Form Mobile Optimization */
+@media (max-width: 640px) {
+  .visa-form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .visa-form-input {
+    min-height: 48px !important;
+    font-size: 16px !important;
+    padding: 0.75rem 1rem !important;
+  }
+
+  .visa-form-select {
+    min-height: 48px !important;
+    font-size: 16px !important;
+  }
+
+  .visa-form-button {
+    min-height: 48px !important;
+    font-size: 16px !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .visa-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+/* Enhanced Touch Targets for Mobile */
+@media (max-width: 768px) {
+  .touch-target {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  .mobile-button {
+    padding: 0.875rem 1.5rem !important;
+    font-size: 1rem !important;
+    min-height: 48px !important;
+  }
+
+  .mobile-input {
+    padding: 1rem !important;
+    font-size: 16px !important;
+    min-height: 48px !important;
+  }
+
+  .mobile-select {
+    padding: 1rem !important;
+    font-size: 16px !important;
+    min-height: 48px !important;
+  }
+}
+
+/* Package Slider Mobile Enhancement */
+@media (max-width: 768px) {
+  .package-slider-mobile {
+    padding: 0 1rem !important;
+  }
+
+  .package-card-mobile {
+    margin: 0 0.5rem !important;
+    border-radius: 1.5rem !important;
+  }
+
+  .package-price-mobile {
+    font-size: 1.5rem !important;
+  }
+
+  .package-button-mobile {
+    width: 100% !important;
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* Hero Section Mobile Text Optimization */
+@media (max-width: 640px) {
+  .hero-title-mobile {
+    font-size: 2.25rem !important;
+    line-height: 1.1 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .hero-subtitle-mobile {
+    font-size: 1.125rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 2rem !important;
+  }
+
+  .hero-buttons-mobile {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    width: 100% !important;
+  }
+
+  .hero-button-mobile {
+    width: 100% !important;
+    padding: 1rem 2rem !important;
+    font-size: 1.1rem !important;
+    min-height: 52px !important;
+  }
+}
+
+/* FAQ Section Mobile */
+@media (max-width: 640px) {
+  .faq-item-mobile {
+    padding: 1.25rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .faq-question-mobile {
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .faq-answer-mobile {
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+    padding-top: 1rem !important;
+  }
+}
+
+/* Mobile Navigation Enhancement */
+@media (max-width: 768px) {
+  .mobile-nav-item {
+    padding: 1rem 0 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .mobile-nav-link {
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+  }
+
+  .mobile-book-button {
+    margin-top: 1rem !important;
+    padding: 1rem 2rem !important;
+    font-size: 1.1rem !important;
+    border-radius: 0.75rem !important;
+  }
+}
+
+/* Improved Spacing for Mobile */
+@media (max-width: 640px) {
+  .mobile-section-padding {
+    padding: 3rem 1rem !important;
+  }
+
+  .mobile-container {
+    padding: 0 1rem !important;
+  }
+
+  .mobile-text-center {
+    text-align: center !important;
+  }
+
+  .mobile-mb-large {
+    margin-bottom: 2rem !important;
+  }
+
+  .mobile-mb-medium {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .mobile-mb-small {
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Better Focus States for Mobile */
+@media (max-width: 768px) {
+  .mobile-focus:focus {
+    outline: 2px solid #ff7a59 !important;
+    outline-offset: 2px !important;
+    border-color: #ff7a59 !important;
+  }
+
+  .mobile-focus:focus-visible {
+    outline: 2px solid #ff7a59 !important;
+    outline-offset: 2px !important;
+  }
+}
+
+/* ===== FLIGHTS PAGE STYLES ===== */
+
+/* Updated Custom colors incorporating both orange accent and deep blue */
+.accent {
+  color: #ff7a59;
+}
+.bg-accent {
+  background-color: #ff7a59;
+}
+.deep-blue {
+  color: #1a365d;
+}
+.bg-deep-blue {
+  background-color: #1a365d;
+}
+
+/* Gradient backgrounds */
+.bg-gradient-brand {
+  background-image: linear-gradient(135deg, #1a365d, #ff7a59);
+}
+
+/* Hover effects */
+.hover-deep-blue:hover {
+  color: #1a365d;
+}
+.hover-bg-deep-blue:hover {
+  background-color: #1a365d;
+}
+
+/* Custom hover colors - Light Orange and Blue */
+.hover-light-orange:hover {
+  background-color: #fff3e0 !important;
+  color: #e65100 !important;
+}
+
+.hover-light-blue:hover {
+  background-color: #e3f2fd !important;
+  color: #1565c0 !important;
+}
+
+.hover-light-orange-bg:hover {
+  background-color: #fff3e0 !important;
+}
+
+.hover-light-blue-bg:hover {
+  background-color: #e3f2fd !important;
+}
+
+.hover-light-orange-text:hover {
+  color: #e65100 !important;
+}
+
+.hover-light-blue-text:hover {
+  color: #1565c0 !important;
+}
+
+/* Floating plane animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+.floating-plane {
+  animation: float 6s ease-in-out infinite;
+  font-size: 1.5rem;
+}
+
+.floating-plane:nth-child(2) {
+  animation-delay: -2s;
+  animation-duration: 8s;
+}
+
+.floating-plane:nth-child(3) {
+  animation-delay: -4s;
+  animation-duration: 7s;
+}
+
+.floating-plane:nth-child(4) {
+  animation-delay: -1s;
+  animation-duration: 9s;
+}
+
+/* Airline logo containers */
+.airline-logo-container {
+  perspective: 1000px;
+}
+
+.airline-logo-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.airline-logo-card:hover {
+  transform: translateY(-8px) rotateX(5deg);
+  box-shadow: 0 20px 40px rgba(255, 122, 89, 0.3);
+  background: rgba(255, 255, 255, 1);
+}
+
+.airline-logo-card img {
+  transition: all 0.3s ease;
+  filter: brightness(1.1) contrast(1.1);
+}
+
+.airline-logo-card:hover img {
+  transform: scale(1.05);
+  filter: brightness(1.2) contrast(1.2);
+}
+
+/* Modern Flight Booking Form Styles */
+.tab-button {
+  color: #6b7280;
+  background: transparent;
+}
+
+.tab-button.active {
+  color: #ffffff;
+  background: transparent;
+}
+
+.tab-indicator {
+  width: 33.333%;
+  background: linear-gradient(135deg, #ff7a59, #f97316);
+  box-shadow: 0 4px 15px rgba(255, 122, 89, 0.3);
+}
+
+.modern-input-group {
+  position: relative;
+}
+
+.modern-select,
+.modern-input {
+  padding-top: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.modern-select:focus + .modern-label,
+.modern-input:focus + .modern-label,
+.modern-select:not(:placeholder-shown) + .modern-label,
+.modern-input:not(:placeholder-shown) + .modern-label {
+  transform: translateY(-0.125rem);
+  font-size: 0.75rem;
+  color: #ff7a59;
+}
+
+.modern-select:focus,
+.modern-input:focus {
+  border-color: #ff7a59;
+  box-shadow: 0 0 0 4px rgba(255, 122, 89, 0.1);
+}
+
+.modern-input-group:hover .modern-select,
+.modern-input-group:hover .modern-input {
+  border-color: #ff7a59;
+}
+
+.swap-button:hover {
+  transform: rotate(180deg);
+}
+
+.search-flights-btn {
+  background: linear-gradient(135deg, #ff7a59 0%, #f97316 100%);
+  box-shadow: 0 10px 30px rgba(255, 122, 89, 0.4);
+}
+
+.search-flights-btn:hover {
+  background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
+  box-shadow: 0 20px 40px rgba(255, 122, 89, 0.6);
+}
+
+.advanced-options {
+  transition: max-height 0.5s ease-in-out;
+}
+
+/* Custom checkbox styles */
+.peer:checked ~ div {
+  background-color: #ff7a59;
+}
+
+.peer:focus ~ div {
+  box-shadow: 0 0 0 4px rgba(255, 122, 89, 0.2);
+}
+
+/* Enhanced form field focus states */
+.modern-select:focus,
+.modern-input:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 122, 89, 0.15),
+    0 0 0 4px rgba(255, 122, 89, 0.1);
+}
+
+.modern-input-group:hover {
+  transform: translateY(-1px);
+}
+
+/* Enhanced Dropdown Styling */
+.modern-select {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  cursor: pointer;
+  position: relative;
+}
+
+.modern-select:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-color: #ff7a59;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 122, 89, 0.1);
+}
+
+.modern-select:focus {
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+  border-color: #ff7a59;
+  box-shadow: 0 8px 25px rgba(255, 122, 89, 0.15),
+    0 0 0 4px rgba(255, 122, 89, 0.1);
+}
+
+/* Custom Dropdown Arrow */
+.modern-input-group .dropdown-arrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #ff7a59, #f97316);
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(255, 122, 89, 0.2);
+}
+
+.modern-input-group:hover .dropdown-arrow {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 122, 89, 0.3);
+}
+
+.modern-input-group .modern-select:focus ~ .dropdown-arrow {
+  background: linear-gradient(135deg, #ea580c, #dc2626);
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.dropdown-arrow svg {
+  color: white;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Animate dropdown on interaction */
+.modern-select option {
+  padding: 0.75rem 1rem;
+  background: white;
+  color: #374151;
+  border: none;
+}
+
+.modern-select option:hover {
+  background: #fef7f0;
+  color: #ff7a59;
+}
+
+/* Animation for form loading */
+.modern-input-group {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.modern-input-group:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.modern-input-group:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.modern-input-group:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.modern-input-group:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== END FLIGHTS PAGE STYLES ===== */
+
+/* Hotels Page Mobile Optimization */
+.hotels-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .hotels-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
+.hotels-form-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.hotels-form-input:focus {
+  outline: none;
+  border-color: #ff7a59;
+  box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.1);
+}
+
+.hotels-form-select {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hotels-form-select:focus {
+  outline: none;
+  border-color: #ff7a59;
+  box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.1);
+}
+
+.hotels-form-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+.hotels-form-textarea:focus {
+  outline: none;
+  border-color: #ff7a59;
+  box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.1);
+}
+
+.hotels-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.hotels-checkbox:checked {
+  background-color: #ff7a59;
+  border-color: #ff7a59;
+}
+
+.hotels-submit-button {
+  width: 100%;
+  min-height: 56px;
+  padding: 16px 32px;
+  background-color: #ff7a59;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hotels-submit-button:hover {
+  background-color: #e55a3a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 122, 89, 0.3);
+}
+
+.hotels-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .hotels-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hotels-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.hotel-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.hotel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.hotel-card-header {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.hotel-card-content {
+  padding: 1.5rem;
+}
+
+.hotel-card-button {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 16px;
+  background-color: #1a365d;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hotel-card-button:hover {
+  background-color: #2d4a66;
+  transform: translateY(-1px);
+}
+
+.hotels-faq-item {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.hotels-faq-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hotels-faq-question {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+.hotels-faq-answer {
+  font-size: 16px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 767px) {
+  .hotels-form-input,
+  .hotels-form-select,
+  .hotels-form-textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .hotel-card-header {
+    height: 160px;
+  }
+
+  .hotel-card-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .hotels-faq-question {
+    font-size: 16px;
+  }
+
+  .hotels-faq-answer {
+    font-size: 14px;
+  }
+}
+
+/* ===== FLIGHTS PAGE MOBILE OPTIMIZATION ===== */
+
+/* Mobile-specific tab button improvements */
+@media (max-width: 767px) {
+  .tab-button {
+    padding: 12px 8px;
+    font-size: 12px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tab-button span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .tab-button svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 0;
+    margin-bottom: 2px;
+  }
+
+  .tab-indicator {
+    height: 100%;
+  }
+
+  /* Tab container mobile adjustments */
+  .relative.bg-gradient-to-r {
+    margin: 16px;
+    padding: 4px;
+  }
+}
+
+/* Modern input mobile optimization */
+@media (max-width: 767px) {
+  .modern-input-group {
+    margin-bottom: 16px;
+  }
+
+  .modern-input,
+  .modern-select {
+    min-height: 56px;
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 20px 16px 12px 60px;
+    border-radius: 16px;
+  }
+
+  .modern-label {
+    font-size: 12px;
+    left: 60px !important;
+    top: 8px !important;
+  }
+
+  .modern-input:focus + .modern-label,
+  .modern-input:not(:placeholder-shown) + .modern-label,
+  .modern-select:focus + .modern-label,
+  .modern-select:not(:placeholder-shown) + .modern-label {
+    font-size: 11px;
+    top: 6px !important;
+  }
+
+  /* Icon adjustments for mobile */
+  .modern-input-group .absolute.left-4 {
+    left: 16px;
+  }
+
+  .modern-input-group .w-8.h-8 {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Dropdown arrow mobile adjustments */
+  .dropdown-arrow {
+    right: 12px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .dropdown-arrow svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Mobile grid adjustments for form layout */
+@media (max-width: 1023px) {
+  .grid.grid-cols-1.lg\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .grid.grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .grid.grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Mobile section spacing */
+@media (max-width: 767px) {
+  .py-12 {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+
+  .px-4 {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .mb-8 {
+    margin-bottom: 24px;
+  }
+
+  .mb-6 {
+    margin-bottom: 20px;
+  }
+
+  .mb-4 {
+    margin-bottom: 16px;
+  }
+}
+
+/* Mobile form container */
+@media (max-width: 767px) {
+  .bg-white.rounded-3xl {
+    border-radius: 24px;
+    margin: 0 8px;
+  }
+
+  .p-6 {
+    padding: 20px;
+  }
+
+  .pt-0 {
+    padding-top: 0;
+  }
+}
+
+/* Mobile section headers */
+@media (max-width: 767px) {
+  .text-lg.font-semibold {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .text-2xl.md\\:text-3xl {
+    font-size: 24px;
+  }
+
+  h1.text-3xl.sm\\:text-4xl.md\\:text-5xl {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .text-base.sm\\:text-lg {
+    font-size: 16px;
+  }
+}
+
+/* Mobile feature badges */
+@media (max-width: 767px) {
+  .flex.flex-wrap.justify-center.gap-4 {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .flex.items-center.bg-white\/20 {
+    padding: 8px 16px;
+    border-radius: 20px;
+    min-width: 200px;
+    justify-content: center;
+  }
+
+  .flex.items-center.bg-white\/20 span {
+    font-size: 14px;
+  }
+
+  .flex.items-center.bg-white\/20 svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Mobile button optimization */
+@media (max-width: 767px) {
+  .search-flights-btn {
+    width: 100%;
+    min-height: 56px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 16px;
+    margin-top: 24px;
+  }
+
+  /* Generic button improvements */
+  button {
+    min-height: 48px;
+    touch-action: manipulation;
+  }
+
+  .btn-primary {
+    min-height: 56px;
+    font-size: 16px;
+    padding: 16px 24px;
+  }
+}
+
+/* Mobile checkbox and radio button optimization */
+@media (max-width: 767px) {
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+  }
+
+  .peer:checked ~ div {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Checkbox labels */
+  label {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+}
+
+/* Mobile card grid layouts */
+@media (max-width: 767px) {
+  .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .grid.grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Mobile FAQ section (flights page specific) */
+@media (max-width: 767px) {
+  .faq-item {
+    margin-bottom: 16px;
+    border-radius: 16px;
+  }
+
+  .faq-button {
+    padding: 16px;
+    font-size: 16px;
+    text-align: left;
+  }
+
+  .faq-content {
+    padding: 0 16px 16px 16px;
+  }
+
+  .faq-content p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
+
+/* Mobile airline cards */
+@media (max-width: 767px) {
+  .airline-logo-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .airline-logo-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .floating-plane {
+    font-size: 1.25rem;
+  }
+}
+
+/* Mobile text adjustments */
+@media (max-width: 767px) {
+  .text-xl {
+    font-size: 18px;
+  }
+
+  .text-lg {
+    font-size: 16px;
+  }
+
+  .text-sm {
+    font-size: 14px;
+  }
+
+  .text-xs {
+    font-size: 12px;
+  }
+}
+
+/* Mobile focus states enhancement */
+@media (max-width: 767px) {
+  .modern-input:focus,
+  .modern-select:focus {
+    transform: none;
+    box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.2);
+    border-color: #ff7a59;
+  }
+
+  .modern-input-group:hover {
+    transform: none;
+  }
+
+  button:focus {
+    outline: 3px solid rgba(255, 122, 89, 0.3);
+    outline-offset: 2px;
+  }
+}
+
+/* Mobile scroll improvements */
+@media (max-width: 767px) {
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background-color: #ff7a59;
+    border-radius: 4px;
+  }
+}
+
+/* Mobile animation performance */
+@media (max-width: 767px) {
+  .modern-input-group {
+    animation: none; /* Disable complex animations on mobile for better performance */
+  }
+
+  .floating-plane {
+    animation-duration: 8s; /* Slower animations on mobile */
+  }
+
+  .airline-logo-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+}
+
+/* Mobile safe area padding */
+@media (max-width: 767px) {
+  .mobile-safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .mobile-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ===== END FLIGHTS PAGE MOBILE OPTIMIZATION ===== */
+
+/* Additional Mobile Optimizations for Complex Layouts */
+@media (max-width: 767px) {
+  /* 4-column grid mobile behavior */
+  .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Stack return date field on mobile */
+  .return-date-field {
+    grid-column: 1;
+  }
+
+  /* Form section spacing adjustments */
+  .mb-8 > h3 {
+    margin-bottom: 16px;
+    font-size: 18px;
+    padding: 12px 0;
+    border-bottom: 2px solid #f3f4f6;
+  }
+
+  /* Enhanced checkbox and service selection mobile styles */
+  .grid.grid-cols-2.md\\:grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .flex.items-center input[type="checkbox"] + span {
+    font-size: 15px;
+    margin-left: 12px;
+  }
+
+  /* Mobile submit button container */
+  .text-center {
+    padding: 16px;
+  }
+
+  /* Additional service checkboxes mobile styling */
+  .grid.grid-cols-2.md\\:grid-cols-4 label {
+    background: #f9fafb;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .grid.grid-cols-2.md\\:grid-cols-4 label:hover {
+    background: #fef7f0;
+    border-color: #ff7a59;
+  }
+
+  /* Comments textarea mobile optimization */
+  textarea {
+    min-height: 120px;
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  /* Mobile form submit button */
+  .search-flights-btn,
+  button[type="submit"] {
+    width: 100%;
+    min-height: 56px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 16px;
+    margin-top: 24px;
+    padding: 16px 24px;
+  }
+}
+
+/* Tablet optimizations (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .grid.grid-cols-2.md\\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .modern-input,
+  .modern-select {
+    font-size: 15px;
+    min-height: 52px;
+  }
+}
+
+/* ===== END ADDITIONAL MOBILE OPTIMIZATIONS ===== */
+
+/* ===== CONTACT PAGE MOBILE OPTIMIZATION ===== */
+
+/* Mobile contact info section */
+@media (max-width: 767px) {
+  /* Contact grid layout */
+  .grid.grid-cols-1.md\\:grid-cols-3 {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* Contact info cards */
+  .flex.items-start {
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .flex.items-start .bg-accent.bg-opacity-10 {
+    width: 48px;
+    height: 48px;
+    margin-right: 16px;
+    flex-shrink: 0;
+  }
+
+  .flex.items-start svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Contact info text */
+  .flex.items-start h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .flex.items-start p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+/* Mobile contact form optimization */
+@media (max-width: 767px) {
+  .bg-white.p-8.rounded-2xl {
+    padding: 20px;
+    border-radius: 16px;
+    margin-top: 24px;
+  }
+
+  .grid.grid-cols-1.md\\:grid-cols-2.gap-6 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Contact form inputs */
+  .w-full.px-4.py-2 {
+    min-height: 48px;
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 2px solid #d1d5db;
+    transition: all 0.3s ease;
+  }
+
+  .w-full.px-4.py-2:focus {
+    border-color: #ff7a59;
+    box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.1);
+    outline: none;
+  }
+
+  /* Contact form labels */
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #374151;
+  }
+
+  /* Contact form textarea */
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  /* Contact form submit button */
+  .px-6.py-3.bg-accent {
+    width: 100%;
+    min-height: 56px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 12px;
+    margin-top: 16px;
+  }
+}
+
+/* Mobile social media links */
+@media (max-width: 767px) {
+  .flex.space-x-4 {
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .bg-accent.bg-opacity-10.w-10.h-10 {
+    width: 44px;
+    height: 44px;
+  }
+
+  .bg-accent.bg-opacity-10.w-10.h-10 svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Mobile map section */
+@media (max-width: 767px) {
+  .bg-white.p-4.rounded-2xl.shadow-lg {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .w-full.h-96 {
+    height: 300px;
+    border-radius: 12px;
+  }
+
+  iframe {
+    border-radius: 12px;
+  }
+}
+
+/* Mobile FAQ section */
+@media (max-width: 767px) {
+  .bg-white.p-4.rounded-lg.shadow {
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 2px solid #f3f4f6;
+  }
+
+  .bg-white.p-4.rounded-lg.shadow:hover {
+    border-color: #ff7a59;
+    box-shadow: 0 4px 12px rgba(255, 122, 89, 0.1);
+  }
+
+  /* FAQ buttons */
+  .flex.items-center.justify-between.w-full {
+    font-size: 16px;
+    padding: 8px 0;
+    min-height: 48px;
+    line-height: 1.4;
+  }
+
+  .flex.items-center.justify-between.w-full span {
+    padding-right: 16px;
+  }
+
+  .h-5.w-5.text-accent {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* FAQ answers */
+  .mt-2.text-gray-600 {
+    font-size: 14px;
+    line-height: 1.6;
+    padding-top: 8px;
+  }
+}
+
+/* Mobile page header */
+@media (max-width: 767px) {
+  .relative.pt-24.pb-16 {
+    padding-top: 100px;
+    padding-bottom: 60px;
+  }
+
+  .text-3xl.sm\\:text-4xl.md\\:text-5xl {
+    font-size: 32px;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .text-base.sm\\:text-lg {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+/* Mobile section spacing */
+@media (max-width: 767px) {
+  .py-16 {
+    padding: 40px 0;
+  }
+
+  .px-4 {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .mb-12 {
+    margin-bottom: 32px;
+  }
+
+  .mb-6 {
+    margin-bottom: 20px;
+  }
+
+  .mb-4 {
+    margin-bottom: 16px;
+  }
+
+  .mt-8 {
+    margin-top: 24px;
+  }
+}
+
+/* Mobile section headings */
+@media (max-width: 767px) {
+  .text-xl.md\\:text-2xl {
+    font-size: 20px;
+  }
+
+  .text-3xl {
+    font-size: 24px;
+  }
+
+  .text-2xl {
+    font-size: 20px;
+  }
+
+  .text-lg {
+    font-size: 16px;
+  }
+}
+
+/* Mobile contact background adjustments */
+@media (max-width: 767px) {
+  .bg-gray-50 {
+    background-color: #f8fafc;
+  }
+
+  .space-y-6 > * + * {
+    margin-top: 16px;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 12px;
+  }
+}
+
+/* Contact page mobile focus improvements */
+@media (max-width: 767px) {
+  button:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 3px solid rgba(255, 122, 89, 0.3);
+    outline-offset: 2px;
+  }
+
+  /* Enhanced touch targets */
+  button,
+  a {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Social media links touch enhancement */
+  .bg-accent.bg-opacity-10 {
+    transition: all 0.2s ease;
+  }
+
+  .bg-accent.bg-opacity-10:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Contact page mobile animations */
+@media (max-width: 767px) {
+  .transform.transition-transform {
+    transition: transform 0.2s ease;
+  }
+
+  /* Form submission feedback */
+  .px-6.py-3.bg-accent:active {
+    transform: scale(0.98);
+  }
+
+  /* Card hover effects on mobile */
+  .bg-white.p-4.rounded-lg.shadow {
+    transition: all 0.2s ease;
+  }
+}
+
+/* ===== END CONTACT PAGE MOBILE OPTIMIZATION ===== */
+
+/* ===== HOTELS PAGE MOBILE OPTIMIZATION ===== */
+
+/* Mobile optimizations for hotels.vue */
+@media (max-width: 768px) {
+  /* Form inputs optimization */
+  .hotels-form input,
+  .hotels-form textarea,
+  .hotels-form select {
+    font-size: 16px !important;
+    padding: 12px 16px !important;
+    min-height: 44px !important;
+  }
+
+  /* Hotel cards responsive */
+  .hotel-card {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .hotel-card h3 {
+    font-size: 1.25rem !important;
+  }
+
+  .hotel-card h4 {
+    font-size: 1rem !important;
+  }
+
+  .hotel-examples-grid {
+    gap: 1rem !important;
+  }
+
+  /* Hero section mobile */
+  .bg-gradient-brand h1 {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+    padding: 0 1rem !important;
+  }
+
+  .bg-gradient-brand p {
+    font-size: 1rem !important;
+    margin-bottom: 1.5rem !important;
+    padding: 0 1rem !important;
+  }
+
+  /* Feature badges mobile */
+  .feature-badges {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    padding: 0 1rem !important;
+  }
+
+  .feature-badge {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* Hotel grid mobile */
+  .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Form grid mobile */
+  .grid.grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* FAQ section mobile */
+  .space-y-6 > div {
+    padding: 1rem !important;
+  }
+
+  /* Submit button mobile */
+  .bg-accent.hover\\:bg-orange-600 {
+    width: 100% !important;
+    padding: 1rem 2rem !important;
+    font-size: 1rem !important;
+  }
+}
+
+/* Hotel page specific mobile animations */
+@media (max-width: 767px) {
+  .transform.transition-transform {
+    transition: transform 0.2s ease;
+  }
+
+  /* Hotel card touch feedback */
+  .bg-white.rounded-lg.shadow-lg:active {
+    transform: scale(0.98);
+  }
+
+  /* Button touch feedback */
+  .bg-deep-blue:active {
+    transform: scale(0.98);
+  }
+
+  /* Form submission feedback */
+  .bg-accent:active {
+    transform: scale(0.98);
+  }
+}
+
+/* ===== END HOTELS PAGE MOBILE OPTIMIZATION ===== */
