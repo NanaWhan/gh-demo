@@ -43,7 +43,7 @@ export default defineNuxtConfig({
             link: [
                 { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
                 { rel: 'apple-touch-icon', href: '/glo.png' },
-                { rel: 'canonical', href: 'https://yourdomain.com' } // Update with your actual domain
+                { rel: 'canonical', href: 'https://glohorizonsgh.com/' } // Update with your actual domain
             ]
         }
     },
