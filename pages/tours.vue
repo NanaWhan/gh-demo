@@ -172,7 +172,7 @@
           >
             <div class="relative h-48">
               <img
-                src="https://images.unsplash.com/photo-1539650116574-75c0c6d73ab1?q=80&w=800&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1660549895667-cb9fae3b3be3?q=80&w=1666&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Cultural Tours"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
