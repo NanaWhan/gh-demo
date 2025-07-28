@@ -795,7 +795,7 @@
             </p>
             <div class="flex items-center">
               <img
-                src="https://images.unsplash.com/photo-1494790108755-2616b612b287?w=100&h=100&fit=crop&crop=face"
+                src="https://images.unsplash.com/photo-1626814559338-e4721e75494b?q=80&w=1750&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Rachel M."
                 class="w-12 h-12 rounded-full mr-4"
               />
