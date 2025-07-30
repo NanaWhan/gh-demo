@@ -113,13 +113,13 @@
           class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mt-4 sm:mt-6"
         >
           <nuxt-link
-            to="/consultation"
+            to="/contact"
             class="px-6 py-3 sm:px-8 sm:py-4 bg-white/20 backdrop-blur-sm border-2 border-white text-white rounded-xl sm:rounded-2xl font-semibold sm:font-bold text-base sm:text-lg hover:bg-white hover:text-gray-800 transition-all duration-300 transform hover:scale-105"
           >
             Get Free Consultation
           </nuxt-link>
           <nuxt-link
-            to="/packages"
+            to="/tours"
             class="px-6 py-3 sm:px-8 sm:py-4 bg-accent hover:bg-orange-600 text-white rounded-xl sm:rounded-2xl font-semibold sm:font-bold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 shadow-xl"
           >
             Browse Packages

@@ -411,11 +411,12 @@
                   >Available</span
                 >
               </div>
-              <button
-                class="tour-card-button mobile-button mobile-focus w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold"
+              <nuxt-link
+                to="/tour-booking"
+                class="tour-card-button mobile-button mobile-focus w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold text-center block"
               >
                 Book Now - ${{ calculateTourPrice("london-paris") }}
-              </button>
+              </nuxt-link>
             </div>
           </div>
 
@@ -528,11 +529,12 @@
                   >Available</span
                 >
               </div>
-              <button
-                class="w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold"
+              <nuxt-link
+                to="/tour-booking"
+                class="w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold text-center block"
               >
                 Book Now - ${{ calculateTourPrice("dubai") }}
-              </button>
+              </nuxt-link>
             </div>
           </div>
 
@@ -660,11 +662,12 @@
                   >Available</span
                 >
               </div>
-              <button
-                class="w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold"
+              <nuxt-link
+                to="/tour-booking"
+                class="w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold text-center block"
               >
                 Book Now - ${{ calculateTourPrice("singapore-malaysia") }}
-              </button>
+              </nuxt-link>
             </div>
           </div>
         </div>

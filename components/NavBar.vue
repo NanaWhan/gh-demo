@@ -34,19 +34,40 @@
             >HOTELS</nuxt-link
           >
         </li>
-        <li>
-          <nuxt-link
-            to="/track-booking"
-            class="hover:text-accent font-medium nav-link"
-            >TRACK BOOKING</nuxt-link
-          >
-        </li>
       </ul>
-      <nuxt-link
-        to="/booking"
-        class="hidden md:inline-block px-5 py-2.5 text-white rounded-lg book-now-btn"
-        >Book Now</nuxt-link
-      >
+
+      <!-- Auth-based Navigation -->
+      <div v-if="isAuthenticated" class="hidden md:flex items-center space-x-4">
+        <nuxt-link
+          to="/dashboard"
+          class="hover:text-accent font-medium nav-link"
+          >DASHBOARD</nuxt-link
+        >
+        <nuxt-link
+          to="/my-bookings"
+          class="hover:text-accent font-medium nav-link"
+          >MY BOOKINGS</nuxt-link
+        >
+        <button
+          @click="logout"
+          class="px-4 py-2 text-red-600 hover:text-red-800 font-medium"
+        >
+          LOGOUT
+        </button>
+      </div>
+      <div v-else class="hidden md:flex items-center space-x-4">
+        <nuxt-link
+          v-if="!isOnAuthPage"
+          to="/login"
+          class="hover:text-accent font-medium nav-link"
+          >LOGIN</nuxt-link
+        >
+        <nuxt-link
+          to="/booking"
+          class="px-5 py-2.5 text-white rounded-lg book-now-btn"
+          >Book Now</nuxt-link
+        >
+      </div>
       <div
         class="md:hidden hamburger-icon"
         @click="toggleMobileMenu"
@@ -99,11 +120,35 @@
             >HOTELS</nuxt-link
           >
         </li>
-        <li class="mobile-nav-item">
+
+        <!-- Mobile Auth Section -->
+        <li v-if="isAuthenticated" class="mobile-nav-item">
           <nuxt-link
-            to="/track-booking"
+            to="/dashboard"
             class="mobile-nav-link block py-2 hover:text-accent nav-link"
-            >TRACK BOOKING</nuxt-link
+            >DASHBOARD</nuxt-link
+          >
+        </li>
+        <li v-if="isAuthenticated" class="mobile-nav-item">
+          <nuxt-link
+            to="/my-bookings"
+            class="mobile-nav-link block py-2 hover:text-accent nav-link"
+            >MY BOOKINGS</nuxt-link
+          >
+        </li>
+        <li v-if="isAuthenticated" class="mobile-nav-item">
+          <button
+            @click="logout"
+            class="mobile-nav-link block py-2 text-red-600 hover:text-red-800 w-full text-left"
+          >
+            LOGOUT
+          </button>
+        </li>
+        <li v-if="!isAuthenticated && !isOnAuthPage" class="mobile-nav-item">
+          <nuxt-link
+            to="/login"
+            class="mobile-nav-link block py-2 hover:text-accent nav-link"
+            >LOGIN</nuxt-link
           >
         </li>
         <li class="mobile-nav-item">
@@ -119,12 +164,50 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+
+// Props
+const props = defineProps({
+  currentPage: {
+    type: String,
+    default: "home",
+  },
+});
 
 const mobileMenuOpen = ref(false);
 
+// Auth state using API composable
+const { isAuthenticated, clearToken } = useApi();
+
+// Check if we're on auth pages (login/register)
+const route = useRoute();
+const isOnAuthPage = computed(() => {
+  return ["/login", "/register"].includes(route.path);
+});
+
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
+};
+
+const logout = async () => {
+  try {
+    const { api } = useApi();
+
+    // Call logout endpoint
+    await api.auth.logout();
+  } catch (error) {
+    console.error("Logout failed:", error);
+    // Continue with local logout even if API fails
+  }
+
+  // Clear auth token locally
+  clearToken();
+
+  // Close mobile menu if open
+  mobileMenuOpen.value = false;
+
+  // Redirect to home
+  await navigateTo("/");
 };
 
 onMounted(() => {
@@ -141,4 +224,3 @@ onMounted(() => {
   }
 });
 </script>
- 

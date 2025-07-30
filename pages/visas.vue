@@ -979,14 +979,40 @@ const form = ref({
 });
 
 // Form submission handler
-const handleFormSubmit = () => {
-  // Here you would typically send the form data to your backend
-  alert("Thank you for your application! We will contact you within 24 hours.");
+const handleFormSubmit = async () => {
+  try {
+    const { api } = useApi();
 
-  // Reset form
-  Object.keys(form.value).forEach((key) => {
-    form.value[key] = "";
-  });
+    const bookingData = {
+      serviceType: "Visa",
+      customerInfo: {
+        fullName: form.value.fullName,
+        email: form.value.email,
+        phone: form.value.phone,
+        nationality: form.value.nationality,
+      },
+      serviceDetails: {
+        destinationCountry: form.value.destination,
+        visaType: form.value.visaType,
+        intendedEntryDate: form.value.travelDate,
+        specialRequirements: form.value.message,
+      },
+    };
+
+    const response = await api.booking.submit(bookingData);
+
+    alert(
+      `Thank you for your application! Your reference number is ${response.referenceNumber}. We will contact you within 24 hours.`
+    );
+
+    // Reset form
+    Object.keys(form.value).forEach((key) => {
+      form.value[key] = "";
+    });
+  } catch (error) {
+    console.error("Visa application submission failed:", error);
+    alert("There was an error submitting your application. Please try again.");
+  }
 };
 
 // Meta data for SEO

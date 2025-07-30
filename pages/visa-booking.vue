@@ -1165,26 +1165,38 @@ const submitVisaRequest = async () => {
       submission_date: new Date().toLocaleString(),
     };
 
-    // Send customer confirmation email
-    await emailjs.send(
-      "service_j123abc", // Replace with your EmailJS service ID
-      "template_visa_customer", // Replace with your customer template ID
-      templateParams,
-      "your_public_key" // Replace with your EmailJS public key
-    );
+    // Submit to backend API
+    const { api } = useApi();
 
-    // Send admin notification email
-    const adminParams = {
-      ...templateParams,
-      to_email: "visas@globalhorizons.com", // Your admin email
+    const bookingData = {
+      serviceType: "Visa",
+      customerInfo: {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        nationality: formData.nationality,
+      },
+      serviceDetails: {
+        destinationCountry: formData.destinationCountry,
+        visaType: formData.visaType,
+        purposeOfTravel: formData.purposeOfTravel,
+        intendedEntryDate: formData.intendedEntryDate,
+        durationOfStay: formData.durationOfStay,
+        processingSpeed: formData.processingSpeed,
+        urgency: formData.urgency,
+      },
+      additionalInfo: {
+        passportNumber: formData.passportNumber,
+        passportExpiryDate: formData.passportExpiryDate,
+        employmentStatus: formData.employmentStatus,
+        monthlyIncome: formData.monthlyIncome,
+        specialRequirements: formData.specialRequirements,
+        availableDocuments: formData.availableDocuments,
+      },
     };
 
-    await emailjs.send(
-      "service_j123abc", // Replace with your EmailJS service ID
-      "template_visa_admin", // Replace with your admin template ID
-      adminParams,
-      "your_public_key" // Replace with your EmailJS public key
-    );
+    const response = await api.booking.submit(bookingData);
+    referenceNumber.value = response.referenceNumber;
 
     // Show success state
     isSubmitted.value = true;

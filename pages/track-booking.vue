@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Navigation -->
-    <NavBar />
+    <NavBar current-page="track-booking" />
 
     <!-- Page Header -->
     <section
@@ -14,18 +14,43 @@
             Track Your Booking
           </h1>
           <p class="text-xl md:text-2xl mb-8 opacity-90">
-            Enter your reference number to check your booking status
+            Secure booking tracking for registered users
           </p>
           <div class="flex justify-center items-center space-x-4">
             <span class="bg-white bg-opacity-20 px-4 py-2 rounded-full"
-              >📋 Real-time Updates</span
+              >🔒 Secure Access</span
             >
             <span class="bg-white bg-opacity-20 px-4 py-2 rounded-full"
-              >⚡ Instant Status</span
+              >⚡ Real-time Updates</span
             >
             <span class="bg-white bg-opacity-20 px-4 py-2 rounded-full"
-              >📞 Direct Contact</span
+              >📞 Direct Support</span
             >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Welcome Section -->
+    <section class="py-8 bg-blue-50">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <div class="flex items-center justify-center mb-4">
+            <div
+              class="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mr-4"
+            >
+              <span class="text-lg font-bold text-white"
+                >{{ user.firstName[0] }}{{ user.lastName[0] }}</span
+              >
+            </div>
+            <div class="text-left">
+              <p class="text-lg font-semibold text-gray-900">
+                Welcome, {{ user.firstName }}!
+              </p>
+              <p class="text-sm text-gray-600">
+                Your bookings are secure and private
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -359,16 +384,28 @@
 <script setup>
 import { ref, reactive } from "vue";
 
-// SEO Meta
+// Authentication middleware - PROTECT THIS PAGE
+definePageMeta({
+  middleware: "auth",
+});
+
+// Page meta
 useHead({
-  title: "Track Your Booking - Global Horizons Travel Services",
+  title: "Track Booking - Global Horizons Travel Services",
   meta: [
     {
       name: "description",
       content:
-        "Track the status of your travel booking request in real-time. Enter your reference number to get instant updates.",
+        "Securely track your booking status with Global Horizons Travel Services.",
     },
   ],
+});
+
+// Get authenticated user
+const user = ref({
+  firstName: "John",
+  lastName: "Doe",
+  email: "john@example.com",
 });
 
 // Form state

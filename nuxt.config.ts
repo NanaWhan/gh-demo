@@ -5,6 +5,20 @@ export default defineNuxtConfig({
     modules: ['@nuxtjs/tailwindcss'],
     css: ['~/assets/css/main.css'],
 
+    // API Configuration
+    runtimeConfig: {
+        // Private keys (only available on server-side)
+        emailjsServiceId: process.env.EMAILJS_SERVICE_ID,
+        emailjsTemplateId: process.env.EMAILJS_TEMPLATE_ID,
+        emailjsPublicKey: process.env.EMAILJS_PUBLIC_KEY,
+
+        // Public keys (exposed to client-side)
+        public: {
+            apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:5080/api',
+            siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
+        }
+    },
+
     // Production optimizations
     nitro: {
         preset: 'static', // Change to 'node-server' if you need SSR
@@ -17,8 +31,7 @@ export default defineNuxtConfig({
 
     // Performance optimizations
     experimental: {
-        payloadExtraction: false,
-        inlineSSRStyles: false,
+        payloadExtraction: false
     },
 
     // SEO and meta optimizations
@@ -68,16 +81,5 @@ export default defineNuxtConfig({
         }
     },
 
-    // Runtime config for environment variables
-    runtimeConfig: {
-        // Private keys (only available on server-side)
-        emailjsServiceId: process.env.EMAILJS_SERVICE_ID,
-        emailjsTemplateId: process.env.EMAILJS_TEMPLATE_ID,
-        emailjsPublicKey: process.env.EMAILJS_PUBLIC_KEY,
 
-        // Public keys (exposed to client-side)
-        // public: {
-        //     siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
-        // }
-    }
 }) 
