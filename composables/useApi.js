@@ -48,16 +48,16 @@ export const useApi = () => {
           body: userData,
         }),
 
-      requestOtp: (phoneNumber) =>
-        $api("/auth/otp-login", {
+      requestOtp: (data) =>
+        $api("/auth/request-otp", {
           method: "POST",
-          body: { phoneNumber, action: "request" },
+          body: data,
         }),
 
-      verifyOtp: (phoneNumber, otpCode) =>
-        $api("/auth/otp-login", {
+      verifyOtp: (data) =>
+        $api("/auth/verify-otp", {
           method: "POST",
-          body: { phoneNumber, otpCode, action: "verify" },
+          body: data,
         }),
 
       logout: () =>
@@ -78,12 +78,12 @@ export const useApi = () => {
 
       changePassword: (passwordData) =>
         $api("/user/change-password", {
-          method: "POST",
+          method: "PUT",
           body: passwordData,
         }),
 
-      getBookings: (params = {}) =>
-        $api("/user/bookings", {
+      getBookingHistory: (params = {}) =>
+        $api("/user/booking-history", {
           query: params,
         }),
 
@@ -104,12 +104,7 @@ export const useApi = () => {
 
       track: (referenceNumber) => $api(`/booking/track/${referenceNumber}`),
 
-      getById: (id) => $api(`/booking/${id}`),
-
-      getHistory: (params = {}) =>
-        $api("/booking/history", {
-          query: params,
-        }),
+      getMyBookings: () => $api("/booking/my-bookings"),
     },
 
     // Travel packages
@@ -125,18 +120,37 @@ export const useApi = () => {
 
       getDestinations: () => $api("/travelpackage/destinations"),
 
-      search: (searchParams) =>
-        $api("/travelpackage/search", {
-          query: searchParams,
+      // Note: Search functionality can be handled by getAll with filters
+      create: (packageData) =>
+        $api("/travelpackage", {
+          method: "POST",
+          body: packageData,
+        }),
+
+      update: (id, packageData) =>
+        $api(`/travelpackage/${id}`, {
+          method: "PUT",
+          body: packageData,
+        }),
+
+      delete: (id) =>
+        $api(`/travelpackage/${id}`, {
+          method: "DELETE",
         }),
     },
 
-    // Admin endpoints (if needed)
+    // 👨‍💼 Admin endpoints (/api/admin) [Auth Required]
     admin: {
       login: (credentials) =>
         $api("/admin/login", {
           method: "POST",
           body: credentials,
+        }),
+
+      create: (adminData) =>
+        $api("/admin/create", {
+          method: "POST",
+          body: adminData,
         }),
 
       getDashboard: () => $api("/admin/dashboard"),
@@ -146,10 +160,94 @@ export const useApi = () => {
           query: params,
         }),
 
+      getBooking: (id) => $api(`/admin/bookings/${id}`),
+
       updateBookingStatus: (id, statusData) =>
         $api(`/admin/bookings/${id}/status`, {
           method: "PUT",
           body: statusData,
+        }),
+
+      updateBookingPricing: (id, pricingData) =>
+        $api(`/admin/bookings/${id}/pricing`, {
+          method: "PUT",
+          body: pricingData,
+        }),
+
+      addBookingNote: (id, noteData) =>
+        $api(`/admin/bookings/${id}/notes`, {
+          method: "POST",
+          body: noteData,
+        }),
+
+      generatePaymentLink: (id) =>
+        $api(`/admin/bookings/${id}/payment-link`, {
+          method: "POST",
+        }),
+    },
+
+    // 🖼️ Image Upload endpoints (/api/image) [Auth Required]
+    image: {
+      upload: (file, params = {}) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        return $api("/image/upload", {
+          method: "POST",
+          body: formData,
+          query: params,
+          headers: {}, // Remove content-type header for multipart
+        });
+      },
+
+      uploadMultiple: (files, params = {}) => {
+        const formData = new FormData();
+        files.forEach((file) => formData.append("files", file));
+        return $api("/image/upload-multiple", {
+          method: "POST",
+          body: formData,
+          query: params,
+          headers: {},
+        });
+      },
+
+      uploadProfile: (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        return $api("/image/upload-profile", {
+          method: "POST",
+          body: formData,
+          headers: {},
+        });
+      },
+
+      uploadPackage: (file, packageId) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        return $api("/image/upload-package", {
+          method: "POST",
+          body: formData,
+          query: { packageId },
+          headers: {},
+        });
+      },
+
+      delete: (filePath) =>
+        $api("/image/delete", {
+          method: "DELETE",
+          query: { filePath },
+        }),
+
+      getUrl: (filePath) =>
+        $api("/image/url", {
+          query: { filePath },
+        }),
+    },
+
+    // 💳 Payment endpoints (/api/payment)
+    payment: {
+      verify: (reference) =>
+        $api(`/payment/verify/${reference}`, {
+          method: "POST",
         }),
     },
   };
@@ -173,4 +271,3 @@ export const useApi = () => {
     $api, // Raw API instance for custom calls
   };
 };
- 

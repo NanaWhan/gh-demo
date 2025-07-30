@@ -526,15 +526,34 @@ const logout = async () => {
 // Load user data on mount
 onMounted(async () => {
   try {
-    // TODO: Replace with actual API calls
-    // const userData = await $fetch('/api/user/profile')
-    // const userStats = await $fetch('/api/user/stats')
-    // const userBookings = await $fetch('/api/user/bookings?limit=5')
-    // user.value = userData
-    // stats.value = userStats
-    // recentBookings.value = userBookings
+    const { api } = useApi();
+
+    // Load user profile
+    const userData = await api.user.getProfile();
+    user.value = userData;
+
+    // Load user booking history (recent 5)
+    const bookingHistory = await api.user.getBookingHistory({
+      page: 1,
+      pageSize: 5,
+    });
+    recentBookings.value = bookingHistory.data || bookingHistory;
+
+    // Calculate stats from booking history
+    const allBookings = await api.user.getBookingHistory();
+    const bookings = allBookings.data || allBookings;
+
+    stats.value = {
+      totalBookings: bookings.length,
+      completedBookings: bookings.filter((b) => b.status === "Completed")
+        .length,
+      pendingBookings: bookings.filter((b) =>
+        ["Submitted", "Processing"].includes(b.status)
+      ).length,
+    };
   } catch (error) {
     console.error("Failed to load dashboard data:", error);
+    // Keep mock data on error
   }
 });
 </script>

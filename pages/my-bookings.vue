@@ -505,11 +505,12 @@ const loadMoreBookings = async () => {
 onMounted(async () => {
   loading.value = true;
   try {
-    // TODO: Replace with actual API call
-    // const userBookings = await $fetch('/api/user/bookings')
-    // bookings.value = userBookings
+    const { api } = useApi();
+    const userBookings = await api.booking.getMyBookings();
+    bookings.value = userBookings.data || userBookings;
   } catch (error) {
     console.error("Failed to load bookings:", error);
+    // Keep mock data on error
   } finally {
     loading.value = false;
   }

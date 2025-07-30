@@ -3,15 +3,23 @@
   <section class="mobile-section-padding py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto mobile-container px-4">
       <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold mb-2">Upcoming Travel Packages</h2>
+        <h2 class="text-3xl font-bold mb-2">Featured Travel Packages</h2>
         <p class="text-gray-600 max-w-2xl mx-auto">
-          Join our upcoming group tours and experience amazing destinations with
-          fellow travelers.
+          Discover our carefully curated travel packages designed for
+          unforgettable experiences.
         </p>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="loading" class="text-center py-12">
+        <div
+          class="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
+        ></div>
+        <p class="text-gray-600">Loading featured packages...</p>
+      </div>
+
       <!-- Package Slider Container -->
-      <div class="relative">
+      <div v-else class="relative">
         <div class="packages-slider overflow-hidden">
           <div
             class="packages-track flex transition-transform duration-500 ease-in-out"
@@ -386,11 +394,41 @@
 import { ref, onMounted } from "vue";
 
 const packagesTrack = ref(null);
+const loading = ref(true);
+const featuredPackages = ref([]);
 let packagesCurrentIndex = 0;
+
+// Load featured packages
+const loadFeaturedPackages = async () => {
+  try {
+    const { api } = useApi();
+    const packages = await api.packages.getFeatured();
+    featuredPackages.value = packages.data || packages;
+  } catch (error) {
+    console.error("Failed to load featured packages:", error);
+    // Fallback to mock data on error
+    featuredPackages.value = [
+      {
+        id: 1,
+        title: "Dubai Adventure",
+        description: "Experience the magic of Dubai with luxury and adventure.",
+        price: 1899,
+        duration: 6,
+        destination: "Dubai, UAE",
+        category: "Adventure",
+        isFeatured: true,
+        imageUrl:
+          "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=600&auto=format&fit=crop",
+      },
+    ];
+  } finally {
+    loading.value = false;
+  }
+};
 
 const nextPackage = () => {
   const visiblePackages = getVisiblePackages();
-  const totalPackages = 5; // Total number of packages
+  const totalPackages = featuredPackages.value.length;
 
   if (packagesCurrentIndex < totalPackages - visiblePackages) {
     packagesCurrentIndex++;
@@ -421,7 +459,8 @@ const getVisiblePackages = () => {
   return 3;
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await loadFeaturedPackages();
   updatePackagePosition();
 
   // Handle window resize

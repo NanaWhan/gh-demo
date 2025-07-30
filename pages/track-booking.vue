@@ -506,28 +506,71 @@ const getStatusClass = (stepStatus, currentStatus) => {
 const trackBooking = async () => {
   isTracking.value = true;
 
-  // Simulate API call
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  try {
+    const { api } = useApi();
+    const result = await api.booking.track(referenceNumber.value);
 
-  const result = mockTrackingData[referenceNumber.value];
+    if (result) {
+      // Map backend response to frontend format
+      trackingResult.value = {
+        reference: result.referenceNumber,
+        serviceType: result.serviceType,
+        currentStatus:
+          result.status === "Submitted"
+            ? 1
+            : result.status === "Processing"
+            ? 2
+            : result.status === "Confirmed"
+            ? 3
+            : result.status === "Completed"
+            ? 4
+            : 1,
+        statusMessage:
+          result.statusMessage || getDefaultStatusMessage(result.status),
+        estimatedTime: result.estimatedTime || "We will update you soon.",
+        timestamps:
+          result.statusHistory?.reduce((acc, hist) => {
+            const statusNum =
+              hist.status === "Submitted"
+                ? 1
+                : hist.status === "Processing"
+                ? 2
+                : hist.status === "Confirmed"
+                ? 3
+                : hist.status === "Completed"
+                ? 4
+                : 1;
+            acc[statusNum] = new Date(hist.timestamp).toLocaleString();
+            return acc;
+          }, {}) || {},
+      };
 
-  if (result) {
-    // Add timestamps to status steps
-    statusSteps.forEach((step, index) => {
-      if (result.timestamps[step.status]) {
-        step.timestamp = result.timestamps[step.status];
-      }
-    });
-
-    trackingResult.value = result;
-  } else {
-    // Handle not found
+      // Update status steps with timestamps
+      statusSteps.forEach((step) => {
+        if (trackingResult.value.timestamps[step.status]) {
+          step.timestamp = trackingResult.value.timestamps[step.status];
+        }
+      });
+    }
+  } catch (error) {
+    console.error("Tracking failed:", error);
     alert(
       "Booking reference not found. Please check your reference number and try again."
     );
   }
 
   isTracking.value = false;
+};
+
+// Helper function for default status messages
+const getDefaultStatusMessage = (status) => {
+  const messages = {
+    Submitted: "Your booking request has been received and is being reviewed.",
+    Processing: "We are currently processing your booking request.",
+    Confirmed: "Great news! Your booking has been confirmed.",
+    Completed: "Your booking is complete. Have a wonderful trip!",
+  };
+  return messages[status] || "Your booking is being processed.";
 };
 
 // Reset tracking to search again

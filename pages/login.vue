@@ -372,7 +372,7 @@ const requestOtp = async () => {
   try {
     const { api } = useApi();
 
-    await api.auth.requestOtp(otpForm.phoneNumber);
+    await api.auth.requestOtp({ phoneNumber: otpForm.phoneNumber });
 
     otpSent.value = true;
     successMessage.value = "OTP sent successfully! Check your phone.";
@@ -397,10 +397,10 @@ const verifyOtp = async () => {
   try {
     const { api, setToken } = useApi();
 
-    const response = await api.auth.verifyOtp(
-      otpForm.phoneNumber,
-      otpForm.otpCode
-    );
+    const response = await api.auth.verifyOtp({
+      phoneNumber: otpForm.phoneNumber,
+      otpCode: otpForm.otpCode,
+    });
 
     // Store token and redirect
     setToken(response.token);
