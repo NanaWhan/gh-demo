@@ -337,7 +337,10 @@
 </template>
 
 <script setup lang="ts">
-import type { RegisterRequest } from '~/composables/useApi'
+// Import AuthService and types
+import authService from '~/services/AuthService'
+import type { RegisterRequest } from '~/types/auth-api-types'
+import { safeLoginRedirect } from '~/utils/navigation'
 
 // Page meta
 useHead({
@@ -351,17 +354,26 @@ useHead({
   ],
 });
 
+// Authentication middleware - protect already logged in users
+definePageMeta({
+  middleware: (to, from) => {
+    if (authService.isAuthenticated()) {
+      return navigateTo('/dashboard')
+    }
+  }
+})
+
 // Reactive data
-const showPassword = ref<boolean>(false);
-const showConfirmPassword = ref<boolean>(false);
-const loading = ref<boolean>(false);
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+const loading = ref(false);
 
 // Message states
-const errorMessage = ref<string>("");
-const successMessage = ref<string>("");
+const errorMessage = ref("");
+const successMessage = ref("");
 
-// Registration form
-const form = reactive<RegisterRequest & { confirmPassword: string; acceptTerms: boolean }>({
+// Registration form - extended with confirmPassword for frontend validation
+const form = reactive({
   firstName: "",
   lastName: "",
   email: "",
@@ -379,20 +391,37 @@ const passwordsMatch = computed(() => {
   return form.password === form.confirmPassword;
 });
 
+// Helper function for displaying messages
+const showMessage = (message: string, type: 'success' | 'error' = 'error') => {
+  if (type === 'success') {
+    successMessage.value = message
+    errorMessage.value = ''
+  } else {
+    errorMessage.value = message
+    successMessage.value = ''
+  }
+}
+
 // Methods
 const register = async () => {
+  // Frontend validation
+  if (!form.acceptTerms) {
+    showMessage("Please accept the terms and conditions");
+    return;
+  }
+
   if (!passwordsMatch.value) {
-    errorMessage.value = "Passwords do not match";
+    showMessage("Passwords do not match");
     return;
   }
 
   loading.value = true;
   errorMessage.value = "";
+  successMessage.value = "";
 
   try {
-    const { api, setToken } = useApi();
-
-    const response = await api.auth.register({
+    // Prepare registration data according to RegisterRequest interface
+    const registrationData: RegisterRequest = {
       firstName: form.firstName,
       lastName: form.lastName,
       email: form.email,
@@ -400,31 +429,20 @@ const register = async () => {
       password: form.password,
       dateOfBirth: form.dateOfBirth || undefined,
       acceptMarketing: form.acceptMarketing,
-    });
+    };
 
-    // Store token and redirect
-    setToken(response.token);
+    console.log('🚀 Starting registration...');
+    const response = await authService.register(registrationData);
+    console.log('✅ Registration response received:', response);
 
-    successMessage.value = "Account created successfully! Redirecting...";
+    showMessage("Account created successfully! Redirecting...", 'success');
 
-    await navigateTo("/dashboard");
+    // Redirect immediately after success
+    console.log('🎯 Redirecting to dashboard...');
+    safeLoginRedirect("/dashboard");
   } catch (error: any) {
     console.error("Registration failed:", error);
-
-    // Show user-friendly error messages
-    if (error.status === 422) {
-      if (error.data?.errors?.email) {
-        errorMessage.value = "Email address is already registered";
-      } else if (error.data?.errors?.phoneNumber) {
-        errorMessage.value = "Phone number is already registered";
-      } else {
-        errorMessage.value = "Please check your information and try again";
-      }
-    } else if (error.status === 400) {
-      errorMessage.value = "Invalid registration data. Please check all fields";
-    } else {
-      errorMessage.value = "Registration failed. Please try again later";
-    }
+    showMessage(error.message || "Registration failed. Please try again later.");
   } finally {
     loading.value = false;
   }
@@ -448,3 +466,4 @@ const register = async () => {
   animation: fadeInUp 0.6s ease-out;
 }
 </style>
+ 

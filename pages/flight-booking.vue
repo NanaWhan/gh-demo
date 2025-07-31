@@ -37,7 +37,7 @@
         <div class="max-w-4xl mx-auto">
           <!-- Success Message -->
           <div
-            v-if="bookingSubmitted"
+            v-if="successMessage"
             class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8"
           >
             <div class="flex items-center">
@@ -56,30 +56,60 @@
               </div>
               <div class="ml-3">
                 <h3 class="text-sm font-medium text-green-800">
-                  Booking Request Submitted Successfully!
+                  Flight Booking Submitted Successfully!
                 </h3>
                 <div class="mt-2 text-sm text-green-700">
-                  <p>
+                  <p v-if="referenceNumber">
                     Your reference number is:
                     <strong>{{ referenceNumber }}</strong>
                   </p>
                   <p>
-                    We've sent confirmation details to your email and SMS. Our
-                    team will contact you within 2-4 hours with your flight
-                    options.
+                    Your flight booking request has been submitted to our travel
+                    experts. We'll contact you within 2-4 hours with flight
+                    options and pricing.
                   </p>
                   <p
+                    v-if="referenceNumber"
                     class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-700"
                   >
-                    💡 <strong>Track your booking:</strong> Visit our
+                    💡 <strong>Track your booking:</strong> Visit your
                     <nuxt-link
-                      to="/track-booking"
+                      to="/my-bookings"
                       class="underline font-medium hover:text-blue-800"
-                      >booking tracker</nuxt-link
+                      >My Bookings</nuxt-link
                     >
-                    anytime to check your status using reference number
-                    {{ referenceNumber }}.
+                    page anytime to check status and updates.
                   </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div
+            v-if="errorMessage"
+            class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg
+                  class="h-5 w-5 text-red-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  Booking Submission Failed
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <p>{{ errorMessage }}</p>
                 </div>
               </div>
             </div>
@@ -163,7 +193,7 @@
                       >From (Departure City/Airport)</label
                     >
                     <input
-                      v-model="bookingData.departure"
+                      v-model="bookingData.departureCity"
                       type="text"
                       required
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -175,7 +205,7 @@
                       >To (Destination City/Airport)</label
                     >
                     <input
-                      v-model="bookingData.destination"
+                      v-model="bookingData.arrivalCity"
                       type="text"
                       required
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -249,7 +279,7 @@
                       >Adults (12+ years)</label
                     >
                     <select
-                      v-model="bookingData.adults"
+                      v-model="bookingData.adultPassengers"
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option v-for="n in 9" :key="n" :value="n">
@@ -262,7 +292,7 @@
                       >Children (2-11 years)</label
                     >
                     <select
-                      v-model="bookingData.children"
+                      v-model="bookingData.childPassengers"
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option v-for="n in 8" :key="n" :value="n - 1">
@@ -275,7 +305,7 @@
                       >Infants (under 2)</label
                     >
                     <select
-                      v-model="bookingData.infants"
+                      v-model="bookingData.infantPassengers"
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option v-for="n in 5" :key="n" :value="n - 1">
@@ -297,7 +327,7 @@
                       >Preferred Class</label
                     >
                     <select
-                      v-model="bookingData.class"
+                      v-model="bookingData.preferredClass"
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="economy">Economy</option>
@@ -404,21 +434,10 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Full Name *</label
-                    >
-                    <input
-                      v-model="bookingData.fullName"
-                      type="text"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
                       >Email Address *</label
                     >
                     <input
-                      v-model="bookingData.email"
+                      v-model="bookingData.contactEmail"
                       type="email"
                       required
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -429,7 +448,7 @@
                       >Phone Number *</label
                     >
                     <input
-                      v-model="bookingData.phone"
+                      v-model="bookingData.contactPhone"
                       type="tel"
                       required
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -572,9 +591,18 @@
   </div>
 </template>
 
-<script setup>
-import { ref, reactive } from "vue";
-import emailjs from "@emailjs/browser";
+<script setup lang="ts">
+import { ref, reactive, onMounted } from "vue";
+import bookingService from '~/services/BookingService';
+import authService from '~/services/AuthService';
+import {
+  FlightBookingSubmissionDto,
+  FlightBookingDetails,
+  PassengerInfo,
+  URGENCY_OPTIONS,
+  BookingSubmissionResponse
+} from '~/types/booking-api-types';
+import { forceRedirect } from '~/utils/navigation';
 
 // SEO Meta
 useHead({
@@ -591,115 +619,153 @@ useHead({
 // Form state
 const bookingSubmitted = ref(false);
 const isSubmitting = ref(false);
+const errorMessage = ref("");
+const successMessage = ref("");
 const referenceNumber = ref("");
 
-// Form data
+// Form data with proper TypeScript typing
 const bookingData = reactive({
-  tripType: "round-trip",
-  departure: "",
-  destination: "",
+  // Flight details
+  tripType: "round-trip" as 'one-way' | 'round-trip' | 'multi-city',
+  departureCity: "",
+  arrivalCity: "",
   departureDate: "",
   returnDate: "",
-  multiCityDetails: "",
-  flexibility: "exact",
-  adults: 1,
-  children: 0,
-  infants: 0,
-  class: "economy",
-  budget: "500-1000",
-  airlinePreferences: "",
-  specialRequirements: {
-    wheelchair: false,
-    dietary: false,
-    extraLegroom: false,
-    petTravel: false,
-  },
-  additionalRequirements: "",
-  fullName: "",
-  email: "",
-  phone: "",
-  contactMethod: "email",
-  urgency: "normal",
+  adultPassengers: 1,
+  childPassengers: 0,
+  infantPassengers: 0,
+  preferredClass: "economy" as 'economy' | 'business' | 'first',
+  preferredAirline: "",
+
+  // Contact information
+  contactEmail: "",
+  contactPhone: "",
+  specialRequests: "",
+  urgency: 1,
+
+  // Passenger information
+  passengers: [] as PassengerInfo[]
 });
 
-// Generate reference number
-const generateReferenceNumber = () => {
-  const timestamp = Date.now();
-  const random = Math.floor(Math.random() * 1000);
-  return `FL${timestamp}${random}`.slice(-10).toUpperCase();
+// Auto-fill user contact information
+onMounted(() => {
+  const defaultContact = bookingService.getDefaultContactInfo();
+  if (defaultContact.contactEmail) {
+    bookingData.contactEmail = defaultContact.contactEmail;
+  }
+  if (defaultContact.contactPhone) {
+    bookingData.contactPhone = defaultContact.contactPhone;
+  }
+  if (defaultContact.urgency) {
+    bookingData.urgency = defaultContact.urgency;
+  }
+});
+
+// Helper functions
+const showMessage = (message: string, type: 'success' | 'error' = 'error') => {
+  if (type === 'success') {
+    successMessage.value = message;
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = message;
+    successMessage.value = '';
+  }
 };
 
-// Format special requirements for email
-const formatSpecialRequirements = () => {
-  const requirements = [];
-  if (bookingData.specialRequirements.wheelchair)
-    requirements.push("Wheelchair assistance");
-  if (bookingData.specialRequirements.dietary)
-    requirements.push("Special dietary requirements");
-  if (bookingData.specialRequirements.extraLegroom)
-    requirements.push("Extra legroom seats");
-  if (bookingData.specialRequirements.petTravel)
-    requirements.push("Pet travel");
+const addPassenger = () => {
+  const newPassenger: PassengerInfo = {
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    passportNumber: "",
+    nationality: ""
+  };
+  bookingData.passengers.push(newPassenger);
+};
 
-  let formatted = requirements.join(", ");
-  if (bookingData.additionalRequirements) {
-    formatted += (formatted ? "; " : "") + bookingData.additionalRequirements;
+const removePassenger = (index: number) => {
+  bookingData.passengers.splice(index, 1);
+};
+
+const validateForm = (): string[] => {
+  const errors: string[] = [];
+
+  if (!bookingData.departureCity.trim()) errors.push('Departure city is required');
+  if (!bookingData.arrivalCity.trim()) errors.push('Arrival city is required');
+  if (!bookingData.departureDate) errors.push('Departure date is required');
+  if (bookingData.tripType === 'round-trip' && !bookingData.returnDate) {
+    errors.push('Return date is required for round-trip flights');
+  }
+  if (!bookingData.contactEmail.trim()) errors.push('Contact email is required');
+  if (!bookingData.contactPhone.trim()) errors.push('Contact phone is required');
+  if (bookingData.adultPassengers < 1) errors.push('At least 1 adult passenger is required');
+
+  return errors;
+};
+
+// Submit booking using new API
+const submitBooking = async () => {
+  console.log('🛫 Starting flight booking submission...');
+
+  // Check authentication
+  if (!bookingService.isAuthenticated()) {
+    showMessage('You must be logged in to make a booking. Redirecting to login...');
+    setTimeout(() => {
+      forceRedirect('/login?redirect=' + encodeURIComponent('/flight-booking'));
+    }, 2000);
+    return;
   }
 
-  return formatted || "None";
-};
+  // Validate form
+  const validationErrors = validateForm();
+  if (validationErrors.length > 0) {
+    showMessage('Please fix the following errors: ' + validationErrors.join(', '));
+    return;
+  }
 
-// Submit booking
-const submitBooking = async () => {
   isSubmitting.value = true;
-  referenceNumber.value = generateReferenceNumber();
+  errorMessage.value = '';
+  successMessage.value = '';
 
   try {
-    // Prepare email template data
-    const emailData = {
-      reference_number: referenceNumber.value,
-      customer_name: bookingData.fullName,
-      customer_email: bookingData.email,
-      customer_phone: bookingData.phone,
-      trip_type: bookingData.tripType,
-      departure: bookingData.departure,
-      destination: bookingData.destination,
-      departure_date: bookingData.departureDate,
-      return_date: bookingData.returnDate || "N/A",
-      multi_city_details: bookingData.multiCityDetails || "N/A",
-      flexibility: bookingData.flexibility,
-      passengers: `${bookingData.adults} Adults, ${bookingData.children} Children, ${bookingData.infants} Infants`,
-      preferred_class: bookingData.class,
-      budget_range: bookingData.budget,
-      airline_preferences: bookingData.airlinePreferences || "No preference",
-      special_requirements: formatSpecialRequirements(),
-      contact_method: bookingData.contactMethod,
-      urgency: bookingData.urgency,
-      submission_time: new Date().toLocaleString(),
+    // Prepare flight booking data
+    const flightDetails: FlightBookingDetails = {
+      tripType: bookingData.tripType,
+      departureCity: bookingData.departureCity,
+      arrivalCity: bookingData.arrivalCity,
+      departureDate: bookingData.departureDate,
+      returnDate: bookingData.tripType === 'round-trip' ? bookingData.returnDate : undefined,
+      adultPassengers: bookingData.adultPassengers,
+      childPassengers: bookingData.childPassengers,
+      infantPassengers: bookingData.infantPassengers,
+      preferredClass: bookingData.preferredClass,
+      preferredAirline: bookingData.preferredAirline || undefined,
+      passengers: bookingData.passengers
     };
 
-    // Send customer confirmation email
-    await emailjs.send(
-      "YOUR_SERVICE_ID", // Replace with your EmailJS service ID
-      "customer_flight_confirmation", // Replace with your customer template ID
-      emailData,
-      "YOUR_PUBLIC_KEY" // Replace with your EmailJS public key
-    );
+    const submissionData: FlightBookingSubmissionDto = {
+      flightDetails,
+      contactEmail: bookingData.contactEmail,
+      contactPhone: bookingData.contactPhone,
+      specialRequests: bookingData.specialRequests || undefined,
+      urgency: bookingData.urgency
+    };
 
-    // Send admin notification email
-    await emailjs.send(
-      "YOUR_SERVICE_ID", // Replace with your EmailJS service ID
-      "admin_flight_notification", // Replace with your admin template ID
-      emailData,
-      "YOUR_PUBLIC_KEY" // Replace with your EmailJS public key
-    );
+    console.log('📤 Submitting flight booking data:', submissionData);
 
+    // Submit to API
+    const response: BookingSubmissionResponse = await bookingService.submitFlightBooking(submissionData);
+
+    console.log('✅ Flight booking submitted successfully:', response);
+
+    // Update UI with success
+    referenceNumber.value = response.referenceNumber;
     bookingSubmitted.value = true;
-  } catch (error) {
-    console.error("Error submitting booking:", error);
-    alert(
-      "There was an error submitting your request. Please try again or contact us directly."
-    );
+    showMessage(`Flight booking submitted successfully! Your reference number is ${response.referenceNumber}`, 'success');
+
+  } catch (error: any) {
+    console.error('❌ Flight booking submission failed:', error);
+    showMessage(error.message || 'Failed to submit flight booking. Please try again.');
   } finally {
     isSubmitting.value = false;
   }
@@ -756,4 +822,3 @@ const submitBooking = async () => {
   }
 }
 </style>
- 

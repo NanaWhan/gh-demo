@@ -1,25 +1,19 @@
-export default defineNuxtRouteMiddleware((to, from) => {
-    // Check if user is authenticated
-    const token = useCookie('auth-token')
+import authService from '~/services/AuthService'
 
-    if (!token.value) {
+export default defineNuxtRouteMiddleware((to, from) => {
+    console.log('🛡️ Auth middleware checking route:', to.path);
+
+    // Check if user is authenticated using AuthService
+    const isAuth = authService.isAuthenticated();
+    console.log('🔐 Middleware auth result:', isAuth);
+
+    if (!isAuth) {
+        console.log('❌ Not authenticated, redirecting to login');
         // Redirect to login with return URL
         return navigateTo(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
     }
 
-    // TODO: Validate token with backend
-    // For now, just check if token exists
-    if (process.client && token.value) {
-        // Optional: Verify token validity
-        try {
-            // You can add token validation logic here
-            // const response = await $fetch('/api/auth/verify', {
-            //   headers: { Authorization: `Bearer ${token.value}` }
-            // })
-        } catch (error) {
-            // Token is invalid, clear it and redirect
-            token.value = null
-            return navigateTo(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
-        }
-    }
+    console.log('✅ Authenticated, allowing access to:', to.path);
+    // AuthService already handles token validation including expiration checking
+    // If we reach here, the user has a valid, non-expired token
 }) 

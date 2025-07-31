@@ -285,7 +285,10 @@
 </template>
 
 <script setup lang="ts">
-import type { LoginRequest, OtpRequest, VerifyOtpRequest } from '~/composables/useApi'
+// Import AuthService and types
+import authService from '~/services/AuthService'
+import type { LoginRequest } from '~/types/auth-api-types'
+import { safeLoginRedirect, forceRedirect } from '~/utils/navigation'
 
 // Page meta
 useHead({
@@ -299,69 +302,78 @@ useHead({
   ],
 });
 
+// Authentication middleware - protect already logged in users
+definePageMeta({
+  middleware: (to, from) => {
+    if (authService.isAuthenticated()) {
+      return navigateTo('/dashboard')
+    }
+  }
+})
+
 // Reactive data
-const loginType = ref<'email' | 'otp'>("email");
-const showPassword = ref<boolean>(false);
-const otpSent = ref<boolean>(false);
+const loginType = ref("email");
+const showPassword = ref(false);
+const otpSent = ref(false);
 
 // Get route for redirect handling
 const route = useRoute();
 
 // Message states
-const errorMessage = ref<string>("");
-const successMessage = ref<string>("");
+const errorMessage = ref("");
+const successMessage = ref("");
 
-// Email login form
-const emailForm = reactive<LoginRequest & { rememberMe: boolean }>({
+// Email login form - now type-safe
+const emailForm = reactive<LoginRequest>({
   email: "",
   password: "",
-  rememberMe: false,
 });
 
 // OTP login form
-const otpForm = reactive<VerifyOtpRequest>({
+const otpForm = reactive({
   phoneNumber: "",
   otpCode: "",
 });
 
 // Loading states
-const emailLoading = ref<boolean>(false);
-const otpLoading = ref<boolean>(false);
-const otpVerifyLoading = ref<boolean>(false);
+const emailLoading = ref(false);
+const otpLoading = ref(false);
+const otpVerifyLoading = ref(false);
+
+// Helper function for displaying messages
+const showMessage = (message: string, type: 'success' | 'error' = 'error') => {
+  if (type === 'success') {
+    successMessage.value = message
+    errorMessage.value = ''
+  } else {
+    errorMessage.value = message
+    successMessage.value = ''
+  }
+}
 
 // Methods
 const loginWithEmail = async () => {
   emailLoading.value = true;
   errorMessage.value = "";
+  successMessage.value = "";
 
   try {
-    const { api, setToken } = useApi();
+    console.log('🚀 Starting email login...');
+    const response = await authService.login(emailForm);
+    console.log('✅ Login response received:', response);
 
-    const response = await api.auth.login({
-      email: emailForm.email,
-      password: emailForm.password,
-    });
+        // Show success message
+    showMessage("Login successful! Redirecting...", 'success');
 
-    // Store token and redirect
-    setToken(response.token);
-
-    // Show success message
-    successMessage.value = "Login successful! Redirecting...";
-
-    // Redirect to dashboard or return URL
+    // Redirect to dashboard or return URL immediately
     const redirectTo = (route.query.redirect as string) || "/dashboard";
-    await navigateTo(redirectTo);
+    console.log('🎯 Redirecting to:', redirectTo);
+
+    // Use safe redirect utility
+    safeLoginRedirect(redirectTo);
   } catch (error: any) {
     console.error("Login failed:", error);
-
-    // Show user-friendly error message
-    if (error.status === 401) {
-      errorMessage.value = "Invalid email or password. Please try again.";
-    } else if (error.status === 422) {
-      errorMessage.value = "Please check your email and password format.";
-    } else {
-      errorMessage.value = "Login failed. Please try again later.";
-    }
+    showMessage(error.message || "Login failed. Please try again.");
   } finally {
     emailLoading.value = false;
   }
@@ -370,22 +382,21 @@ const loginWithEmail = async () => {
 const requestOtp = async () => {
   otpLoading.value = true;
   errorMessage.value = "";
+  successMessage.value = "";
 
   try {
-    const { api } = useApi();
-
-    await api.auth.requestOtp({ phoneNumber: otpForm.phoneNumber });
+    await authService.requestOtp(otpForm.phoneNumber);
 
     otpSent.value = true;
-    successMessage.value = "OTP sent successfully! Check your phone.";
+    showMessage("OTP sent successfully! Check your phone.", 'success');
   } catch (error: any) {
     console.error("OTP request failed:", error);
 
-    if (error.status === 422) {
-      errorMessage.value =
-        "Invalid phone number format. Please use +233XXXXXXXXX";
+    if (error.message.includes('not registered')) {
+      showMessage('Phone number not registered. Redirecting to registration...');
+      forceRedirect('/register');
     } else {
-      errorMessage.value = "Failed to send OTP. Please try again.";
+      showMessage(error.message || "Failed to send OTP. Please try again.");
     }
   } finally {
     otpLoading.value = false;
@@ -395,33 +406,24 @@ const requestOtp = async () => {
 const verifyOtp = async () => {
   otpVerifyLoading.value = true;
   errorMessage.value = "";
+  successMessage.value = "";
 
   try {
-    const { api, setToken } = useApi();
+    console.log('🚀 Starting OTP verification...');
+    const response = await authService.verifyOtp(otpForm.phoneNumber, otpForm.otpCode);
+    console.log('✅ OTP verification response received:', response);
 
-    const response = await api.auth.verifyOtp({
-      phoneNumber: otpForm.phoneNumber,
-      otpCode: otpForm.otpCode,
-    });
+        showMessage("OTP verified! Redirecting...", 'success');
 
-    // Store token and redirect
-    setToken(response.token);
-
-    successMessage.value = "OTP verified! Redirecting...";
-
-    // Redirect to dashboard or return URL
+    // Redirect to dashboard or return URL immediately
     const redirectTo = (route.query.redirect as string) || "/dashboard";
-    await navigateTo(redirectTo);
+    console.log('🎯 Redirecting to:', redirectTo);
+
+    // Use safe redirect utility
+    safeLoginRedirect(redirectTo);
   } catch (error: any) {
     console.error("OTP verification failed:", error);
-
-    if (error.status === 401) {
-      errorMessage.value = "Invalid OTP code. Please try again.";
-    } else if (error.status === 422) {
-      errorMessage.value = "OTP code expired. Please request a new one.";
-    } else {
-      errorMessage.value = "Verification failed. Please try again.";
-    }
+    showMessage(error.message || "Verification failed. Please try again.");
   } finally {
     otpVerifyLoading.value = false;
   }
@@ -430,6 +432,8 @@ const verifyOtp = async () => {
 const resetOtp = () => {
   otpSent.value = false;
   otpForm.otpCode = "";
+  errorMessage.value = "";
+  successMessage.value = "";
 };
 </script>
 
@@ -450,3 +454,4 @@ const resetOtp = () => {
   animation: fadeInUp 0.6s ease-out;
 }
 </style>
+ 

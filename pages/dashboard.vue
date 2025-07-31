@@ -9,7 +9,8 @@
         <!-- Header -->
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {{ user.firstName }}!
+            <span v-if="user">Welcome back, {{ user.firstName }}!</span>
+            <span v-else>Welcome back!</span>
           </h1>
           <p class="text-gray-600">
             Manage your bookings and travel preferences
@@ -43,7 +44,8 @@
                   <div class="ml-4">
                     <p class="text-sm text-gray-600">Total Bookings</p>
                     <p class="text-2xl font-bold text-gray-900">
-                      {{ stats.totalBookings }}
+                      <span v-if="stats">{{ stats.totalBookings }}</span>
+                      <span v-else>-</span>
                     </p>
                   </div>
                 </div>
@@ -71,7 +73,8 @@
                   <div class="ml-4">
                     <p class="text-sm text-gray-600">Completed</p>
                     <p class="text-2xl font-bold text-gray-900">
-                      {{ stats.completedBookings }}
+                      <span v-if="stats">{{ stats.completedBookings }}</span>
+                      <span v-else>-</span>
                     </p>
                   </div>
                 </div>
@@ -99,7 +102,8 @@
                   <div class="ml-4">
                     <p class="text-sm text-gray-600">Pending</p>
                     <p class="text-2xl font-bold text-gray-900">
-                      {{ stats.pendingBookings }}
+                      <span v-if="stats">{{ stats.pendingBookings }}</span>
+                      <span v-else>-</span>
                     </p>
                   </div>
                 </div>
@@ -316,14 +320,21 @@
                   <div
                     class="w-20 h-20 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4"
                   >
-                    <span class="text-2xl font-bold text-white"
+                    <span v-if="user" class="text-2xl font-bold text-white"
                       >{{ user.firstName[0] }}{{ user.lastName[0] }}</span
                     >
+                    <span v-else class="text-2xl font-bold text-white">U</span>
                   </div>
                   <h3 class="text-lg font-bold text-gray-900">
-                    {{ user.firstName }} {{ user.lastName }}
+                    <span v-if="user"
+                      >{{ user.firstName }} {{ user.lastName }}</span
+                    >
+                    <span v-else>Loading...</span>
                   </h3>
-                  <p class="text-sm text-gray-600 mb-4">{{ user.email }}</p>
+                  <p class="text-sm text-gray-600 mb-4">
+                    <span v-if="user">{{ user.email }}</span>
+                    <span v-else>Loading...</span>
+                  </p>
                   <nuxt-link
                     to="/profile"
                     class="inline-block px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
@@ -433,7 +444,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// Import AuthService and types
+import authService from '~/services/AuthService'
+import type { UserProfile, BookingHistory, BookingStats } from '~/types/auth-api-types'
+import { safeLogout } from '~/utils/navigation'
+
 // Authentication middleware
 definePageMeta({
   middleware: "auth",
@@ -451,38 +467,50 @@ useHead({
   ],
 });
 
-// Mock data (replace with API calls)
-const user = ref({
+// Reactive data with proper typing
+const user = ref<UserProfile | null>(null);
+const stats = ref<BookingStats | null>(null);
+const recentBookings = ref<BookingHistory[]>([]);
+const loading = ref(true);
+const error = ref("");
+
+// Mock data for fallback
+const mockUser: UserProfile = {
+  id: "mock-id",
   firstName: "John",
   lastName: "Doe",
   email: "john@example.com",
-  phone: "+233 XX XXX XXXX",
-});
+  phoneNumber: "+233 XX XXX XXXX",
+  role: "User",
+  acceptMarketing: false,
+  createdAt: new Date().toISOString(),
+};
 
-const stats = ref({
+const mockStats: BookingStats = {
   totalBookings: 5,
-  completedBookings: 3,
   pendingBookings: 2,
-});
+  confirmedBookings: 3,
+  totalSpent: 2500,
+};
 
-const recentBookings = ref([
+const mockRecentBookings: BookingHistory[] = [
   {
     id: 1,
     serviceType: "Flight",
     referenceNumber: "GH-FL-001",
     status: "Confirmed",
-    destination: "Dubai",
-    createdAt: "2024-01-15",
+    totalAmount: 1200,
+    createdAt: "2024-01-15T10:30:00Z",
   },
   {
     id: 2,
     serviceType: "Hotel",
     referenceNumber: "GH-HT-002",
     status: "Processing",
-    destination: "London",
-    createdAt: "2024-01-12",
+    totalAmount: 800,
+    createdAt: "2024-01-12T15:45:00Z",
   },
-]);
+];
 
 // Methods
 const getServiceIcon = (serviceType) => {
@@ -515,45 +543,40 @@ const formatDate = (dateString) => {
 };
 
 const logout = async () => {
-  // Clear auth token
-  const token = useCookie("auth-token");
-  token.value = null;
-
-  // Redirect to home
-  await navigateTo("/");
+  // Use safe logout utility
+  await safeLogout();
 };
 
 // Load user data on mount
 onMounted(async () => {
+  console.log('📊 Dashboard: Starting to load...');
+  loading.value = true;
+  error.value = "";
+
   try {
-    const { api } = useApi();
-
+    console.log('👤 Dashboard: Loading user profile...');
     // Load user profile
-    const userData = await api.user.getProfile();
+    const userData = await authService.getProfile();
     user.value = userData;
+    console.log('✅ Dashboard: User profile loaded:', userData);
 
-    // Load user booking history (recent 5)
-    const bookingHistory = await api.user.getBookingHistory({
-      page: 1,
-      pageSize: 5,
-    });
-    recentBookings.value = bookingHistory.data || bookingHistory;
+    console.log('📋 Dashboard: Loading booking history...');
+    // Load user booking history with stats
+    const bookingData = await authService.getBookingHistory();
+    stats.value = bookingData.stats;
+    recentBookings.value = bookingData.bookings.slice(0, 5); // Show recent 5
+    console.log('✅ Dashboard: Booking data loaded:', bookingData);
+  } catch (err: any) {
+    console.error("Failed to load dashboard data:", err);
+    error.value = err.message || "Failed to load dashboard data";
 
-    // Calculate stats from booking history
-    const allBookings = await api.user.getBookingHistory();
-    const bookings = allBookings.data || allBookings;
-
-    stats.value = {
-      totalBookings: bookings.length,
-      completedBookings: bookings.filter((b) => b.status === "Completed")
-        .length,
-      pendingBookings: bookings.filter((b) =>
-        ["Submitted", "Processing"].includes(b.status)
-      ).length,
-    };
-  } catch (error) {
-    console.error("Failed to load dashboard data:", error);
-    // Keep mock data on error
+    // Use mock data as fallback
+    user.value = mockUser;
+    stats.value = mockStats;
+    recentBookings.value = mockRecentBookings;
+  } finally {
+    loading.value = false;
+    console.log('🎉 Dashboard: Loading complete!');
   }
 });
 </script>
@@ -575,3 +598,4 @@ onMounted(async () => {
   animation: fadeInUp 0.6s ease-out;
 }
 </style>
+ 

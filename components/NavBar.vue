@@ -163,8 +163,10 @@
   </nav>
 </template>
 
-<script setup>
-import { ref, onMounted, computed } from "vue";
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted, computed } from "vue";
+import authService from '~/services/AuthService';
+import { safeLogout } from '~/utils/navigation';
 
 // Props
 const props = defineProps({
@@ -176,8 +178,28 @@ const props = defineProps({
 
 const mobileMenuOpen = ref(false);
 
-// Auth state using API composable
-const { isAuthenticated, clearToken } = useApi();
+// Auth state using new AuthService with reactive updates
+const authState = ref(authService.isAuthenticated());
+const isAuthenticated = computed(() => authState.value);
+
+// Update auth state periodically to catch changes
+onMounted(() => {
+  const updateAuthState = () => {
+    const newState = authService.isAuthenticated();
+    if (newState !== authState.value) {
+      console.log('🔄 NavBar auth state changed:', newState);
+      authState.value = newState;
+    }
+  };
+
+  // Check auth state every second
+  const authInterval = setInterval(updateAuthState, 1000);
+
+  // Cleanup on unmount
+  onUnmounted(() => {
+    clearInterval(authInterval);
+  });
+});
 
 // Check if we're on auth pages (login/register)
 const route = useRoute();
@@ -190,24 +212,11 @@ const toggleMobileMenu = () => {
 };
 
 const logout = async () => {
-  try {
-    const { api } = useApi();
-
-    // Call logout endpoint
-    await api.auth.logout();
-  } catch (error) {
-    console.error("Logout failed:", error);
-    // Continue with local logout even if API fails
-  }
-
-  // Clear auth token locally
-  clearToken();
-
   // Close mobile menu if open
   mobileMenuOpen.value = false;
 
-  // Redirect to home
-  await navigateTo("/");
+  // Use safe logout utility
+  await safeLogout();
 };
 
 onMounted(() => {

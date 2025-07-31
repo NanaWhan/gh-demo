@@ -10,6 +10,37 @@
         <div class="mb-8">
           <h1 class="text-3xl font-bold text-gray-900 mb-2">My Bookings</h1>
           <p class="text-gray-600">Track and manage all your travel bookings</p>
+
+          <!-- Emergency Reset (only show if having issues) -->
+          <div
+            class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl"
+            v-if="error"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-medium text-red-800">
+                  Having navigation issues?
+                </h3>
+                <p class="text-sm text-red-600">
+                  If the page seems stuck, try these options:
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  @click="handleSafeLogout"
+                  class="px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700"
+                >
+                  Safe Logout
+                </button>
+                <button
+                  @click="handleEmergencyReset"
+                  class="px-3 py-1 bg-red-800 text-white text-sm rounded-lg hover:bg-red-900"
+                >
+                  Emergency Reset
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Quick Search -->
@@ -291,10 +322,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// Import AuthService and types
+import authService from '~/services/AuthService'
+import type { BookingHistory, BookingStats } from '~/types/auth-api-types'
+import { emergencyReset, safeLogout } from '~/utils/navigation'
+
 // Authentication middleware
 definePageMeta({
-  middleware: "auth",
+  middleware: (to, from) => {
+    if (!authService.isAuthenticated()) {
+      return navigateTo('/login')
+    }
+  }
 });
 
 // Page meta
@@ -316,53 +356,39 @@ const serviceFilter = ref("");
 const loading = ref(false);
 const loadingMore = ref(false);
 const hasMoreBookings = ref(true);
-const expandedBookings = ref([]);
+const expandedBookings = ref<number[]>([]);
 
-// Mock data (replace with API calls)
-const bookings = ref([
+// Booking data with proper typing
+const bookings = ref<BookingHistory[]>([]);
+const stats = ref<BookingStats | null>(null);
+const error = ref("");
+
+// Mock data for fallback when API fails
+const mockBookings: BookingHistory[] = [
   {
     id: 1,
     serviceType: "Flight",
     referenceNumber: "GH-FL-001",
     status: "Confirmed",
-    destination: "Dubai, UAE",
-    travelDate: "2024-02-15",
     totalAmount: 1200,
     createdAt: "2024-01-15T10:30:00Z",
-    statusHistory: [
-      { status: "Submitted", timestamp: "2024-01-15T10:30:00Z" },
-      { status: "Processing", timestamp: "2024-01-15T14:20:00Z" },
-      { status: "Confirmed", timestamp: "2024-01-16T09:15:00Z" },
-    ],
-    details: {
-      departure: "Accra (ACC)",
-      arrival: "Dubai (DXB)",
-      passengers: 2,
-      class: "Economy",
-    },
   },
   {
     id: 2,
     serviceType: "Hotel",
     referenceNumber: "GH-HT-002",
     status: "Processing",
-    destination: "London, UK",
-    travelDate: "2024-03-01",
     totalAmount: 800,
     createdAt: "2024-01-12T15:45:00Z",
-    statusHistory: [
-      { status: "Submitted", timestamp: "2024-01-12T15:45:00Z" },
-      { status: "Processing", timestamp: "2024-01-13T08:30:00Z" },
-    ],
-    details: {
-      hotel: "Marriott London",
-      checkIn: "2024-03-01",
-      checkOut: "2024-03-05",
-      rooms: 1,
-      guests: 2,
-    },
   },
-]);
+];
+
+const mockStats: BookingStats = {
+  totalBookings: 2,
+  pendingBookings: 1,
+  confirmedBookings: 1,
+  totalSpent: 2000,
+};
 
 // Computed properties
 const filteredBookings = computed(() => {
@@ -392,37 +418,44 @@ const filteredBookings = computed(() => {
 });
 
 // Methods
-const getServiceIcon = (serviceType) => {
+const getServiceIcon = (serviceType: string): string => {
   // Return appropriate SVG component based on service type
   return "svg";
 };
 
-const getServiceBgColor = (serviceType) => {
-  const colors = {
+const getServiceBgColor = (serviceType: string): string => {
+  const colors: Record<string, string> = {
     Flight: "bg-blue-100",
     Hotel: "bg-green-100",
     Tour: "bg-orange-100",
     Visa: "bg-purple-100",
     Complete: "bg-indigo-100",
+    TravelPackage: "bg-indigo-100",
+    CarRental: "bg-yellow-100",
+    Insurance: "bg-pink-100",
   };
   return colors[serviceType] || "bg-gray-100";
 };
 
-const getServiceTextColor = (serviceType) => {
-  const colors = {
+const getServiceTextColor = (serviceType: string): string => {
+  const colors: Record<string, string> = {
     Flight: "text-blue-600",
     Hotel: "text-green-600",
     Tour: "text-orange-600",
     Visa: "text-purple-600",
     Complete: "text-indigo-600",
+    TravelPackage: "text-indigo-600",
+    CarRental: "text-yellow-600",
+    Insurance: "text-pink-600",
   };
   return colors[serviceType] || "text-gray-600";
 };
 
-const getStatusColor = (status) => {
-  const colors = {
-    Submitted: "bg-blue-100 text-blue-800",
-    Processing: "bg-yellow-100 text-yellow-800",
+const getStatusColor = (status: string): string => {
+  const colors: Record<string, string> = {
+    Pending: "bg-blue-100 text-blue-800",
+    UnderReview: "bg-yellow-100 text-yellow-800",
+    Processing: "bg-orange-100 text-orange-800",
     Confirmed: "bg-green-100 text-green-800",
     Completed: "bg-purple-100 text-purple-800",
     Cancelled: "bg-red-100 text-red-800",
@@ -501,16 +534,34 @@ const loadMoreBookings = async () => {
   }
 };
 
+// Emergency navigation methods
+const handleEmergencyReset = () => {
+  console.log('🚨 User triggered emergency reset from My Bookings');
+  emergencyReset();
+};
+
+const handleSafeLogout = () => {
+  console.log('🚪 User triggered safe logout from My Bookings');
+  safeLogout();
+};
+
 // Load bookings on mount
 onMounted(async () => {
   loading.value = true;
+  error.value = "";
+
   try {
-    const { api } = useApi();
-    const userBookings = await api.booking.getMyBookings();
-    bookings.value = userBookings.data || userBookings;
-  } catch (error) {
-    console.error("Failed to load bookings:", error);
-    // Keep mock data on error
+    // Fetch real booking history from API
+    const response = await authService.getBookingHistory();
+    bookings.value = response.bookings;
+    stats.value = response.stats;
+  } catch (err: any) {
+    console.error("Failed to load bookings:", err);
+    error.value = err.message || "Failed to load your bookings";
+
+    // Use mock data as fallback
+    bookings.value = mockBookings;
+    stats.value = mockStats;
   } finally {
     loading.value = false;
   }
