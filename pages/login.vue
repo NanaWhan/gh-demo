@@ -284,7 +284,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { LoginRequest, OtpRequest, VerifyOtpRequest } from '~/composables/useApi'
+
 // Page meta
 useHead({
   title: "Login - Global Horizons Travel Services",
@@ -298,34 +300,34 @@ useHead({
 });
 
 // Reactive data
-const loginType = ref("email");
-const showPassword = ref(false);
-const otpSent = ref(false);
+const loginType = ref<'email' | 'otp'>("email");
+const showPassword = ref<boolean>(false);
+const otpSent = ref<boolean>(false);
 
 // Get route for redirect handling
 const route = useRoute();
 
 // Message states
-const errorMessage = ref("");
-const successMessage = ref("");
+const errorMessage = ref<string>("");
+const successMessage = ref<string>("");
 
 // Email login form
-const emailForm = reactive({
+const emailForm = reactive<LoginRequest & { rememberMe: boolean }>({
   email: "",
   password: "",
   rememberMe: false,
 });
 
 // OTP login form
-const otpForm = reactive({
+const otpForm = reactive<VerifyOtpRequest>({
   phoneNumber: "",
   otpCode: "",
 });
 
 // Loading states
-const emailLoading = ref(false);
-const otpLoading = ref(false);
-const otpVerifyLoading = ref(false);
+const emailLoading = ref<boolean>(false);
+const otpLoading = ref<boolean>(false);
+const otpVerifyLoading = ref<boolean>(false);
 
 // Methods
 const loginWithEmail = async () => {
@@ -347,9 +349,9 @@ const loginWithEmail = async () => {
     successMessage.value = "Login successful! Redirecting...";
 
     // Redirect to dashboard or return URL
-    const redirectTo = route.query.redirect || "/dashboard";
+    const redirectTo = (route.query.redirect as string) || "/dashboard";
     await navigateTo(redirectTo);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Login failed:", error);
 
     // Show user-friendly error message
@@ -376,7 +378,7 @@ const requestOtp = async () => {
 
     otpSent.value = true;
     successMessage.value = "OTP sent successfully! Check your phone.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("OTP request failed:", error);
 
     if (error.status === 422) {
@@ -408,9 +410,9 @@ const verifyOtp = async () => {
     successMessage.value = "OTP verified! Redirecting...";
 
     // Redirect to dashboard or return URL
-    const redirectTo = route.query.redirect || "/dashboard";
+    const redirectTo = (route.query.redirect as string) || "/dashboard";
     await navigateTo(redirectTo);
-  } catch (error) {
+  } catch (error: any) {
     console.error("OTP verification failed:", error);
 
     if (error.status === 401) {

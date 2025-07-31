@@ -336,7 +336,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { RegisterRequest } from '~/composables/useApi'
+
 // Page meta
 useHead({
   title: "Register - Global Horizons Travel Services",
@@ -350,16 +352,16 @@ useHead({
 });
 
 // Reactive data
-const showPassword = ref(false);
-const showConfirmPassword = ref(false);
-const loading = ref(false);
+const showPassword = ref<boolean>(false);
+const showConfirmPassword = ref<boolean>(false);
+const loading = ref<boolean>(false);
 
 // Message states
-const errorMessage = ref("");
-const successMessage = ref("");
+const errorMessage = ref<string>("");
+const successMessage = ref<string>("");
 
 // Registration form
-const form = reactive({
+const form = reactive<RegisterRequest & { confirmPassword: string; acceptTerms: boolean }>({
   firstName: "",
   lastName: "",
   email: "",
@@ -396,7 +398,7 @@ const register = async () => {
       email: form.email,
       phoneNumber: form.phoneNumber,
       password: form.password,
-      dateOfBirth: form.dateOfBirth || null,
+      dateOfBirth: form.dateOfBirth || undefined,
       acceptMarketing: form.acceptMarketing,
     });
 
@@ -406,7 +408,7 @@ const register = async () => {
     successMessage.value = "Account created successfully! Redirecting...";
 
     await navigateTo("/dashboard");
-  } catch (error) {
+  } catch (error: any) {
     console.error("Registration failed:", error);
 
     // Show user-friendly error messages

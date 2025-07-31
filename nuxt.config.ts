@@ -14,7 +14,7 @@ export default defineNuxtConfig({
 
         // Public keys (exposed to client-side)
         public: {
-            apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:5080/api',
+            apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://glohorizonapi.fly.dev',
             siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
         }
     },
