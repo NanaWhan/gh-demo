@@ -42,12 +42,22 @@
           >
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                <svg
+                  class="h-5 w-5 text-red-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </div>
               <div class="ml-3">
-                <p class="text-sm font-medium text-red-800">{{ errorMessage }}</p>
+                <p class="text-sm font-medium text-red-800">
+                  {{ errorMessage }}
+                </p>
               </div>
             </div>
           </div>
@@ -847,7 +857,7 @@ const formData = reactive({
   // Contact information
   contactEmail: "",
   contactPhone: "",
-  
+
   // Tour details
   tourPackage: "",
   destination: "",
@@ -858,11 +868,11 @@ const formData = reactive({
   tourType: "group" as 'group' | 'private' | 'custom',
   activities: [] as string[],
   mealPlan: "breakfast" as 'breakfast' | 'half-board' | 'full-board',
-  
+
   // Additional details
   specialRequests: "",
   urgency: 1,
-  
+
   // Legacy fields for UI compatibility
   fullName: "",
   email: "",
@@ -883,7 +893,7 @@ const formData = reactive({
   agreeToTerms: false,
 });
 
-// Auto-fill user contact information
+// Auto-fill user contact information AND tour data from previous pages
 onMounted(() => {
   const defaultContact = bookingService.getDefaultContactInfo();
   if (defaultContact.contactEmail) {
@@ -896,6 +906,71 @@ onMounted(() => {
   }
   if (defaultContact.urgency) {
     formData.urgency = defaultContact.urgency;
+  }
+
+  // ACTUALLY READ THE TOUR DATA FROM TOURS PAGE
+  if (process.client) {
+    // Read URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const tourParam = urlParams.get('tour');
+    const priceParam = urlParams.get('price');
+    const adultsParam = urlParams.get('adults');
+    const childrenParam = urlParams.get('children');
+
+    // Read sessionStorage data
+    const selectedTourData = sessionStorage.getItem('selectedTour');
+    const searchDestination = sessionStorage.getItem('searchDestination');
+    const searchDates = sessionStorage.getItem('searchDates');
+
+    console.log('📋 Loading booking data:', {
+      urlParams: { tour: tourParam, price: priceParam, adults: adultsParam, children: childrenParam },
+      sessionTour: selectedTourData ? JSON.parse(selectedTourData) : null,
+      searchContext: { destination: searchDestination, dates: searchDates }
+    });
+
+    // Fill form with tour data
+    if (selectedTourData) {
+      const tourData = JSON.parse(selectedTourData);
+      formData.tourPackage = tourData.tourName || tourParam || '';
+      formData.adults = tourData.travelers?.adults?.toString() || adultsParam || '1';
+      formData.children = tourData.travelers?.children || 0;
+      formData.travelers = (tourData.travelers?.adults || 1) + (tourData.travelers?.children || 0);
+
+      // Set destination from search context
+      if (tourData.searchContext?.originalDestination) {
+        formData.destination = tourData.searchContext.originalDestination;
+        formData.customDestination = tourData.searchContext.originalDestination;
+      }
+
+      // Set date if available
+      if (tourData.searchContext?.originalDate) {
+        formData.startDate = tourData.searchContext.originalDate;
+        formData.travelDate = tourData.searchContext.originalDate;
+      }
+    }
+
+    // Fill from URL params if no session data
+    if (!selectedTourData && tourParam) {
+      formData.tourPackage = tourParam;
+      if (adultsParam) formData.adults = adultsParam;
+      if (childrenParam) formData.children = parseInt(childrenParam) || 0;
+      if (searchDestination) {
+        formData.destination = searchDestination;
+        formData.customDestination = searchDestination;
+      }
+      if (searchDates) {
+        formData.startDate = searchDates;
+        formData.travelDate = searchDates;
+      }
+    }
+
+    console.log('✅ Form prefilled with tour data:', {
+      tourPackage: formData.tourPackage,
+      destination: formData.destination,
+      adults: formData.adults,
+      children: formData.children,
+      startDate: formData.startDate
+    });
   }
 });
 
@@ -1073,7 +1148,7 @@ const submitTourRequest = async () => {
   formData.contactEmail = formData.email || formData.contactEmail;
   formData.contactPhone = formData.phone || formData.contactPhone;
   formData.startDate = formData.travelDate || formData.startDate;
-  
+
   // Calculate end date if not set
   if (!formData.endDate && formData.startDate && formData.duration) {
     const startDate = new Date(formData.startDate);
@@ -1179,7 +1254,6 @@ const submitTourRequest = async () => {
     isSubmitting.value = false;
   }
 };
-
 </script>
 
 <style scoped>

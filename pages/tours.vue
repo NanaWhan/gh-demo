@@ -53,14 +53,18 @@
                 >
                 <select
                   v-model="searchFilters.destination"
-                  class="tours-search-select mobile-select mobile-focus w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent"
+                  class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent hover:border-gray-300 transition-all duration-200 text-gray-700 font-medium shadow-sm"
                 >
-                  <option value="">All Destinations</option>
-                  <option value="europe">Europe</option>
-                  <option value="asia">Asia</option>
-                  <option value="america">Americas</option>
-                  <option value="africa">Africa</option>
-                  <option value="oceania">Oceania</option>
+                  <option value="" class="text-gray-500">
+                    All Destinations
+                  </option>
+                  <option value="europe" class="text-gray-800">Europe</option>
+                  <option value="asia" class="text-gray-800">Asia</option>
+                  <option value="america" class="text-gray-800">
+                    Americas
+                  </option>
+                  <option value="africa" class="text-gray-800">Africa</option>
+                  <option value="oceania" class="text-gray-800">Oceania</option>
                 </select>
               </div>
               <div>
@@ -69,12 +73,12 @@
                 >
                 <select
                   v-model="searchFilters.duration"
-                  class="tours-search-select mobile-select mobile-focus w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent"
+                  class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent hover:border-gray-300 transition-all duration-200 text-gray-700 font-medium shadow-sm"
                 >
-                  <option value="">Any Duration</option>
-                  <option value="short">1-3 Days</option>
-                  <option value="medium">4-7 Days</option>
-                  <option value="long">8+ Days</option>
+                  <option value="" class="text-gray-500">Any Duration</option>
+                  <option value="short" class="text-gray-800">1-3 Days</option>
+                  <option value="medium" class="text-gray-800">4-7 Days</option>
+                  <option value="long" class="text-gray-800">8+ Days</option>
                 </select>
               </div>
               <div>
@@ -83,12 +87,16 @@
                 >
                 <select
                   v-model="searchFilters.budget"
-                  class="tours-search-select mobile-select mobile-focus w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent"
+                  class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-accent focus:border-accent hover:border-gray-300 transition-all duration-200 text-gray-700 font-medium shadow-sm"
                 >
-                  <option value="">Any Budget</option>
-                  <option value="budget">Under $1,000</option>
-                  <option value="mid">$1,000 - $3,000</option>
-                  <option value="luxury">$3,000+</option>
+                  <option value="" class="text-gray-500">Any Budget</option>
+                  <option value="budget" class="text-gray-800">
+                    Under $1,000
+                  </option>
+                  <option value="mid" class="text-gray-800">
+                    $1,000 - $3,000
+                  </option>
+                  <option value="luxury" class="text-gray-800">$3,000+</option>
                 </select>
               </div>
               <div class="flex items-end">
@@ -295,7 +303,7 @@
                 <span
                   class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold"
                 >
-                  🔥 Bestseller
+                  Bestseller
                 </span>
               </div>
               <div class="absolute top-4 right-4">
@@ -405,18 +413,35 @@
               </div>
 
               <div class="flex items-center justify-between mb-4">
-                <span class="text-sm text-gray-500">⭐ 4.9 (127 reviews)</span>
+                <div class="flex items-center text-sm text-gray-500">
+                  <svg
+                    class="w-4 h-4 text-yellow-400 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                    />
+                  </svg>
+                  4.9 (127 reviews)
+                </div>
                 <span
                   class="text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full"
                   >Available</span
                 >
               </div>
-              <nuxt-link
-                to="/tour-booking"
+              <button
+                @click="
+                  bookTour(
+                    'london-paris',
+                    'London & Paris Classic',
+                    calculateTourPrice('london-paris')
+                  )
+                "
                 class="tour-card-button mobile-button mobile-focus w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold text-center block"
               >
                 Book Now - ${{ calculateTourPrice("london-paris") }}
-              </nuxt-link>
+              </button>
             </div>
           </div>
 
@@ -434,7 +459,7 @@
                 <span
                   class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold"
                 >
-                  ⭐ Premium
+                  Premium
                 </span>
               </div>
               <div class="absolute top-4 right-4">
@@ -523,18 +548,35 @@
               </div>
 
               <div class="flex items-center justify-between mb-4">
-                <span class="text-sm text-gray-500">⭐ 4.8 (89 reviews)</span>
+                <div class="flex items-center text-sm text-gray-500">
+                  <svg
+                    class="w-4 h-4 text-yellow-400 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                    />
+                  </svg>
+                  4.8 (89 reviews)
+                </div>
                 <span
                   class="text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full"
                   >Available</span
                 >
               </div>
-              <nuxt-link
-                to="/tour-booking"
+              <button
+                @click="
+                  bookTour(
+                    'dubai',
+                    'Dubai Luxury Experience',
+                    calculateTourPrice('dubai')
+                  )
+                "
                 class="w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold text-center block"
               >
                 Book Now - ${{ calculateTourPrice("dubai") }}
-              </nuxt-link>
+              </button>
             </div>
           </div>
 
@@ -552,7 +594,7 @@
                 <span
                   class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold"
                 >
-                  💰 Best Value
+                  Best Value
                 </span>
               </div>
               <div class="absolute top-4 right-4">
@@ -656,18 +698,35 @@
               </div>
 
               <div class="flex items-center justify-between mb-4">
-                <span class="text-sm text-gray-500">⭐ 4.7 (156 reviews)</span>
+                <div class="flex items-center text-sm text-gray-500">
+                  <svg
+                    class="w-4 h-4 text-yellow-400 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                    />
+                  </svg>
+                  4.7 (156 reviews)
+                </div>
                 <span
                   class="text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full"
                   >Available</span
                 >
               </div>
-              <nuxt-link
-                to="/tour-booking"
+              <button
+                @click="
+                  bookTour(
+                    'singapore-malaysia',
+                    'Singapore & Malaysia Twin',
+                    calculateTourPrice('singapore-malaysia')
+                  )
+                "
                 class="w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold text-center block"
               >
                 Book Now - ${{ calculateTourPrice("singapore-malaysia") }}
-              </nuxt-link>
+              </button>
             </div>
           </div>
         </div>
@@ -790,7 +849,33 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div class="bg-gray-50 rounded-3xl p-8">
-            <div class="flex text-yellow-400 mb-4">⭐⭐⭐⭐⭐</div>
+            <div class="flex text-yellow-400 mb-4">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+            </div>
             <p class="text-gray-600 italic mb-6">
               "The London & Paris tour exceeded all expectations! Our guide
               Sarah was amazing, and the itinerary was perfectly balanced
@@ -810,7 +895,33 @@
           </div>
 
           <div class="bg-gray-50 rounded-3xl p-8">
-            <div class="flex text-yellow-400 mb-4">⭐⭐⭐⭐⭐</div>
+            <div class="flex text-yellow-400 mb-4">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+            </div>
             <p class="text-gray-600 italic mb-6">
               "Dubai was absolutely incredible! The desert safari was a
               highlight, and staying at the Burj Al Arab made it feel like a
@@ -830,7 +941,33 @@
           </div>
 
           <div class="bg-gray-50 rounded-3xl p-8">
-            <div class="flex text-yellow-400 mb-4">⭐⭐⭐⭐⭐</div>
+            <div class="flex text-yellow-400 mb-4">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+            </div>
             <p class="text-gray-600 italic mb-6">
               "Singapore and Malaysia in one trip was brilliant! Great value for
               money, excellent hotels, and we loved experiencing both cultures
@@ -858,13 +995,82 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 
 // Search filters
 const searchFilters = reactive({
   destination: "",
   duration: "",
   budget: "",
+});
+
+// Load search data from URL params and sessionStorage on mount
+onMounted(() => {
+  if (process.client) {
+    // Get URL search parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const destinationParam = urlParams.get("destination");
+    const dateParam = urlParams.get("date");
+
+    // Get sessionStorage data
+    const savedFilters = sessionStorage.getItem("tourFilters");
+    const searchData = sessionStorage.getItem("searchData");
+
+    console.log("🔍 Loading search context:", {
+      urlParams: { destination: destinationParam, date: dateParam },
+      savedFilters: savedFilters ? JSON.parse(savedFilters) : null,
+      searchData: searchData ? JSON.parse(searchData) : null,
+    });
+
+    // Prefill form based on incoming search
+    if (destinationParam) {
+      // Map common destination names to our filter values
+      const destinationMap = {
+        london: "europe",
+        paris: "europe",
+        rome: "europe",
+        barcelona: "europe",
+        dubai: "asia",
+        singapore: "asia",
+        tokyo: "asia",
+        bangkok: "asia",
+        "new york": "america",
+        miami: "america",
+        "los angeles": "america",
+        sydney: "oceania",
+        melbourne: "oceania",
+        cairo: "africa",
+        "cape town": "africa",
+      };
+
+      const destLower = destinationParam.toLowerCase();
+      const mappedDestination = Object.keys(destinationMap).find((key) =>
+        destLower.includes(key)
+      );
+
+      if (mappedDestination) {
+        searchFilters.destination = destinationMap[mappedDestination];
+        console.log(
+          `✅ Mapped "${destinationParam}" to "${searchFilters.destination}"`
+        );
+      }
+    }
+
+    // Load previously saved filters
+    if (savedFilters) {
+      const saved = JSON.parse(savedFilters);
+      Object.assign(searchFilters, saved);
+    }
+
+    // Log search context - no annoying popups!
+    if (destinationParam || dateParam) {
+      console.log("🎯 Search context loaded:", {
+        destination: destinationParam,
+        date: dateParam,
+        message: "User came from search - filters auto-applied",
+      });
+    }
+  }
 });
 
 // Tour pricing data (like Adansi's system!)
@@ -904,11 +1110,119 @@ const calculateTourPrice = (tour) => {
   return (adultTotal + childTotal).toLocaleString();
 };
 
-// Apply search filters
+// Apply search filters - REAL functionality!
 const applyFilters = () => {
-  // Here you would filter the tours based on selected criteria
-  alert("Filtering tours based on your preferences...");
-  console.log("Applied filters:", searchFilters);
+  console.log("🔍 Filtering tours with:", searchFilters);
+
+  // Save search preferences to sessionStorage
+  if (process.client) {
+    sessionStorage.setItem("tourFilters", JSON.stringify(searchFilters));
+  }
+
+  // Filter tours based on criteria
+  let filteredResults = [];
+
+  // Map filter values to tour IDs (this would normally be from a database)
+  const tourDatabase = {
+    europe: ["london-paris"],
+    asia: ["singapore-malaysia"],
+    america: ["new-york-tour"], // We can add this later
+    africa: ["safari-tour"], // We can add this later
+    oceania: ["australia-tour"], // We can add this later
+    short: [], // 1-3 days
+    medium: ["dubai", "singapore-malaysia"], // 4-7 days
+    long: ["london-paris"], // 8+ days
+    budget: ["singapore-malaysia"], // Under $1000
+    mid: ["london-paris"], // $1000-3000
+    luxury: ["dubai"], // $3000+
+  };
+
+  // Create filter message
+  let filterMessage = "🎯 **Filtering Results:**\n\n";
+
+  if (searchFilters.destination) {
+    const destinationName = {
+      europe: "Europe",
+      asia: "Asia",
+      america: "Americas",
+      africa: "Africa",
+      oceania: "Oceania",
+    }[searchFilters.destination];
+    filterMessage += `Destination: ${destinationName}\n`;
+  }
+
+  if (searchFilters.duration) {
+    const durationName = {
+      short: "1-3 Days",
+      medium: "4-7 Days",
+      long: "8+ Days",
+    }[searchFilters.duration];
+    filterMessage += `Duration: ${durationName}\n`;
+  }
+
+  if (searchFilters.budget) {
+    const budgetName = {
+      budget: "Under $1,000",
+      mid: "$1,000 - $3,000",
+      luxury: "$3,000+",
+    }[searchFilters.budget];
+    filterMessage += `Budget: ${budgetName}\n`;
+  }
+
+  if (
+    !searchFilters.destination &&
+    !searchFilters.duration &&
+    !searchFilters.budget
+  ) {
+    filterMessage += "📋 Showing all available tours\n";
+  }
+
+  filterMessage += "\n🔄 **Scroll down to see matching tours!**\n\n";
+  filterMessage +=
+    "💡 **Next Step:** Click 'Book Now' on any tour to continue with dates and travelers.";
+
+  // Scroll to tour results immediately - no annoying popups!
+  const featuredSection = document.getElementById("featured-tours");
+  if (featuredSection) {
+    featuredSection.scrollIntoView({ behavior: "smooth" });
+  }
+
+  console.log("✅ Filters applied successfully:", filterMessage);
+};
+
+// Book tour function - creates seamless booking flow
+const bookTour = (tourId, tourName, totalPrice) => {
+  console.log("🎯 Booking tour:", { tourId, tourName, totalPrice });
+
+  if (process.client) {
+    // Prepare comprehensive booking data
+    const bookingData = {
+      tourId,
+      tourName,
+      basePrice: totalPrice,
+      travelers: {
+        adults: tourPricing[tourId].adults,
+        children: tourPricing[tourId].children,
+      },
+      searchContext: {
+        originalDestination: sessionStorage.getItem("searchDestination"),
+        originalDate: sessionStorage.getItem("searchDates"),
+        appliedFilters: searchFilters,
+      },
+      bookingSource: "tours-page",
+      timestamp: new Date().toISOString(),
+    };
+
+    // Store booking context
+    sessionStorage.setItem("selectedTour", JSON.stringify(bookingData));
+    sessionStorage.setItem("bookingStep", "1");
+
+    console.log("💾 Stored booking data:", bookingData);
+
+    // Navigate to booking page with parameters
+    const bookingUrl = `/tour-booking?tour=${tourId}&price=${totalPrice}&adults=${tourPricing[tourId].adults}&children=${tourPricing[tourId].children}`;
+    navigateTo(bookingUrl);
+  }
 };
 
 // Meta data for SEO

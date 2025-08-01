@@ -122,38 +122,86 @@ const destination = ref("");
 const travelDate = ref("");
 
 const handleSearch = () => {
-  // Store search data in session storage
-  if (destination.value || travelDate.value) {
-    if (process.client) {
-      sessionStorage.setItem("searchDestination", destination.value);
-      sessionStorage.setItem("searchDates", travelDate.value);
-    }
+  // Enhanced search functionality with better flow
+  console.log("🔍 Search initiated:", {
+    destination: destination.value,
+    date: travelDate.value,
+  });
+
+  // Store comprehensive search data
+  if (process.client) {
+    const searchData = {
+      destination: destination.value,
+      travelDate: travelDate.value,
+      searchTime: new Date().toISOString(),
+      searchSource: "hero",
+    };
+
+    sessionStorage.setItem("searchDestination", destination.value);
+    sessionStorage.setItem("searchDates", travelDate.value);
+    sessionStorage.setItem("searchData", JSON.stringify(searchData));
   }
 
-  // Redirect to appropriate page based on content
-  if (
-    destination.value.toLowerCase().includes("visa") ||
-    destination.value.toLowerCase().includes("work") ||
-    destination.value.toLowerCase().includes("study")
-  ) {
-    navigateTo("/visas");
-  } else if (
-    destination.value.toLowerCase().includes("tour") ||
-    destination.value.toLowerCase().includes("package")
-  ) {
-    navigateTo("/tours");
-  } else if (
-    destination.value.toLowerCase().includes("flight") ||
-    destination.value.toLowerCase().includes("airline")
-  ) {
-    navigateTo("/flights");
-  } else if (
-    destination.value.toLowerCase().includes("hotel") ||
-    destination.value.toLowerCase().includes("accommodation")
-  ) {
-    navigateTo("/hotels");
+  // Enhanced routing logic with search parameters
+  const dest = destination.value.toLowerCase();
+  const baseRoute = getTargetRoute(dest);
+
+  // Add search parameters to URL for better UX
+  const searchParams = new URLSearchParams();
+  if (destination.value) searchParams.set("destination", destination.value);
+  if (travelDate.value) searchParams.set("date", travelDate.value);
+
+  const finalUrl = searchParams.toString()
+    ? `${baseRoute}?${searchParams.toString()}`
+    : baseRoute;
+
+  console.log("🚀 Navigating to:", finalUrl);
+
+  // Show search feedback
+  if (destination.value || travelDate.value) {
+    const message = `🎯 Searching for ${destination.value || "destinations"}${
+      travelDate.value ? ` on ${travelDate.value}` : ""
+    }...`;
+
+    // Create a brief loading state
+    const originalButton = document.querySelector(".search-btn");
+    if (originalButton) {
+      originalButton.innerHTML =
+        '<div class="flex items-center justify-center"><div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>Searching...</div>';
+
+      setTimeout(() => {
+        navigateTo(finalUrl);
+      }, 800);
+    } else {
+      navigateTo(finalUrl);
+    }
   } else {
-    navigateTo("/tours");
+    navigateTo(baseRoute);
+  }
+};
+
+const getTargetRoute = (destination) => {
+  if (
+    destination.includes("visa") ||
+    destination.includes("work") ||
+    destination.includes("study")
+  ) {
+    return "/visas";
+  } else if (
+    destination.includes("flight") ||
+    destination.includes("airline")
+  ) {
+    return "/flights";
+  } else if (
+    destination.includes("hotel") ||
+    destination.includes("accommodation")
+  ) {
+    return "/hotels";
+  } else if (destination.includes("tour") || destination.includes("package")) {
+    return "/tours";
+  } else {
+    // Default to tours for general destinations
+    return "/tours";
   }
 };
 

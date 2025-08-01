@@ -190,25 +190,25 @@ let slideInterval = null;
 
 const heroContent = [
   {
-    location: "🇬🇧 London, United Kingdom",
+    location: "London, United Kingdom",
     title: "Discover London's Royal Heritage",
     description:
       "Experience Big Ben, Buckingham Palace & Thames River • UK Visa Assistance Available",
   },
   {
-    location: "🇺🇸 New York, United States",
+    location: "New York, United States",
     title: "The City That Never Sleeps",
     description:
       "Times Square, Central Park & Statue of Liberty • US Visa Support Included",
   },
   {
-    location: "🇦🇪 Dubai, United Arab Emirates",
+    location: "Dubai, United Arab Emirates",
     title: "Where Dreams Meet Reality",
     description:
       "Burj Khalifa, Desert Safari & Luxury Shopping • UAE Visa Processing Available",
   },
   {
-    location: "🇫🇷 Paris, France",
+    location: "Paris, France",
     title: "City of Love and Light",
     description:
       "Eiffel Tower, Louvre Museum & Seine River • Schengen Visa Assistance",
