@@ -701,8 +701,8 @@
       </div>
     </section>
 
-    <!-- Blog Section -->
-    <BlogSection />
+    <!-- Travel News & Tips Section (Upgraded) -->
+    <TravelNewsSection />
 
     <!-- Newsletter -->
     <NewsletterSection />

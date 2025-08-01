@@ -11,17 +11,22 @@ export default defineNuxtConfig({
         emailjsServiceId: process.env.EMAILJS_SERVICE_ID,
         emailjsTemplateId: process.env.EMAILJS_TEMPLATE_ID,
         emailjsPublicKey: process.env.EMAILJS_PUBLIC_KEY,
+        openweatherApiKey: process.env.OPENWEATHER_API_KEY,
 
         // Public keys (exposed to client-side)
         public: {
             apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://glohorizonapi.fly.dev/api',
-            siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://glohorizonsgh.com'
+            siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://glohorizonsgh.com',
+            openweatherApiKey: process.env.VITE_OPENWEATHER_API_KEY
         }
     },
 
     // Production optimizations
     nitro: {
         preset: 'static', // Change to 'node-server' if you need SSR
+        experimental: {
+            wasm: true
+        },
         prerender: {
             routes: ['/sitemap.xml', '/robots.txt'],
             ignore: ['/consultation', '/packages'], // Ignore non-existent routes
@@ -96,7 +101,5 @@ export default defineNuxtConfig({
                 }
             }
         }
-    },
-
-
+    }
 }) 
