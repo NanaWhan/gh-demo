@@ -68,8 +68,25 @@ export default defineNuxtConfig({
         }
     },
 
+    // Development server configuration
+    devServer: {
+        port: 3000
+    },
+
     // Build optimizations
     vite: {
+        server: {
+            hmr: {
+                port: 24678,
+                protocol: 'ws'
+            },
+            fs: {
+                strict: false
+            }
+        },
+        optimizeDeps: {
+            include: ['vue', '@nuxt/kit']
+        },
         build: {
             rollupOptions: {
                 output: {

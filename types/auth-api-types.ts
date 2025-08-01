@@ -96,9 +96,29 @@ export interface BookingStats {
     totalSpent: number;
 }
 
+// Quote/Booking History Types
+export interface BookingHistory {
+    id: number;
+    referenceNumber: string;
+    serviceType: string; // "Flight", "Hotel", "Tour", "Visa"
+    status: string; // "Submitted", "Processing", "Confirmed", "Completed", "Cancelled"
+    destination: string;
+    travelDate: string;
+    createdAt: string;
+    quotedAmount?: number;
+    currency: string;
+    contactEmail: string;
+    contactPhone: string;
+    contactName: string;
+    specialRequests?: string;
+    urgency: number;
+}
+
 export interface BookingHistoryResponse {
-    bookings: BookingHistory[];
-    stats: BookingStats;
+    success: boolean;
+    message: string;
+    quotes: BookingHistory[]; // API returns 'quotes' not 'bookings'
+    totalCount: number;
 }
 
 // 🚨 ERROR TYPES

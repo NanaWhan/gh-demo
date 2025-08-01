@@ -81,7 +81,8 @@ export class BookingService {
                 }
             }
 
-            const response = await this.makeAuthenticatedRequest<BookingSubmissionResponse>('/booking/flight', {
+            // Use quote endpoint for flight requests (as per API guide)
+            const response = await this.makePublicRequest<BookingSubmissionResponse>('/quote/flight', {
                 method: 'POST',
                 body: data
             });
@@ -108,7 +109,8 @@ export class BookingService {
                 throw new Error(`Validation errors: ${contactErrors.join(', ')}`);
             }
 
-            const response = await this.makeAuthenticatedRequest<BookingSubmissionResponse>('/booking/hotel', {
+            // Use quote endpoint for hotel requests (as per API guide)
+            const response = await this.makePublicRequest<BookingSubmissionResponse>('/quote/hotel', {
                 method: 'POST',
                 body: data
             });
@@ -135,7 +137,8 @@ export class BookingService {
                 throw new Error(`Validation errors: ${contactErrors.join(', ')}`);
             }
 
-            const response = await this.makeAuthenticatedRequest<BookingSubmissionResponse>('/booking/tour', {
+            // Use quote endpoint for tour requests (as per API guide)
+            const response = await this.makePublicRequest<BookingSubmissionResponse>('/quote/tour', {
                 method: 'POST',
                 body: data
             });
@@ -162,7 +165,8 @@ export class BookingService {
                 throw new Error(`Validation errors: ${contactErrors.join(', ')}`);
             }
 
-            const response = await this.makeAuthenticatedRequest<BookingSubmissionResponse>('/booking/visa', {
+            // Use quote endpoint for visa requests (as per API guide)
+            const response = await this.makePublicRequest<BookingSubmissionResponse>('/quote/visa', {
                 method: 'POST',
                 body: data
             });
@@ -189,7 +193,8 @@ export class BookingService {
                 throw new Error(`Validation errors: ${contactErrors.join(', ')}`);
             }
 
-            const response = await this.makeAuthenticatedRequest<BookingSubmissionResponse>('/booking/complete-package', {
+            // Use quote endpoint for complete package requests (as per API guide)
+            const response = await this.makePublicRequest<BookingSubmissionResponse>('/quote/complete-package', {
                 method: 'POST',
                 body: data
             });

@@ -35,6 +35,23 @@
     <section class="py-16 bg-gray-50">
       <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto">
+          <!-- Error Message -->
+          <div
+            v-if="errorMessage"
+            class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-red-800">{{ errorMessage }}</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Success Message -->
           <div
             v-if="isSubmitted"
@@ -76,12 +93,17 @@
                   >
                     💡 <strong>Track your booking:</strong> Visit our
                     <nuxt-link
+                      to="/my-bookings"
+                      class="underline font-medium hover:text-blue-800"
+                      >My Bookings</nuxt-link
+                    >
+                    or
+                    <nuxt-link
                       to="/track-booking"
                       class="underline font-medium hover:text-blue-800"
                       >booking tracker</nuxt-link
                     >
-                    anytime to check your status using reference number
-                    {{ referenceNumber }}.
+                    anytime using reference number {{ referenceNumber }}.
                   </p>
                 </div>
               </div>
@@ -665,9 +687,17 @@
   </div>
 </template>
 
-<script setup>
-import { ref, reactive, computed } from "vue";
-import emailjs from "@emailjs/browser";
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted } from "vue";
+import bookingService from '~/services/BookingService';
+import authService from '~/services/AuthService';
+import {
+  HotelBookingSubmissionDto,
+  HotelBookingDetails,
+  URGENCY_OPTIONS,
+  BookingSubmissionResponse
+} from '~/types/booking-api-types';
+import { forceRedirect } from '~/utils/navigation';
 
 // SEO Meta
 useHead({
@@ -685,145 +715,170 @@ useHead({
 const isSubmitting = ref(false);
 const isSubmitted = ref(false);
 const referenceNumber = ref("");
+const errorMessage = ref("");
+const successMessage = ref("");
 
 // Today's date for minimum date validation
 const today = computed(() => {
   return new Date().toISOString().split("T")[0];
 });
 
-// Form data
+// Form data with proper TypeScript typing
 const formData = reactive({
+  // Contact information
+  contactEmail: "",
+  contactPhone: "",
+  
+  // Hotel details
+  destination: "",
+  checkInDate: "",
+  checkOutDate: "",
+  rooms: 1,
+  adultGuests: 1,
+  childGuests: 0,
+  roomType: "standard" as 'standard' | 'deluxe' | 'suite',
+  preferredHotel: "",
+  starRating: "4-star" as '3-star' | '4-star' | '5-star',
+  amenities: [] as string[],
+  
+  // Additional details
+  specialRequests: "",
+  urgency: 1,
+  
+  // Legacy fields for UI compatibility
   fullName: "",
   email: "",
   phone: "",
   country: "",
-  destination: "",
   area: "",
-  checkInDate: "",
-  checkOutDate: "",
-  numberOfRooms: "",
-  totalGuests: "",
+  numberOfRooms: "1",
+  totalGuests: "1",
   roomConfiguration: "",
-  starRating: "",
   budgetRange: "",
   mealPlan: "",
   hotelChain: "",
-  amenities: [],
   additionalServices: [],
-  specialRequests: "",
   purposeOfStay: "",
-  urgency: "",
   agreeToTerms: false,
 });
 
-// Generate reference number
-const generateReferenceNumber = () => {
-  const prefix = "HT";
-  const timestamp = Date.now().toString();
-  return prefix + timestamp.slice(-10);
+// Auto-fill user contact information
+onMounted(() => {
+  const defaultContact = bookingService.getDefaultContactInfo();
+  if (defaultContact.contactEmail) {
+    formData.contactEmail = defaultContact.contactEmail;
+    formData.email = defaultContact.contactEmail; // For UI compatibility
+  }
+  if (defaultContact.contactPhone) {
+    formData.contactPhone = defaultContact.contactPhone;
+    formData.phone = defaultContact.contactPhone; // For UI compatibility
+  }
+  if (defaultContact.urgency) {
+    formData.urgency = defaultContact.urgency;
+  }
+});
+
+// Helper functions
+const showMessage = (message: string, type: 'success' | 'error' = 'error') => {
+  if (type === 'success') {
+    successMessage.value = message;
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = message;
+    successMessage.value = '';
+  }
 };
 
-// Submit hotel request
+const validateForm = (): string[] => {
+  const errors: string[] = [];
+
+  if (!formData.destination.trim()) errors.push('Destination is required');
+  if (!formData.checkInDate) errors.push('Check-in date is required');
+  if (!formData.checkOutDate) errors.push('Check-out date is required');
+  if (!formData.contactEmail.trim()) errors.push('Contact email is required');
+  if (!formData.contactPhone.trim()) errors.push('Contact phone is required');
+  if (formData.rooms < 1) errors.push('At least 1 room is required');
+  if (formData.adultGuests < 1) errors.push('At least 1 adult guest is required');
+
+  return errors;
+};
+
+// Submit hotel booking using new API
 const submitHotelRequest = async () => {
-  isSubmitting.value = true;
+  console.log('🏨 Starting hotel booking submission...');
 
-  try {
-    // Generate reference number
-    referenceNumber.value = generateReferenceNumber();
+  // Note: Quote requests don't require authentication
+  console.log('📤 Submitting hotel quote request (no auth required)');
 
-    // Calculate stay duration
-    const checkIn = new Date(formData.checkInDate);
-    const checkOut = new Date(formData.checkOutDate);
-    const stayDuration = Math.ceil(
-      (checkOut - checkIn) / (1000 * 60 * 60 * 24)
-    );
+  // Sync UI fields to API fields
+  formData.contactEmail = formData.email || formData.contactEmail;
+  formData.contactPhone = formData.phone || formData.contactPhone;
+  formData.destination = formData.destination;
+  formData.rooms = parseInt(formData.numberOfRooms) || 1;
+  formData.adultGuests = parseInt(formData.totalGuests) || 1;
+  formData.preferredHotel = formData.hotelChain;
 
-    // Prepare email template parameters
-    const templateParams = {
-      // Customer Info
-      to_email: formData.email,
-      customer_name: formData.fullName,
-      reference_number: referenceNumber.value,
+  // Map star rating
+  if (formData.starRating === "luxury") formData.starRating = "5-star";
+  if (formData.starRating === "any") formData.starRating = "4-star";
 
-      // Hotel Details
-      destination: formData.destination,
-      area: formData.area || "Not specified",
-      check_in_date: formData.checkInDate,
-      check_out_date: formData.checkOutDate,
-      stay_duration: `${stayDuration} night${stayDuration > 1 ? "s" : ""}`,
-      number_of_rooms: formData.numberOfRooms,
-      total_guests: formData.totalGuests,
-      room_configuration: formData.roomConfiguration || "Not specified",
+  // Map urgency
+  if (formData.urgency === "standard") formData.urgency = 1;
+  else if (formData.urgency === "urgent") formData.urgency = 2;
+  else if (formData.urgency === "asap") formData.urgency = 3;
 
-      // Preferences
-      star_rating: formData.starRating,
-      budget_range: formData.budgetRange,
-      meal_plan: formData.mealPlan || "No preference",
-      hotel_chain: formData.hotelChain || "No preference",
-      amenities:
-        formData.amenities.length > 0
-          ? formData.amenities.join(", ")
-          : "None specified",
-      additional_services:
-        formData.additionalServices.length > 0
-          ? formData.additionalServices.join(", ")
-          : "None",
-
-      // Special Requirements
-      special_requests: formData.specialRequests || "None",
-      purpose_of_stay: formData.purposeOfStay || "Not specified",
-      urgency: formData.urgency,
-
-      // Contact
-      phone: formData.phone,
-      country: formData.country || "Not specified",
-
-      // Current date/time
-      submission_date: new Date().toLocaleString(),
-    };
-
-    // Send customer confirmation email
-    await emailjs.send(
-      "service_j123abc", // Replace with your EmailJS service ID
-      "template_hotel_customer", // Replace with your customer template ID
-      templateParams,
-      "your_public_key" // Replace with your EmailJS public key
-    );
-
-    // Send admin notification email
-    const adminParams = {
-      ...templateParams,
-      to_email: "bookings@globalhorizons.com", // Your admin email
-    };
-
-    await emailjs.send(
-      "service_j123abc", // Replace with your EmailJS service ID
-      "template_hotel_admin", // Replace with your admin template ID
-      adminParams,
-      "your_public_key" // Replace with your EmailJS public key
-    );
-
-    // Show success state
-    isSubmitted.value = true;
-
-    // Store in session storage (for admin retrieval)
-    sessionStorage.setItem(
-      `hotel_booking_${referenceNumber.value}`,
-      JSON.stringify({
-        ...formData,
-        referenceNumber: referenceNumber.value,
-        submissionDate: new Date().toISOString(),
-        serviceType: "hotel",
-      })
-    );
-  } catch (error) {
-    console.error("Error submitting hotel request:", error);
-    alert(
-      "There was an error submitting your request. Please try again or contact us directly."
-    );
+  // Validate form
+  const validationErrors = validateForm();
+  if (validationErrors.length > 0) {
+    showMessage('Please fix the following errors: ' + validationErrors.join(', '));
+    return;
   }
 
-  isSubmitting.value = false;
+  isSubmitting.value = true;
+  errorMessage.value = '';
+  successMessage.value = '';
+
+  try {
+    // Prepare hotel booking data
+    const hotelDetails: HotelBookingDetails = {
+      destination: formData.destination,
+      checkInDate: formData.checkInDate,
+      checkOutDate: formData.checkOutDate,
+      rooms: formData.rooms,
+      adultGuests: formData.adultGuests,
+      childGuests: formData.childGuests,
+      roomType: formData.roomType,
+      preferredHotel: formData.preferredHotel || undefined,
+      starRating: formData.starRating,
+      amenities: formData.amenities
+    };
+
+    const submissionData: HotelBookingSubmissionDto = {
+      hotelDetails,
+      contactEmail: formData.contactEmail,
+      contactPhone: formData.contactPhone,
+      specialRequests: formData.specialRequests || undefined,
+      urgency: formData.urgency
+    };
+
+    console.log('📤 Submitting hotel booking data:', submissionData);
+
+    // Submit to API
+    const response: BookingSubmissionResponse = await bookingService.submitHotelBooking(submissionData);
+
+    console.log('✅ Hotel booking submitted successfully:', response);
+
+    // Update UI with success
+    referenceNumber.value = response.referenceNumber;
+    isSubmitted.value = true;
+    showMessage(`Hotel booking submitted successfully! Your reference number is ${response.referenceNumber}`, 'success');
+
+  } catch (error: any) {
+    console.error('❌ Hotel booking submission failed:', error);
+    showMessage(error.message || 'Failed to submit hotel booking. Please try again.');
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 </script>
 

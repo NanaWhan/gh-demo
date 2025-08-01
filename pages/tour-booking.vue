@@ -35,6 +35,23 @@
     <section class="py-16 bg-gray-50">
       <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto">
+          <!-- Error Message -->
+          <div
+            v-if="errorMessage"
+            class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-red-800">{{ errorMessage }}</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Success Message -->
           <div
             v-if="isSubmitted"
@@ -789,9 +806,17 @@
   </div>
 </template>
 
-<script setup>
-import { ref, reactive, computed } from "vue";
-import emailjs from "@emailjs/browser";
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted } from "vue";
+import bookingService from '~/services/BookingService';
+import authService from '~/services/AuthService';
+import {
+  TourBookingSubmissionDto,
+  TourBookingDetails,
+  URGENCY_OPTIONS,
+  BookingSubmissionResponse
+} from '~/types/booking-api-types';
+import { forceRedirect } from '~/utils/navigation';
 
 // SEO Meta
 useHead({
@@ -809,36 +834,102 @@ useHead({
 const isSubmitting = ref(false);
 const isSubmitted = ref(false);
 const referenceNumber = ref("");
+const errorMessage = ref("");
+const successMessage = ref("");
 
 // Today's date for minimum date validation
 const today = computed(() => {
   return new Date().toISOString().split("T")[0];
 });
 
-// Form data
+// Form data with proper TypeScript typing
 const formData = reactive({
+  // Contact information
+  contactEmail: "",
+  contactPhone: "",
+  
+  // Tour details
+  tourPackage: "",
+  destination: "",
+  startDate: "",
+  endDate: "",
+  travelers: 1,
+  accommodationType: "standard" as 'budget' | 'standard' | 'luxury',
+  tourType: "group" as 'group' | 'private' | 'custom',
+  activities: [] as string[],
+  mealPlan: "breakfast" as 'breakfast' | 'half-board' | 'full-board',
+  
+  // Additional details
+  specialRequests: "",
+  urgency: 1,
+  
+  // Legacy fields for UI compatibility
   fullName: "",
   email: "",
   phone: "",
   country: "",
-  destination: "",
   customDestination: "",
   customBudget: "",
   customRequirements: "",
   travelDate: "",
   duration: "",
-  tourType: "",
-  adults: "",
+  adults: "1",
   children: 0,
   infants: 0,
   accommodationLevel: "standard",
   activityLevel: "",
   mealPreferences: "",
   interests: [],
-  specialRequests: "",
-  urgency: "",
   agreeToTerms: false,
 });
+
+// Auto-fill user contact information
+onMounted(() => {
+  const defaultContact = bookingService.getDefaultContactInfo();
+  if (defaultContact.contactEmail) {
+    formData.contactEmail = defaultContact.contactEmail;
+    formData.email = defaultContact.contactEmail; // For UI compatibility
+  }
+  if (defaultContact.contactPhone) {
+    formData.contactPhone = defaultContact.contactPhone;
+    formData.phone = defaultContact.contactPhone; // For UI compatibility
+  }
+  if (defaultContact.urgency) {
+    formData.urgency = defaultContact.urgency;
+  }
+});
+
+// Helper functions
+const showMessage = (message: string, type: 'success' | 'error' = 'error') => {
+  if (type === 'success') {
+    successMessage.value = message;
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = message;
+    successMessage.value = '';
+  }
+};
+
+const validateForm = (): string[] => {
+  const errors: string[] = [];
+
+  // Safe string validation - handle undefined/null values
+  const destination = (formData.destination || '').trim();
+  const customDestination = (formData.customDestination || '').trim();
+  const contactEmail = (formData.contactEmail || '').trim();
+  const contactPhone = (formData.contactPhone || '').trim();
+
+  if (!destination && !customDestination) {
+    errors.push('Destination is required');
+  }
+  if (!formData.startDate) errors.push('Start date is required');
+  if (!formData.endDate) errors.push('End date is required');
+  if (!contactEmail) errors.push('Contact email is required');
+  if (!contactPhone) errors.push('Contact phone is required');
+  if (formData.travelers < 1) errors.push('At least 1 traveler is required');
+
+  return errors;
+};
 
 // Pre-defined tour packages with base prices
 const tourPackages = {
@@ -971,109 +1062,124 @@ const generateReferenceNumber = () => {
 };
 
 // Submit tour request
+// Submit tour booking using new API
 const submitTourRequest = async () => {
-  isSubmitting.value = true;
+  console.log('🗺️ Starting tour booking submission...');
 
-  try {
-    // Generate reference number
-    referenceNumber.value = generateReferenceNumber();
+  // Note: Quote requests don't require authentication
+  console.log('📤 Submitting tour quote request (no auth required)');
 
-    // Prepare email template parameters
-    const templateParams = {
-      // Customer Info
-      to_email: formData.email,
-      customer_name: formData.fullName,
-      reference_number: referenceNumber.value,
-
-      // Tour Details
-      destination:
-        formData.destination === "custom"
-          ? formData.customDestination
-          : tourPackages[formData.destination]?.name || formData.destination,
-      travel_date: formData.travelDate,
-      duration:
-        formData.duration || tourPackages[formData.destination]?.days || "N/A",
-      tour_type: formData.tourType,
-
-      // Group Details
-      adults: formData.adults,
-      children: formData.children,
-      infants: formData.infants,
-      total_travelers: totalTravelers.value,
-      accommodation_level: formData.accommodationLevel,
-
-      // Preferences
-      activity_level: formData.activityLevel || "Not specified",
-      meal_preferences: formData.mealPreferences || "Not specified",
-      interests:
-        formData.interests.length > 0
-          ? formData.interests.join(", ")
-          : "None specified",
-
-      // Pricing
-      estimated_price: calculatedPrice.value,
-
-      // Custom Tour (if applicable)
-      custom_destination: formData.customDestination || "N/A",
-      custom_budget: formData.customBudget || "N/A",
-      custom_requirements: formData.customRequirements || "N/A",
-
-      // Special Requirements
-      special_requests: formData.specialRequests || "None",
-      urgency: formData.urgency,
-
-      // Contact
-      phone: formData.phone,
-      country: formData.country || "Not specified",
-
-      // Current date/time
-      submission_date: new Date().toLocaleString(),
-    };
-
-    // Send customer confirmation email
-    await emailjs.send(
-      "service_j123abc", // Replace with your EmailJS service ID
-      "template_tour_customer", // Replace with your customer template ID
-      templateParams,
-      "your_public_key" // Replace with your EmailJS public key
-    );
-
-    // Send admin notification email
-    const adminParams = {
-      ...templateParams,
-      to_email: "bookings@globalhorizons.com", // Your admin email
-    };
-
-    await emailjs.send(
-      "service_j123abc", // Replace with your EmailJS service ID
-      "template_tour_admin", // Replace with your admin template ID
-      adminParams,
-      "your_public_key" // Replace with your EmailJS public key
-    );
-
-    // Show success state
-    isSubmitted.value = true;
-
-    // Store in session storage (for admin retrieval)
-    sessionStorage.setItem(
-      `tour_booking_${referenceNumber.value}`,
-      JSON.stringify({
-        ...formData,
-        referenceNumber: referenceNumber.value,
-        estimatedPrice: calculatedPrice.value,
-        submissionDate: new Date().toISOString(),
-        serviceType: "tour",
-      })
-    );
-  } catch (error) {
-    console.error("Error submitting tour request:", error);
-    alert(
-      "There was an error submitting your request. Please try again or contact us directly."
-    );
+  // Sync UI fields to API fields
+  formData.contactEmail = formData.email || formData.contactEmail;
+  formData.contactPhone = formData.phone || formData.contactPhone;
+  formData.startDate = formData.travelDate || formData.startDate;
+  
+  // Calculate end date if not set
+  if (!formData.endDate && formData.startDate && formData.duration) {
+    const startDate = new Date(formData.startDate);
+    const durationDays = parseInt(formData.duration) || 7;
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + durationDays);
+    formData.endDate = endDate.toISOString().split('T')[0];
   }
 
-  isSubmitting.value = false;
+  // Set destination
+  if (formData.destination === "custom" && formData.customDestination) {
+    formData.destination = formData.customDestination;
+  } else if (formData.destination && tourPackages[formData.destination]) {
+    formData.destination = tourPackages[formData.destination].name;
+  }
+
+  // Set travelers count
+  formData.travelers = parseInt(formData.adults) + formData.children + formData.infants || 1;
+
+  // Set tour package name
+  if (formData.destination && tourPackages[formData.destination]) {
+    formData.tourPackage = tourPackages[formData.destination].name;
+  } else {
+    formData.tourPackage = formData.destination || "Custom Tour Package";
+  }
+
+  // Map accommodation level
+  if (formData.accommodationLevel === "budget") formData.accommodationType = "budget";
+  else if (formData.accommodationLevel === "luxury") formData.accommodationType = "luxury";
+  else formData.accommodationType = "standard";
+
+  // Map meal preferences to meal plan
+  if (formData.mealPreferences === "half-board") formData.mealPlan = "half-board";
+  else if (formData.mealPreferences === "full-board") formData.mealPlan = "full-board";
+  else formData.mealPlan = "breakfast";
+
+  // Map urgency
+  if (formData.urgency === "standard") formData.urgency = 1;
+  else if (formData.urgency === "urgent") formData.urgency = 2;
+  else if (formData.urgency === "asap") formData.urgency = 3;
+
+  // Set activities from interests
+  formData.activities = formData.interests || [];
+
+  // Validate form
+  const validationErrors = validateForm();
+  if (validationErrors.length > 0) {
+    const { notifyError } = useNotifications();
+    notifyError('Validation Error', 'Please fix the following errors: ' + validationErrors.join(', '));
+    return;
+  }
+
+  isSubmitting.value = true;
+  errorMessage.value = '';
+  successMessage.value = '';
+
+  try {
+    // Prepare tour booking data
+    const tourDetails: TourBookingDetails = {
+      tourPackage: formData.tourPackage,
+      destination: formData.destination,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      travelers: formData.travelers,
+      accommodationType: formData.accommodationType,
+      tourType: formData.tourType,
+      activities: formData.activities,
+      mealPlan: formData.mealPlan
+    };
+
+    const submissionData: TourBookingSubmissionDto = {
+      tourDetails,
+      contactEmail: formData.contactEmail,
+      contactPhone: formData.contactPhone,
+      contactName: formData.fullName || formData.contactEmail.split('@')[0] || 'Tour Guest',
+      specialRequests: formData.specialRequests || undefined,
+      urgency: formData.urgency
+    };
+
+    console.log('📤 Submitting tour booking data:', submissionData);
+
+    // Submit to API
+    const response: BookingSubmissionResponse = await bookingService.submitTourBooking(submissionData);
+
+    console.log('✅ Tour booking submitted successfully:', response);
+
+    // Show success notification
+    const { notifyQuoteSuccess } = useNotifications();
+    notifyQuoteSuccess(response.referenceNumber, 'Tour');
+
+    // Update UI with success
+    referenceNumber.value = response.referenceNumber;
+    isSubmitted.value = true;
+    showMessage(`Tour booking submitted successfully! Your reference number is ${response.referenceNumber}`, 'success');
+
+  } catch (error: any) {
+    console.error('❌ Tour booking submission failed:', error);
+    const { notifyQuoteError } = useNotifications();
+    const errorMsg = error.message || 'Failed to submit tour booking. Please try again.';
+    notifyQuoteError('Tour', errorMsg);
+    showMessage(errorMsg);
+  } finally {
+    isSubmitting.value = false;
+  }
 };
+
 </script>
 
 <style scoped>

@@ -40,12 +40,12 @@
               class="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mr-4"
             >
               <span class="text-lg font-bold text-white"
-                >{{ user.firstName[0] }}{{ user.lastName[0] }}</span
+                >{{ firstName[0] }}{{ lastName[0] }}</span
               >
             </div>
             <div class="text-left">
               <p class="text-lg font-semibold text-gray-900">
-                Welcome, {{ user.firstName }}!
+                Welcome, {{ firstName }}!
               </p>
               <p class="text-sm text-gray-600">
                 Your bookings are secure and private
@@ -382,7 +382,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 
 // Authentication middleware - PROTECT THIS PAGE
 definePageMeta({
@@ -402,16 +402,59 @@ useHead({
 });
 
 // Get authenticated user
-const user = ref({
-  firstName: "John",
-  lastName: "Doe",
-  email: "john@example.com",
+import authService from '~/services/AuthService';
+import bookingService from '~/services/BookingService';
+
+const user = ref(authService.getCurrentUser() || {
+  fullName: "Guest User",
+  email: "guest@example.com",
+});
+
+// Parse name for display
+const firstName = computed(() => {
+  if (user.value.fullName) {
+    return user.value.fullName.split(' ')[0];
+  }
+  return user.value.firstName || 'Guest';
+});
+const lastName = computed(() => {
+  if (user.value.fullName) {
+    const parts = user.value.fullName.split(' ');
+    return parts[parts.length - 1];
+  }
+  return user.value.lastName || 'User';
 });
 
 // Form state
 const referenceNumber = ref("");
 const isTracking = ref(false);
 const trackingResult = ref(null);
+
+// Helper functions
+const getServiceTypeName = (serviceType) => {
+  const types = {
+    1: "Flight",
+    2: "Hotel", 
+    3: "Tour",
+    4: "Visa",
+    5: "Complete Package"
+  };
+  return types[serviceType] || "Unknown";
+};
+
+const getStatusMessage = (status) => {
+  const messages = {
+    1: "Your request has been submitted and is in our queue",
+    2: "Our team is reviewing your request",
+    3: "Quote has been prepared and sent to you",
+    4: "Awaiting payment confirmation",
+    5: "Payment received successfully",
+    6: "Booking confirmed - details will follow",
+    7: "Request has expired",
+    8: "Request was cancelled"
+  };
+  return messages[status] || "Status unknown";
+};
 
 // Status steps configuration
 const statusSteps = [
@@ -504,45 +547,42 @@ const getStatusClass = (stepStatus, currentStatus) => {
 
 // Track booking function
 const trackBooking = async () => {
+  if (!referenceNumber.value.trim()) {
+    alert('Please enter a reference number');
+    return;
+  }
+
   isTracking.value = true;
 
   try {
-    const { api } = useApi();
-    const result = await api.booking.track(referenceNumber.value);
+    // Use the public quote tracking endpoint
+    const response = await $fetch(`https://glohorizonapi.fly.dev/api/quote/track/${referenceNumber.value}`, {
+      method: 'GET'
+    });
+    
+    const result = response;
 
     if (result) {
       // Map backend response to frontend format
       trackingResult.value = {
         reference: result.referenceNumber,
-        serviceType: result.serviceType,
-        currentStatus:
-          result.status === "Submitted"
-            ? 1
-            : result.status === "Processing"
-            ? 2
-            : result.status === "Confirmed"
-            ? 3
-            : result.status === "Completed"
-            ? 4
-            : 1,
-        statusMessage:
-          result.statusMessage || getDefaultStatusMessage(result.status),
-        estimatedTime: result.estimatedTime || "We will update you soon.",
-        timestamps:
-          result.statusHistory?.reduce((acc, hist) => {
-            const statusNum =
-              hist.status === "Submitted"
-                ? 1
-                : hist.status === "Processing"
-                ? 2
-                : hist.status === "Confirmed"
-                ? 3
-                : hist.status === "Completed"
-                ? 4
-                : 1;
-            acc[statusNum] = new Date(hist.timestamp).toLocaleString();
-            return acc;
-          }, {}) || {},
+        serviceType: getServiceTypeName(result.serviceType),
+        destination: result.destination,
+        createdAt: result.createdAt,
+        travelDate: result.travelDate,
+        contactEmail: result.contactEmail,
+        contactPhone: result.contactPhone,
+        contactName: result.contactName,
+        specialRequests: result.specialRequests,
+        quotedAmount: result.quotedAmount,
+        currency: result.currency,
+        currentStatus: result.status, // API returns numeric status
+        statusMessage: getStatusMessage(result.status),
+        estimatedTime: "We will update you within 24-48 hours.",
+        timestamps: result.statusHistory?.reduce((acc, hist) => {
+          acc[hist.toStatus] = new Date(hist.changedAt).toLocaleString();
+          return acc;
+        }, {}) || {},
       };
 
       // Update status steps with timestamps

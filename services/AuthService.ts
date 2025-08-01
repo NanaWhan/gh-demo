@@ -209,18 +209,27 @@ export class AuthService {
     /**
      * Get user booking history with stats
      */
-    async getBookingHistory(): Promise<BookingHistoryResponse> {
+    async getBookingHistory(): Promise<{ bookings: BookingHistory[], stats: BookingStats }> {
         try {
             const token = this.getToken();
             if (!token) {
                 throw new Error('No authentication token found');
             }
 
-            const response = await $fetch<BookingHistoryResponse>(`${this.baseUrl}/user/booking-history`, {
+            const response = await $fetch<BookingHistoryResponse>(`${this.baseUrl}/quote/my-quotes`, {
                 headers: createAuthHeaders(token)
             });
 
-            return response;
+            // Transform the response to match what the UI expects
+            return {
+                bookings: response.quotes || [],
+                stats: {
+                    totalBookings: response.totalCount || 0,
+                    pendingBookings: (response.quotes || []).filter(q => q.status === 'Submitted' || q.status === 'Processing').length,
+                    completedBookings: (response.quotes || []).filter(q => q.status === 'Completed').length,
+                    totalSpent: 0 // We don't have this data yet
+                }
+            };
         } catch (error: any) {
             console.error('Booking history fetch error:', error);
 

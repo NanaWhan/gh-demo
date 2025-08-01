@@ -814,6 +814,23 @@
         </div>
       </form>
 
+      <!-- Error Message -->
+      <div
+        v-if="errorMessage"
+        class="mt-8 bg-red-50 border border-red-200 rounded-lg p-6"
+      >
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-red-800">{{ errorMessage }}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Success Message -->
       <div
         v-if="showSuccess"
@@ -870,8 +887,20 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import bookingService from '~/services/BookingService';
+import authService from '~/services/AuthService';
+import {
+  CompletePackageSubmissionDto,
+  CompletePackageDetails,
+  FlightBookingDetails,
+  HotelBookingDetails,
+  VisaBookingDetails,
+  URGENCY_OPTIONS,
+  BookingSubmissionResponse
+} from '~/types/booking-api-types';
+import { forceRedirect } from '~/utils/navigation';
 
 // Form data structure
 const formData = ref({
@@ -920,6 +949,46 @@ const selectedPackage = ref("premium");
 const isSubmitting = ref(false);
 const showSuccess = ref(false);
 const referenceNumber = ref("");
+const errorMessage = ref("");
+const successMessage = ref("");
+
+// Auto-fill user contact information
+onMounted(() => {
+  const defaultContact = bookingService.getDefaultContactInfo();
+  if (defaultContact.contactEmail) {
+    formData.value.personalInfo.email = defaultContact.contactEmail;
+  }
+  if (defaultContact.contactPhone) {
+    formData.value.personalInfo.phone = defaultContact.contactPhone;
+  }
+});
+
+// Helper functions
+const showMessage = (message: string, type: 'success' | 'error' = 'error') => {
+  if (type === 'success') {
+    successMessage.value = message;
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = message;
+    successMessage.value = '';
+  }
+};
+
+const validateForm = (): string[] => {
+  const errors: string[] = [];
+
+  if (!formData.value.personalInfo.fullName.trim()) errors.push('Full name is required');
+  if (!formData.value.personalInfo.email.trim()) errors.push('Email is required');
+  if (!formData.value.personalInfo.phone.trim()) errors.push('Phone is required');
+  if (!formData.value.personalInfo.nationality.trim()) errors.push('Nationality is required');
+  if (!formData.value.travelDetails.destination.trim()) errors.push('Destination is required');
+  if (!formData.value.travelDetails.departureDate) errors.push('Departure date is required');
+  if (!formData.value.travelDetails.travelers || parseInt(formData.value.travelDetails.travelers) < 1) {
+    errors.push('At least 1 traveler is required');
+  }
+
+  return errors;
+};
 
 // Package selection
 const selectPackage = (packageType) => {
@@ -1035,19 +1104,98 @@ const generateReferenceNumber = () => {
   return `${prefix}${timestamp}${random}`;
 };
 
-// Handle form submission
+// Handle form submission using new API
 const handleFormSubmit = async () => {
+  console.log('📦 Starting complete package booking submission...');
+
+  // Note: Quote requests don't require authentication
+  console.log('📤 Submitting complete package quote request (no auth required)');
+
+  // Validate form
+  const validationErrors = validateForm();
+  if (validationErrors.length > 0) {
+    showMessage('Please fix the following errors: ' + validationErrors.join(', '));
+    return;
+  }
+
   isSubmitting.value = true;
+  errorMessage.value = '';
+  successMessage.value = '';
 
   try {
-    // Generate reference number
-    referenceNumber.value = generateReferenceNumber();
+    // Prepare flight details (if needed)
+    const flightDetails: FlightBookingDetails | undefined = formData.value.flightPreferences.departureCity ? {
+      tripType: formData.value.travelDetails.returnDate ? 'round-trip' : 'one-way',
+      departureCity: formData.value.flightPreferences.departureCity,
+      arrivalCity: formData.value.travelDetails.destination,
+      departureDate: formData.value.travelDetails.departureDate,
+      returnDate: formData.value.travelDetails.returnDate || undefined,
+      adultPassengers: parseInt(formData.value.travelDetails.travelers) || 1,
+      childPassengers: 0,
+      infantPassengers: 0,
+      preferredClass: formData.value.flightPreferences.classPreference as 'economy' | 'business' | 'first',
+      preferredAirline: formData.value.flightPreferences.airlinePreference || undefined,
+      passengers: []
+    } : undefined;
 
-    // Simulate form submission delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Prepare hotel details (if needed)  
+    const hotelDetails: HotelBookingDetails | undefined = formData.value.hotelPreferences.category ? {
+      destination: formData.value.travelDetails.destination,
+      checkInDate: formData.value.travelDetails.departureDate,
+      checkOutDate: formData.value.travelDetails.returnDate || formData.value.travelDetails.departureDate,
+      rooms: 1,
+      adultGuests: parseInt(formData.value.travelDetails.travelers) || 1,
+      childGuests: 0,
+      roomType: formData.value.hotelPreferences.roomType as 'standard' | 'deluxe' | 'suite',
+      preferredHotel: undefined,
+      starRating: formData.value.hotelPreferences.category as '3-star' | '4-star' | '5-star',
+      amenities: formData.value.hotelPreferences.amenities || []
+    } : undefined;
 
-    // Show success message
+    // Prepare visa details (if needed)
+    const visaDetails: VisaBookingDetails | undefined = formData.value.visaRequirements.passportCountry ? {
+      visaType: "Tourist Visa",
+      destinationCountry: formData.value.travelDetails.destination,
+      processingType: formData.value.visaRequirements.urgency as 'standard' | 'express' | 'super-express',
+      intendedTravelDate: formData.value.travelDetails.departureDate,
+      durationOfStay: 30,
+      purposeOfVisit: "Tourism",
+      passportNumber: "",
+      passportExpiryDate: "",
+      nationality: formData.value.personalInfo.nationality,
+      hasPreviousVisa: false,
+      requiredDocuments: []
+    } : undefined;
+
+    // Prepare complete package data
+    const packageDetails: CompletePackageDetails = {
+      flightDetails,
+      hotelDetails,
+      visaDetails,
+      packageType: selectedPackage.value as 'honeymoon' | 'business' | 'family' | 'adventure' | 'custom',
+      estimatedBudget: getTotalPrice(),
+      additionalServices: []
+    };
+
+    const submissionData: CompletePackageSubmissionDto = {
+      packageDetails,
+      contactEmail: formData.value.personalInfo.email,
+      contactPhone: formData.value.personalInfo.phone,
+      specialRequests: formData.value.specialRequirements.additionalRequests || undefined,
+      urgency: 1
+    };
+
+    console.log('📤 Submitting complete package booking data:', submissionData);
+
+    // Submit to API
+    const response: BookingSubmissionResponse = await bookingService.submitCompletePackage(submissionData);
+
+    console.log('✅ Complete package booking submitted successfully:', response);
+
+    // Update UI with success
+    referenceNumber.value = response.referenceNumber;
     showSuccess.value = true;
+    showMessage(`Complete package booking submitted successfully! Your reference number is ${response.referenceNumber}`, 'success');
 
     // Scroll to success message
     setTimeout(() => {
@@ -1056,9 +1204,10 @@ const handleFormSubmit = async () => {
         successElement.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }, 100);
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    alert("There was an error submitting your booking. Please try again.");
+
+  } catch (error: any) {
+    console.error('❌ Complete package booking submission failed:', error);
+    showMessage(error.message || 'Failed to submit complete package booking. Please try again.');
   } finally {
     isSubmitting.value = false;
   }

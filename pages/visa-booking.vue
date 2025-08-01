@@ -35,6 +35,23 @@
     <section class="py-16 bg-gray-50">
       <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto">
+          <!-- Error Message -->
+          <div
+            v-if="errorMessage"
+            class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8"
+          >
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-red-800">{{ errorMessage }}</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Success Message -->
           <div
             v-if="isSubmitted"
@@ -938,9 +955,18 @@
   </div>
 </template>
 
-<script setup>
-import { ref, reactive, computed } from "vue";
-import emailjs from "@emailjs/browser";
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted } from "vue";
+import bookingService from '~/services/BookingService';
+import authService from '~/services/AuthService';
+import {
+  VisaBookingSubmissionDto,
+  VisaBookingDetails,
+  VisaDocument,
+  URGENCY_OPTIONS,
+  BookingSubmissionResponse
+} from '~/types/booking-api-types';
+import { forceRedirect } from '~/utils/navigation';
 
 // SEO Meta
 useHead({
@@ -958,6 +984,8 @@ useHead({
 const isSubmitting = ref(false);
 const isSubmitted = ref(false);
 const referenceNumber = ref("");
+const errorMessage = ref("");
+const successMessage = ref("");
 const availableVisaTypes = ref([]);
 
 // Today's date for minimum date validation
@@ -965,13 +993,76 @@ const today = computed(() => {
   return new Date().toISOString().split("T")[0];
 });
 
-// Form data
+// Auto-fill user contact information
+onMounted(() => {
+  const defaultContact = bookingService.getDefaultContactInfo();
+  if (defaultContact.contactEmail) {
+    formData.contactEmail = defaultContact.contactEmail;
+    formData.email = defaultContact.contactEmail; // For UI compatibility
+  }
+  if (defaultContact.contactPhone) {
+    formData.contactPhone = defaultContact.contactPhone;
+    formData.phone = defaultContact.contactPhone; // For UI compatibility
+  }
+  if (defaultContact.urgency) {
+    formData.urgency = defaultContact.urgency;
+  }
+});
+
+// Helper functions
+const showMessage = (message: string, type: 'success' | 'error' = 'error') => {
+  if (type === 'success') {
+    successMessage.value = message;
+    errorMessage.value = '';
+  } else {
+    errorMessage.value = message;
+    successMessage.value = '';
+  }
+};
+
+const validateForm = (): string[] => {
+  const errors: string[] = [];
+
+  if (!formData.destinationCountry.trim()) errors.push('Destination country is required');
+  if (!formData.visaType.trim()) errors.push('Visa type is required');
+  if (!formData.passportNumber.trim()) errors.push('Passport number is required');
+  if (!formData.passportExpiryDate) errors.push('Passport expiry date is required');
+  if (!formData.intendedTravelDate) errors.push('Intended travel date is required');
+  if (!formData.contactEmail.trim()) errors.push('Contact email is required');
+  if (!formData.contactPhone.trim()) errors.push('Contact phone is required');
+  if (!formData.nationality.trim()) errors.push('Nationality is required');
+
+  return errors;
+};
+
+// Form data with proper TypeScript typing
 const formData = reactive({
+  // Contact information
+  contactEmail: "",
+  contactPhone: "",
+  
+  // Visa details
+  visaType: "",
+  destinationCountry: "",
+  processingType: "standard" as 'standard' | 'express' | 'super-express',
+  intendedTravelDate: "",
+  durationOfStay: 30,
+  purposeOfVisit: "",
+  passportNumber: "",
+  passportExpiryDate: "",
+  nationality: "",
+  hasPreviousVisa: false,
+  requiredDocuments: [] as VisaDocument[],
+  
+  // Additional details
+  specialRequests: "",
+  urgency: 1,
+  
+  // Legacy fields for UI compatibility
   // Personal Information
   fullName: "",
   dateOfBirth: "",
   gender: "",
-  nationality: "",
   email: "",
   phone: "",
   streetAddress: "",
@@ -979,18 +1070,13 @@ const formData = reactive({
   country: "",
 
   // Passport Information
-  passportNumber: "",
   passportIssueDate: "",
-  passportExpiryDate: "",
   passportPlaceOfIssue: "",
 
   // Visa Details
-  destinationCountry: "",
   otherCountry: "",
-  visaType: "",
   purposeOfTravel: "",
   intendedEntryDate: "",
-  durationOfStay: "",
   travelDetails: "",
 
   // Employment & Financial
@@ -1011,7 +1097,6 @@ const formData = reactive({
 
   // Processing Preferences
   processingSpeed: "",
-  urgency: "",
   specialCircumstances: "",
 
   agreeToTerms: false,
@@ -1099,126 +1184,115 @@ const generateReferenceNumber = () => {
 };
 
 // Submit visa request
+// Submit visa booking using new API
 const submitVisaRequest = async () => {
-  isSubmitting.value = true;
+  console.log('📄 Starting visa booking submission...');
 
-  try {
-    // Generate reference number
-    referenceNumber.value = generateReferenceNumber();
+  // Note: Quote requests don't require authentication
+  console.log('📤 Submitting visa quote request (no auth required)');
 
-    // Prepare email template parameters
-    const templateParams = {
-      // Customer Info
-      to_email: formData.email,
-      customer_name: formData.fullName,
-      reference_number: referenceNumber.value,
+  // Sync UI fields to API fields
+  formData.contactEmail = formData.email || formData.contactEmail;
+  formData.contactPhone = formData.phone || formData.contactPhone;
+  formData.intendedTravelDate = formData.intendedEntryDate || formData.intendedTravelDate;
+  formData.purposeOfVisit = formData.purposeOfTravel || formData.purposeOfVisit;
 
-      // Personal Details
-      date_of_birth: formData.dateOfBirth,
-      gender: formData.gender,
-      nationality: formData.nationality,
-      phone: formData.phone,
-      address: `${formData.streetAddress}, ${formData.city}, ${formData.country}`,
-
-      // Passport Info
-      passport_number: formData.passportNumber,
-      passport_issue_date: formData.passportIssueDate,
-      passport_expiry_date: formData.passportExpiryDate,
-      passport_place_of_issue: formData.passportPlaceOfIssue,
-
-      // Visa Details
-      destination_country:
-        formData.destinationCountry === "other"
-          ? formData.otherCountry
-          : formData.destinationCountry,
-      visa_type: formData.visaType,
-      purpose_of_travel: formData.purposeOfTravel,
-      intended_entry_date: formData.intendedEntryDate,
-      duration_of_stay: formData.durationOfStay || "Not specified",
-      travel_details: formData.travelDetails || "None provided",
-
-      // Employment & Financial
-      employment_status: formData.employmentStatus,
-      employer_name: formData.employerName || "N/A",
-      job_title: formData.jobTitle || "N/A",
-      monthly_income: formData.monthlyIncome || "Not disclosed",
-
-      // Documents
-      available_documents:
-        formData.availableDocuments.length > 0
-          ? formData.availableDocuments.join(", ")
-          : "None specified",
-      document_notes: formData.documentNotes || "None",
-
-      // Travel History
-      previously_visited: formData.previouslyVisited || "Not specified",
-      previous_visit_details: formData.previousVisitDetails || "N/A",
-      visa_refused: formData.visaRefused || "Not specified",
-      visa_refusal_details: formData.visaRefusalDetails || "N/A",
-
-      // Processing
-      processing_speed: formData.processingSpeed,
-      urgency: formData.urgency,
-      special_circumstances: formData.specialCircumstances || "None",
-
-      // Current date/time
-      submission_date: new Date().toLocaleString(),
-    };
-
-    // Submit to backend API
-    const { api } = useApi();
-
-    const bookingData = {
-      serviceType: "Visa",
-      customerInfo: {
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        nationality: formData.nationality,
-      },
-      serviceDetails: {
-        destinationCountry: formData.destinationCountry,
-        visaType: formData.visaType,
-        purposeOfTravel: formData.purposeOfTravel,
-        intendedEntryDate: formData.intendedEntryDate,
-        durationOfStay: formData.durationOfStay,
-        processingSpeed: formData.processingSpeed,
-        urgency: formData.urgency,
-      },
-      additionalInfo: {
-        passportNumber: formData.passportNumber,
-        passportExpiryDate: formData.passportExpiryDate,
-        employmentStatus: formData.employmentStatus,
-        monthlyIncome: formData.monthlyIncome,
-        specialRequirements: formData.specialRequirements,
-        availableDocuments: formData.availableDocuments,
-      },
-    };
-
-    const response = await api.booking.submit(bookingData);
-    referenceNumber.value = response.referenceNumber;
-
-    // Show success state
-    isSubmitted.value = true;
-
-    // Store in session storage (for admin retrieval)
-    sessionStorage.setItem(
-      `visa_application_${referenceNumber.value}`,
-      JSON.stringify({
-        ...formData,
-        referenceNumber: referenceNumber.value,
-        submissionDate: new Date().toISOString(),
-        serviceType: "visa",
-      })
-    );
-  } catch (error) {
-    console.error("Error submitting visa application:", error);
-    alert(
-      "There was an error submitting your application. Please try again or contact us directly."
-    );
+  // Handle destination country
+  if (formData.destinationCountry === "other" && formData.otherCountry) {
+    formData.destinationCountry = formData.otherCountry;
   }
 
-  isSubmitting.value = false;
+  // Map processing speed to processing type
+  if (formData.processingSpeed === "standard") formData.processingType = "standard";
+  else if (formData.processingSpeed === "express") formData.processingType = "express";
+  else if (formData.processingSpeed === "super-express") formData.processingType = "super-express";
+
+  // Map urgency
+  if (formData.urgency === "standard") formData.urgency = 1;
+  else if (formData.urgency === "urgent") formData.urgency = 2;
+  else if (formData.urgency === "asap") formData.urgency = 3;
+
+  // Set duration of stay as number
+  formData.durationOfStay = parseInt(formData.durationOfStay) || 30;
+
+  // Set up required documents
+  if (formData.availableDocuments && formData.availableDocuments.length > 0) {
+    formData.requiredDocuments = formData.availableDocuments.map((doc: string) => ({
+      documentType: doc,
+      fileName: "",
+      isRequired: true,
+      isUploaded: false
+    }));
+  }
+
+  // Set previous visa status
+  formData.hasPreviousVisa = formData.previouslyVisited === "yes";
+
+  // Validate form
+  const validationErrors = validateForm();
+  if (validationErrors.length > 0) {
+    showMessage('Please fix the following errors: ' + validationErrors.join(', '));
+    return;
+  }
+
+  isSubmitting.value = true;
+  errorMessage.value = '';
+  successMessage.value = '';
+
+  try {
+    // Convert duration string to number
+    let durationDays = 30; // default
+    const durationStr = formData.durationOfStay.toString();
+    if (durationStr.includes('1-7')) durationDays = 7;
+    else if (durationStr.includes('8-14')) durationDays = 14;
+    else if (durationStr.includes('15-30')) durationDays = 30;
+    else if (durationStr.includes('1-3months')) durationDays = 90;
+    else if (durationStr.includes('3-6months')) durationDays = 180;
+    else if (durationStr.includes('6months+')) durationDays = 365;
+    else if (!isNaN(Number(durationStr))) durationDays = Number(durationStr);
+
+    // Prepare visa booking data
+    const visaDetails: VisaBookingDetails = {
+      visaType: formData.visaType,
+      destinationCountry: formData.destinationCountry,
+      processingType: formData.processingType,
+      intendedTravelDate: formData.intendedTravelDate + "T00:00:00Z",
+      durationOfStay: durationDays,
+      purposeOfVisit: formData.purposeOfVisit || "Tourism",
+      passportNumber: formData.passportNumber,
+      passportExpiryDate: formData.passportExpiryDate + "T00:00:00Z",
+      nationality: formData.nationality,
+      hasPreviousVisa: formData.hasPreviousVisa,
+      requiredDocuments: formData.requiredDocuments
+    };
+
+    const submissionData: VisaBookingSubmissionDto = {
+      visaDetails,
+      contactEmail: formData.contactEmail,
+      contactPhone: formData.contactPhone,
+      contactName: formData.fullName || "Applicant",
+      specialRequests: formData.specialRequests || undefined,
+      urgency: formData.urgency
+    };
+
+    console.log('📤 Submitting visa booking data:', submissionData);
+
+    // Submit to API
+    const response: BookingSubmissionResponse = await bookingService.submitVisaBooking(submissionData);
+
+    console.log('✅ Visa booking submitted successfully:', response);
+
+    // Update UI with success
+    referenceNumber.value = response.referenceNumber;
+    isSubmitted.value = true;
+    showMessage(`Visa booking submitted successfully! Your reference number is ${response.referenceNumber}`, 'success');
+
+  } catch (error: any) {
+    console.error('❌ Visa booking submission failed:', error);
+    showMessage(error.message || 'Failed to submit visa booking. Please try again.');
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 </script>
 

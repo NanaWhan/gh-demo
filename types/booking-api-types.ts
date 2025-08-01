@@ -49,6 +49,7 @@ export interface FlightBookingSubmissionDto {
     flightDetails: FlightBookingDetails;
     contactEmail: string;
     contactPhone: string;
+    contactName: string;
     specialRequests?: string;
     urgency: number; // 1=Standard, 2=Urgent, 3=Emergency
 }
@@ -71,6 +72,7 @@ export interface HotelBookingSubmissionDto {
     hotelDetails: HotelBookingDetails;
     contactEmail: string;
     contactPhone: string;
+    contactName: string;
     specialRequests?: string;
     urgency: number;
 }
@@ -92,6 +94,7 @@ export interface TourBookingSubmissionDto {
     tourDetails: TourBookingDetails;
     contactEmail: string;
     contactPhone: string;
+    contactName: string;
     specialRequests?: string;
     urgency: number;
 }
@@ -122,6 +125,7 @@ export interface VisaBookingSubmissionDto {
     visaDetails: VisaBookingDetails;
     contactEmail: string;
     contactPhone: string;
+    contactName: string;
     specialRequests?: string;
     urgency: number;
 }
@@ -140,6 +144,7 @@ export interface CompletePackageSubmissionDto {
     packageDetails: CompletePackageDetails;
     contactEmail: string;
     contactPhone: string;
+    contactName: string;
     specialRequests?: string;
     urgency: number;
 }
@@ -201,6 +206,7 @@ export interface BookingListResponse {
 export interface BookingFormData {
     contactEmail: string;
     contactPhone: string;
+    contactName: string;
     specialRequests?: string;
     urgency: number;
 }
@@ -249,6 +255,7 @@ export const validateContactInfo = (contact: BookingFormData): string[] => {
 
     if (!contact.contactEmail.trim()) errors.push('Email is required');
     if (!contact.contactPhone.trim()) errors.push('Phone is required');
+    if (!contact.contactName.trim()) errors.push('Contact name is required');
     if (!contact.urgency) errors.push('Urgency level is required');
 
     // Email validation

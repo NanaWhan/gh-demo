@@ -1,0 +1,452 @@
+{
+  "info": {
+    "name": "Global Horizons - BULLETPROOF API Tests",
+    "description": "Comprehensive API testing with automatic validation and error handling",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://glohorizonapi.fly.dev",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testEmail",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "hotelRefNumber",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "flightRefNumber",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔧 Setup & Authentication",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('API is healthy', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response time is acceptable', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register Test User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{$randomEmail}}\",\n  \"password\": \"SecurePass123!\",\n  \"fullName\": \"{{$randomFirstName}} {{$randomLastName}}\",\n  \"phoneNumber\": \"+233{{$randomInt}}\",\n  \"dateOfBirth\": \"1990-01-15T00:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate unique test email",
+                  "const testEmail = `test-${Date.now()}@example.com`;",
+                  "pm.collectionVariables.set('testEmail', testEmail);",
+                  "",
+                  "// Update request body with generated email",
+                  "const requestBody = JSON.parse(pm.request.body.raw);",
+                  "requestBody.email = testEmail;",
+                  "pm.request.body.raw = JSON.stringify(requestBody);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Registration successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.have.property('success').that.is.true;",
+                  "    pm.expect(pm.response.json()).to.have.property('token');",
+                  "    pm.expect(pm.response.json()).to.have.property('user');",
+                  "});",
+                  "",
+                  "pm.test('User data is correct', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.user).to.have.property('email');",
+                  "    pm.expect(response.user).to.have.property('fullName');",
+                  "});",
+                  "",
+                  "// Store token for later use",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "📝 Quote Requests (No Auth)",
+      "item": [
+        {
+          "name": "Hotel Quote Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hotelDetails\": {\n    \"destination\": \"Dubai\",\n    \"checkInDate\": \"2024-12-15T00:00:00Z\",\n    \"checkOutDate\": \"2024-12-22T00:00:00Z\",\n    \"rooms\": 1,\n    \"adultGuests\": 2,\n    \"childGuests\": 0,\n    \"roomType\": \"deluxe\",\n    \"starRating\": \"4-star\",\n    \"amenities\": [\"pool\", \"gym\", \"spa\"]\n  },\n  \"contactEmail\": \"{{testEmail}}\",\n  \"contactPhone\": \"+233123456789\",\n  \"contactName\": \"Postman Test User\",\n  \"specialRequests\": \"Test booking with automated validation\",\n  \"urgency\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/quote/hotel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "quote", "hotel"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Hotel quote request successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.have.property('success').that.is.true;",
+                  "    pm.expect(pm.response.json()).to.have.property('referenceNumber');",
+                  "});",
+                  "",
+                  "pm.test('Quote data structure is correct', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('quote');",
+                  "    pm.expect(response.quote).to.have.property('destination', 'Dubai');",
+                  "    pm.expect(response.quote).to.have.property('serviceType', 2); // Hotel = 2",
+                  "});",
+                  "",
+                  "pm.test('Reference number format is correct', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.referenceNumber).to.match(/^QHT\\d+$/);",
+                  "});",
+                  "",
+                  "// Store reference number for tracking test",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('hotelRefNumber', response.referenceNumber);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flight Quote Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"flightDetails\": {\n    \"tripType\": \"round-trip\",\n    \"departureCity\": \"Accra\",\n    \"arrivalCity\": \"London\",\n    \"departureDate\": \"2024-11-10T00:00:00Z\",\n    \"returnDate\": \"2024-11-20T00:00:00Z\",\n    \"adultPassengers\": 2,\n    \"childPassengers\": 1,\n    \"infantPassengers\": 0,\n    \"preferredClass\": \"business\",\n    \"preferredAirline\": \"British Airways\",\n    \"passengers\": [\n      {\n        \"firstName\": \"John\",\n        \"lastName\": \"Doe\",\n        \"dateOfBirth\": \"1985-03-15\",\n        \"passportNumber\": \"GH1234567\",\n        \"nationality\": \"Ghanaian\"\n      }\n    ]\n  },\n  \"contactEmail\": \"{{testEmail}}\",\n  \"contactPhone\": \"+233123456789\",\n  \"contactName\": \"Postman Test User\",\n  \"specialRequests\": \"Business class with extra legroom\",\n  \"urgency\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/quote/flight",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "quote", "flight"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Flight quote request successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.have.property('success').that.is.true;",
+                  "});",
+                  "",
+                  "pm.test('Flight reference number format', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.referenceNumber).to.match(/^QFL\\d+$/);",
+                  "});",
+                  "",
+                  "// Store reference number",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('flightRefNumber', response.referenceNumber);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🔒 Authenticated Booking Tests",
+      "item": [
+        {
+          "name": "Submit Flight Booking (Auth Required)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"flightDetails\": {\n    \"tripType\": \"round-trip\",\n    \"departureCity\": \"Accra\",\n    \"arrivalCity\": \"London\",\n    \"departureDate\": \"2024-11-10\",\n    \"returnDate\": \"2024-11-20\",\n    \"adultPassengers\": 2,\n    \"childPassengers\": 0,\n    \"infantPassengers\": 0,\n    \"preferredClass\": \"economy\",\n    \"preferredAirline\": \"British Airways\",\n    \"passengers\": []\n  },\n  \"contactEmail\": \"{{testEmail}}\",\n  \"contactPhone\": \"+233123456789\",\n  \"specialRequests\": \"Authenticated flight booking test\",\n  \"urgency\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/booking/flight",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "booking", "flight"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Authenticated booking successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.have.property('success').that.is.true;",
+                  "    pm.expect(pm.response.json()).to.have.property('referenceNumber');",
+                  "});",
+                  "",
+                  "pm.test('Booking data structure', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('booking');",
+                  "    pm.expect(response.booking).to.have.property('id');",
+                  "    pm.expect(response.booking).to.have.property('status');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/booking/my-bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "booking", "my-bookings"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('My bookings retrieved successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Bookings data structure', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('bookings');",
+                  "    pm.expect(response).to.have.property('totalCount');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🔍 Tracking & Validation",
+      "item": [
+        {
+          "name": "Track Hotel Quote",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/quote/track/{{hotelRefNumber}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "quote", "track", "{{hotelRefNumber}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Quote tracking successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Tracking data is complete', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('referenceNumber');",
+                  "    pm.expect(response).to.have.property('status');",
+                  "    pm.expect(response).to.have.property('destination');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "❌ Error Handling Tests",
+      "item": [
+        {
+          "name": "Invalid Hotel Quote (Missing Required Fields)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hotelDetails\": {\n    \"destination\": \"\",\n    \"checkInDate\": \"invalid-date\",\n    \"rooms\": 0\n  },\n  \"contactEmail\": \"invalid-email\",\n  \"contactPhone\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/quote/hotel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "quote", "hotel"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Validation error returned', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "    pm.expect(pm.response.json()).to.have.property('success').that.is.false;",
+                  "    pm.expect(pm.response.json()).to.have.property('errors');",
+                  "});",
+                  "",
+                  "pm.test('Error messages are descriptive', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.errors).to.be.an('array').that.is.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unauthorized Booking Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"flightDetails\": {\n    \"tripType\": \"round-trip\",\n    \"departureCity\": \"Accra\",\n    \"arrivalCity\": \"London\",\n    \"departureDate\": \"2024-11-10\",\n    \"returnDate\": \"2024-11-20\",\n    \"adultPassengers\": 1,\n    \"childPassengers\": 0,\n    \"infantPassengers\": 0,\n    \"preferredClass\": \"economy\",\n    \"passengers\": []\n  },\n  \"contactEmail\": \"test@example.com\",\n  \"contactPhone\": \"+233123456789\",\n  \"urgency\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/booking/flight",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "booking", "flight"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthorized access blocked', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "// Global test for all requests",
+          "pm.test('Response has valid JSON', function () {",
+          "    pm.response.to.be.json;",
+          "});",
+          "",
+          "pm.test('Response time is reasonable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(10000);",
+          "});"
+        ]
+      }
+    }
+  ]
+}

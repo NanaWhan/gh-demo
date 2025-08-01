@@ -429,6 +429,7 @@
                 </li>
               </ul>
               <button
+                @click="applyForVisa('usa')"
                 class="w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold"
               >
                 Apply Now
@@ -514,6 +515,7 @@
                 </li>
               </ul>
               <button
+                @click="applyForVisa('uk')"
                 class="w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold"
               >
                 Apply Now
@@ -599,6 +601,7 @@
                 </li>
               </ul>
               <button
+                @click="applyForVisa('schengen')"
                 class="w-full px-6 py-3 bg-accent text-white rounded-xl hover:bg-opacity-90 transition-colors font-semibold"
               >
                 Apply Now
@@ -980,38 +983,69 @@ const form = ref({
 
 // Form submission handler
 const handleFormSubmit = async () => {
+  const { notifyQuoteSuccess, notifyQuoteError, notifyError } = useNotifications();
+  
   try {
-    const { api } = useApi();
+    // Validate required fields
+    if (!form.value.fullName || !form.value.email || !form.value.phone || !form.value.destination) {
+      notifyError("Validation Error", "Please fill in all required fields.");
+      return;
+    }
 
-    const bookingData = {
-      serviceType: "Visa",
-      customerInfo: {
-        fullName: form.value.fullName,
-        email: form.value.email,
-        phone: form.value.phone,
-        nationality: form.value.nationality,
-      },
-      serviceDetails: {
+    // Prepare visa booking data in the correct API format
+    const visaData = {
+      visaDetails: {
+        visaType: form.value.visaType || "Tourist Visa",
         destinationCountry: form.value.destination,
-        visaType: form.value.visaType,
-        intendedEntryDate: form.value.travelDate,
-        specialRequirements: form.value.message,
+        processingType: "standard",
+        intendedTravelDate: form.value.travelDate ? form.value.travelDate + "T00:00:00Z" : "2025-12-31T00:00:00Z",
+        durationOfStay: 30,
+        purposeOfVisit: "Tourism",
+        passportNumber: "TBD", // Will be provided later
+        passportExpiryDate: "2030-12-31T00:00:00Z", // Placeholder
+        nationality: form.value.nationality || "Not specified",
+        hasPreviousVisa: false,
+        requiredDocuments: []
       },
+      contactEmail: form.value.email,
+      contactPhone: form.value.phone,
+      contactName: form.value.fullName,
+      specialRequests: form.value.message || "Initial inquiry",
+      urgency: 1
     };
 
-    const response = await api.booking.submit(bookingData);
-
-    alert(
-      `Thank you for your application! Your reference number is ${response.referenceNumber}. We will contact you within 24 hours.`
-    );
-
-    // Reset form
-    Object.keys(form.value).forEach((key) => {
-      form.value[key] = "";
+    // Submit to the visa quote API
+    const response = await $fetch('https://glohorizonapi.fly.dev/api/quote/visa', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: visaData
     });
+
+    if (response.success) {
+      notifyQuoteSuccess(response.referenceNumber, "Visa");
+
+      // Reset form
+      Object.keys(form.value).forEach((key) => {
+        form.value[key] = "";
+      });
+    }
   } catch (error) {
     console.error("Visa application submission failed:", error);
-    alert("There was an error submitting your application. Please try again.");
+    notifyQuoteError("Visa", "There was an error submitting your application. Please try again.");
+  }
+};
+
+// Function to handle visa application from destination cards
+const applyForVisa = (destination) => {
+  // Pre-fill the form with the selected destination
+  form.value.destination = destination;
+  
+  // Scroll to the visa application form
+  const formElement = document.querySelector('#application-form');
+  if (formElement) {
+    formElement.scrollIntoView({ behavior: 'smooth' });
   }
 };
 

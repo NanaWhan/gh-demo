@@ -947,55 +947,18 @@ const generateReferenceNumber = () => {
   return `${prefix}${timestamp}${random}`;
 };
 
-// Handle date selection (placeholder functionality)
+// Handle date selection - redirect to dedicated booking page
 const handleDateSelection = () => {
-  const startDate = prompt("Enter check-in date (YYYY-MM-DD):");
-  const endDate = prompt("Enter check-out date (YYYY-MM-DD):");
-  if (startDate && endDate) {
-    formData.value.dates = `${startDate} to ${endDate}`;
-  }
+  console.log("Redirecting to dedicated hotel booking page...");
+  // Redirect to the proper hotel booking page instead of showing prompt
+  navigateTo('/hotel-booking');
 };
 
-// Handle form submission
+// Handle form submission - redirect to dedicated booking page
 const handleFormSubmit = async () => {
-  isSubmitting.value = true;
-
-  try {
-    // Generate reference number
-    referenceNumber.value = generateReferenceNumber();
-
-    // Simulate form submission delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Reset form
-    formData.value = {
-      fullName: "",
-      email: "",
-      phone: "",
-      guests: "",
-      destination: "",
-      dates: "",
-      rooms: "",
-      budget: "",
-      starRating: "",
-      amenities: "",
-      services: [],
-      requirements: "",
-    };
-
-    // Show success message
-    showSuccess.value = true;
-
-    // Hide success message after 10 seconds
-    setTimeout(() => {
-      showSuccess.value = false;
-    }, 10000);
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    alert("There was an error submitting your request. Please try again.");
-  } finally {
-    isSubmitting.value = false;
-  }
+  console.log("Redirecting to dedicated hotel booking page...");
+  // Redirect to the proper hotel booking page instead of simulating
+  navigateTo('/hotel-booking');
 };
 
 // Scroll to form

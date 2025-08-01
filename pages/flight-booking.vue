@@ -11,10 +11,10 @@
       <div class="container mx-auto px-4 relative z-10">
         <div class="text-center text-white">
           <h1 class="text-4xl md:text-5xl font-bold mb-4">
-            Flight Booking Request
+            Detailed Flight Booking Request
           </h1>
           <p class="text-xl md:text-2xl mb-8 opacity-90">
-            Let our travel experts find you the perfect flight
+            Need more options? Fill out this detailed form for personalized flight assistance
           </p>
           <div class="flex justify-center items-center space-x-4">
             <span class="bg-white bg-opacity-20 px-4 py-2 rounded-full"
@@ -26,6 +26,31 @@
             <span class="bg-white bg-opacity-20 px-4 py-2 rounded-full"
               >⚡ Quick Response</span
             >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Quote Alternative -->
+    <section class="py-8 bg-blue-50 border-b border-blue-100">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <div class="bg-white rounded-lg p-6 shadow-sm border border-blue-200">
+            <div class="flex items-center justify-center mb-4">
+              <svg class="h-6 w-6 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h3 class="text-lg font-semibold text-blue-900">Looking for a Quick Quote?</h3>
+            </div>
+            <p class="text-gray-600 mb-4">
+              For a faster experience, try our <strong>simplified flight quote form</strong> that takes just 2 minutes to complete.
+            </p>
+            <nuxt-link to="/flights" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+              <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+              Get Quick Flight Quote
+            </nuxt-link>
           </div>
         </div>
       </div>
@@ -434,6 +459,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Full Name *</label
+                    >
+                    <input
+                      v-model="bookingData.contactName"
+                      type="text"
+                      required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., John Doe"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
                       >Email Address *</label
                     >
                     <input
@@ -640,11 +677,26 @@ const bookingData = reactive({
   // Contact information
   contactEmail: "",
   contactPhone: "",
+  contactName: "",
   specialRequests: "",
-  urgency: 1,
+  urgency: "normal" as 'urgent' | 'normal' | 'flexible',
 
   // Passenger information
-  passengers: [] as PassengerInfo[]
+  passengers: [] as PassengerInfo[],
+
+  // Additional fields from form
+  multiCityDetails: "",
+  flexibility: "exact",
+  budget: "1000-2000",
+  airlinePreferences: "",
+  specialRequirements: {
+    wheelchair: false,
+    dietary: false,
+    extraLegroom: false,
+    petTravel: false
+  },
+  additionalRequirements: "",
+  contactMethod: "email"
 });
 
 // Auto-fill user contact information
@@ -656,8 +708,11 @@ onMounted(() => {
   if (defaultContact.contactPhone) {
     bookingData.contactPhone = defaultContact.contactPhone;
   }
-  if (defaultContact.urgency) {
-    bookingData.urgency = defaultContact.urgency;
+  
+  // Set contact name from current user if available
+  const currentUser = authService.getCurrentUser();
+  if (currentUser && currentUser.fullName) {
+    bookingData.contactName = currentUser.fullName;
   }
 });
 
@@ -696,6 +751,7 @@ const validateForm = (): string[] => {
   if (bookingData.tripType === 'round-trip' && !bookingData.returnDate) {
     errors.push('Return date is required for round-trip flights');
   }
+  if (!bookingData.contactName.trim()) errors.push('Contact name is required');
   if (!bookingData.contactEmail.trim()) errors.push('Contact email is required');
   if (!bookingData.contactPhone.trim()) errors.push('Contact phone is required');
   if (bookingData.adultPassengers < 1) errors.push('At least 1 adult passenger is required');
@@ -707,19 +763,12 @@ const validateForm = (): string[] => {
 const submitBooking = async () => {
   console.log('🛫 Starting flight booking submission...');
 
-  // Check authentication
-  if (!bookingService.isAuthenticated()) {
-    showMessage('You must be logged in to make a booking. Redirecting to login...');
-    setTimeout(() => {
-      forceRedirect('/login?redirect=' + encodeURIComponent('/flight-booking'));
-    }, 2000);
-    return;
-  }
+  const { notifyQuoteSuccess, notifyQuoteError, notifyError } = useNotifications();
 
   // Validate form
   const validationErrors = validateForm();
   if (validationErrors.length > 0) {
-    showMessage('Please fix the following errors: ' + validationErrors.join(', '));
+    notifyError('Validation Error', 'Please fix the following errors: ' + validationErrors.join(', '));
     return;
   }
 
@@ -728,27 +777,52 @@ const submitBooking = async () => {
   successMessage.value = '';
 
   try {
-    // Prepare flight booking data
+    // Map urgency from string to number
+    const urgencyMap = {
+      'urgent': 2,
+      'normal': 1, 
+      'flexible': 1
+    };
+    
+    // Build special requests string from various form fields
+    const specialRequestsParts = [];
+    if (bookingData.specialRequests) specialRequestsParts.push(bookingData.specialRequests);
+    if (bookingData.additionalRequirements) specialRequestsParts.push(bookingData.additionalRequirements);
+    if (bookingData.multiCityDetails) specialRequestsParts.push(`Multi-city details: ${bookingData.multiCityDetails}`);
+    if (bookingData.flexibility !== 'exact') specialRequestsParts.push(`Date flexibility: ${bookingData.flexibility}`);
+    if (bookingData.budget) specialRequestsParts.push(`Budget: ${bookingData.budget}`);
+    if (bookingData.airlinePreferences) specialRequestsParts.push(`Airline preferences: ${bookingData.airlinePreferences}`);
+    
+    // Add special requirements checkboxes
+    const checkedRequirements = Object.entries(bookingData.specialRequirements)
+      .filter(([key, value]) => value)
+      .map(([key, value]) => key.replace(/([A-Z])/g, ' $1').toLowerCase());
+    if (checkedRequirements.length > 0) {
+      specialRequestsParts.push(`Special requirements: ${checkedRequirements.join(', ')}`);
+    }
+
+    // Prepare flight booking data according to API specification
     const flightDetails: FlightBookingDetails = {
       tripType: bookingData.tripType,
       departureCity: bookingData.departureCity,
       arrivalCity: bookingData.arrivalCity,
-      departureDate: bookingData.departureDate,
-      returnDate: bookingData.tripType === 'round-trip' ? bookingData.returnDate : undefined,
+      departureDate: bookingData.departureDate + "T00:00:00Z",
+      returnDate: bookingData.tripType === 'round-trip' && bookingData.returnDate ? bookingData.returnDate + "T00:00:00Z" : undefined,
       adultPassengers: bookingData.adultPassengers,
       childPassengers: bookingData.childPassengers,
       infantPassengers: bookingData.infantPassengers,
       preferredClass: bookingData.preferredClass,
       preferredAirline: bookingData.preferredAirline || undefined,
-      passengers: bookingData.passengers
+      passengers: bookingData.passengers.length > 0 ? bookingData.passengers : []
     };
 
     const submissionData: FlightBookingSubmissionDto = {
       flightDetails,
       contactEmail: bookingData.contactEmail,
       contactPhone: bookingData.contactPhone,
-      specialRequests: bookingData.specialRequests || undefined,
-      urgency: bookingData.urgency
+      contactName: bookingData.contactName || (bookingData.passengers.length > 0 ? `${bookingData.passengers[0].firstName} ${bookingData.passengers[0].lastName}` : "Traveler").trim(),
+      specialRequests: specialRequestsParts.length > 0 ? specialRequestsParts.join('; ') : undefined,
+      urgency: urgencyMap[bookingData.urgency] || 1
     };
 
     console.log('📤 Submitting flight booking data:', submissionData);
@@ -761,11 +835,20 @@ const submitBooking = async () => {
     // Update UI with success
     referenceNumber.value = response.referenceNumber;
     bookingSubmitted.value = true;
+    
+    // Show success notification
+    notifyQuoteSuccess(response.referenceNumber, 'Flight');
+    
+    // Also update the page UI for users who don't see notifications
     showMessage(`Flight booking submitted successfully! Your reference number is ${response.referenceNumber}`, 'success');
 
   } catch (error: any) {
     console.error('❌ Flight booking submission failed:', error);
-    showMessage(error.message || 'Failed to submit flight booking. Please try again.');
+    const errorMsg = error.message || error.data?.message || 'Failed to submit flight booking. Please try again.';
+    
+    // Show notification and page message
+    notifyQuoteError('Flight', errorMsg);
+    showMessage(errorMsg);
   } finally {
     isSubmitting.value = false;
   }

@@ -1047,7 +1047,8 @@
             <div class="flex justify-center">
               <button
                 type="submit"
-                class="request-quote-btn group relative px-12 py-4 bg-gradient-to-r from-blue-600 to-orange-500 hover:from-orange-500 hover:to-red-500 text-white font-bold text-lg rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl min-w-64"
+                :disabled="isSubmitting"
+                class="request-quote-btn group relative px-12 py-4 bg-gradient-to-r from-blue-600 to-orange-500 hover:from-orange-500 hover:to-red-500 text-white font-bold text-lg rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl min-w-64 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 style="
                   background: linear-gradient(
                     45deg,
@@ -1072,7 +1073,8 @@
                       d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                     />
                   </svg>
-                  <span>Get My Flight Quote</span>
+                  <span v-if="isSubmitting">Submitting Quote...</span>
+                  <span v-else>Get My Flight Quote</span>
                   <div
                     class="ml-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1"
                   >
@@ -2115,6 +2117,9 @@ const formData = reactive({
   comments: "",
 });
 
+// Form submission state
+const isSubmitting = ref(false);
+
 // Tab indicator position
 const tabIndicatorPosition = computed(() => {
   switch (currentTab.value) {
@@ -2153,12 +2158,112 @@ const scrollToForm = () => {
   }
 };
 
-// Submit form function
-const submitForm = () => {
-  console.log("Form submitted:", formData);
-  alert(
-    "Thank you for your flight booking request! Our team will contact you within 2 hours with your personalized quote."
-  );
+// Submit form function - submit flight quote directly
+const submitForm = async () => {
+  console.log("🛫 Submitting flight quote from flights page...");
+  
+  const { notifyQuoteSuccess, notifyQuoteError, notifyError } = useNotifications();
+  
+  // Validate required fields
+  const errors = [];
+  if (!formData.fullName.trim()) errors.push('Full name is required');
+  if (!formData.email.trim()) errors.push('Email is required');
+  if (!formData.phone.trim()) errors.push('Phone number is required');
+  if (!formData.from.trim()) errors.push('Departure city is required');
+  if (!formData.to.trim()) errors.push('Destination city is required');
+  if (!formData.departure) errors.push('Departure date is required');
+  if (currentTab.value === 'return' && !formData.return) errors.push('Return date is required for round trip');
+
+  if (errors.length > 0) {
+    notifyError('Validation Error', 'Please fill in all required fields: ' + errors.join(', '));
+    return;
+  }
+
+  isSubmitting.value = true;
+
+  try {
+    // Import the booking service - use dynamic imports safely
+    const [bookingServiceModule, typesModule] = await Promise.all([
+      import('~/services/BookingService'),
+      import('~/types/booking-api-types')
+    ]);
+    const bookingService = bookingServiceModule.default;
+
+    // Map currentTab to tripType
+    const tripTypeMap = {
+      'return': 'round-trip',
+      'oneway': 'one-way', 
+      'multicity': 'multi-city'
+    };
+
+    // Build special requests from comments and preferences
+    const specialRequestsParts = [];
+    if (formData.comments) specialRequestsParts.push(formData.comments);
+    if (formData.budget) specialRequestsParts.push(`Budget: ${formData.budget}`);
+    if (formData.airline) specialRequestsParts.push(`Preferred airline: ${formData.airline}`);
+    if (formData.services && formData.services.length > 0) {
+      specialRequestsParts.push(`Services: ${formData.services.join(', ')}`);
+    }
+
+    // Prepare flight booking data
+    const flightDetails = {
+      tripType: tripTypeMap[currentTab.value] || 'round-trip',
+      departureCity: formData.from,
+      arrivalCity: formData.to,
+      departureDate: formData.departure + "T00:00:00Z",
+      returnDate: currentTab.value === 'return' && formData.return ? formData.return + "T00:00:00Z" : undefined,
+      adultPassengers: parseInt(formData.passengers) || 1,
+      childPassengers: 0,
+      infantPassengers: 0,
+      preferredClass: formData.class || 'economy',
+      preferredAirline: formData.airline || undefined,
+      passengers: []
+    };
+
+    const submissionData = {
+      flightDetails,
+      contactEmail: formData.email,
+      contactPhone: formData.phone,
+      contactName: formData.fullName,
+      specialRequests: specialRequestsParts.length > 0 ? specialRequestsParts.join('; ') : undefined,
+      urgency: 1 // Normal priority
+    };
+
+    console.log('📤 Submitting flight quote:', submissionData);
+
+    // Submit to API with timeout protection
+    const response = await Promise.race([
+      bookingService.submitFlightBooking(submissionData),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout after 30 seconds')), 30000)
+      )
+    ]);
+
+    console.log('✅ Flight quote submitted successfully:', response);
+
+    // Show success notification with actions (user can click to navigate)
+    notifyQuoteSuccess(response.referenceNumber, 'Flight');
+    
+    // Clear form immediately
+    Object.keys(formData).forEach(key => {
+      if (typeof formData[key] === 'string') {
+        formData[key] = '';
+      } else if (Array.isArray(formData[key])) {
+        formData[key] = [];
+      }
+    });
+    formData.class = 'economy'; // Reset to default
+    
+    // No auto-redirect - user can choose via notification buttons
+
+  } catch (error) {
+    console.error('❌ Flight quote submission failed:', error);
+    const errorMsg = error.message || 'Failed to submit flight quote. Please try again.';
+    notifyQuoteError('Flight', errorMsg);
+  } finally {
+    // Always ensure the form is not stuck in submitting state
+    isSubmitting.value = false;
+  }
 };
 
 // Meta data for SEO

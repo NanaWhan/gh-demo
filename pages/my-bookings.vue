@@ -551,17 +551,32 @@ onMounted(async () => {
   error.value = "";
 
   try {
+    console.log('🔍 Attempting to fetch user bookings...');
+    
+    // Check if user is authenticated
+    if (!authService.isAuthenticated()) {
+      throw new Error('User not authenticated');
+    }
+    
+    console.log('✅ User is authenticated, fetching bookings...');
+    
     // Fetch real booking history from API
     const response = await authService.getBookingHistory();
-    bookings.value = response.bookings;
-    stats.value = response.stats;
+    
+    console.log('📊 Booking history response:', response);
+    
+    bookings.value = response.bookings || [];
+    stats.value = response.stats || { totalBookings: 0, pendingBookings: 0, completedBookings: 0 };
+    
+    console.log(`📋 Loaded ${bookings.value.length} bookings`);
+    
   } catch (err: any) {
-    console.error("Failed to load bookings:", err);
+    console.error("❌ Failed to load bookings:", err);
     error.value = err.message || "Failed to load your bookings";
 
-    // Use mock data as fallback
-    bookings.value = mockBookings;
-    stats.value = mockStats;
+    // Don't use mock data in production - user should see empty state
+    bookings.value = [];
+    stats.value = { totalBookings: 0, pendingBookings: 0, completedBookings: 0 };
   } finally {
     loading.value = false;
   }

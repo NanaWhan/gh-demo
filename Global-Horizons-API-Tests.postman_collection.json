@@ -1,0 +1,253 @@
+{
+  "info": {
+    "name": "Global Horizons Travel API",
+    "description": "Complete API testing collection for Global Horizons booking system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://glohorizonapi.fly.dev",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"fullName\": \"Test User\",\n  \"phoneNumber\": \"+233123456789\",\n  \"dateOfBirth\": \"1990-01-15T00:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Quote Requests (No Auth)",
+      "item": [
+        {
+          "name": "Hotel Quote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hotelDetails\": {\n    \"destination\": \"Dubai\",\n    \"checkInDate\": \"2024-12-15T00:00:00Z\",\n    \"checkOutDate\": \"2024-12-22T00:00:00Z\",\n    \"rooms\": 1,\n    \"adultGuests\": 2,\n    \"childGuests\": 0,\n    \"roomType\": \"deluxe\",\n    \"starRating\": \"4-star\",\n    \"amenities\": [\"pool\", \"gym\"]\n  },\n  \"contactEmail\": \"test@example.com\",\n  \"contactPhone\": \"+233123456789\",\n  \"contactName\": \"Test User\",\n  \"specialRequests\": \"Test booking from Postman\",\n  \"urgency\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/quote/hotel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "quote", "hotel"]
+            }
+          }
+        },
+        {
+          "name": "Flight Quote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"flightDetails\": {\n    \"tripType\": \"round-trip\",\n    \"departureCity\": \"Accra\",\n    \"arrivalCity\": \"London\",\n    \"departureDate\": \"2024-11-10T00:00:00Z\",\n    \"returnDate\": \"2024-11-20T00:00:00Z\",\n    \"adultPassengers\": 2,\n    \"childPassengers\": 0,\n    \"infantPassengers\": 0,\n    \"preferredClass\": \"economy\",\n    \"preferredAirline\": \"British Airways\",\n    \"passengers\": []\n  },\n  \"contactEmail\": \"test@example.com\",\n  \"contactPhone\": \"+233123456789\",\n  \"contactName\": \"Test User\",\n  \"specialRequests\": \"Test flight booking from Postman\",\n  \"urgency\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/quote/flight",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "quote", "flight"]
+            }
+          }
+        },
+        {
+          "name": "Tour Quote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tourDetails\": {\n    \"tourPackage\": \"African Safari Adventure\",\n    \"destination\": \"Kenya\",\n    \"startDate\": \"2025-01-20T00:00:00Z\",\n    \"endDate\": \"2025-01-27T00:00:00Z\",\n    \"travelers\": 4,\n    \"accommodationType\": \"luxury\",\n    \"tourType\": \"private\",\n    \"activities\": [\"game-drives\", \"hot-air-balloon\"],\n    \"mealPlan\": \"full-board\"\n  },\n  \"contactEmail\": \"test@example.com\",\n  \"contactPhone\": \"+233123456789\",\n  \"contactName\": \"Test User\",\n  \"specialRequests\": \"Test tour booking from Postman\",\n  \"urgency\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/quote/tour",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "quote", "tour"]
+            }
+          }
+        },
+        {
+          "name": "Visa Quote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"visaDetails\": {\n    \"visaType\": \"Tourist Visa\",\n    \"destinationCountry\": \"United States\",\n    \"processingType\": \"standard\",\n    \"intendedTravelDate\": \"2025-03-15T00:00:00Z\",\n    \"durationOfStay\": 21,\n    \"purposeOfVisit\": \"Tourism\",\n    \"passportNumber\": \"GH9876543\",\n    \"passportExpiryDate\": \"2028-06-30T00:00:00Z\",\n    \"nationality\": \"Ghanaian\",\n    \"hasPreviousVisa\": false,\n    \"requiredDocuments\": []\n  },\n  \"contactEmail\": \"test@example.com\",\n  \"contactPhone\": \"+233123456789\",\n  \"contactName\": \"Test User\",\n  \"specialRequests\": \"Test visa application from Postman\",\n  \"urgency\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/quote/visa",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "quote", "visa"]
+            }
+          }
+        },
+        {
+          "name": "Track Quote",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/quote/track/QHT17054939887",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "quote", "track", "QHT17054939887"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authenticated Booking Requests",
+      "item": [
+        {
+          "name": "Submit Flight Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"flightDetails\": {\n    \"tripType\": \"round-trip\",\n    \"departureCity\": \"Accra\",\n    \"arrivalCity\": \"London\",\n    \"departureDate\": \"2024-11-10\",\n    \"returnDate\": \"2024-11-20\",\n    \"adultPassengers\": 2,\n    \"childPassengers\": 0,\n    \"infantPassengers\": 0,\n    \"preferredClass\": \"economy\",\n    \"preferredAirline\": \"British Airways\",\n    \"passengers\": []\n  },\n  \"contactEmail\": \"test@example.com\",\n  \"contactPhone\": \"+233123456789\",\n  \"specialRequests\": \"Test flight booking from Postman\",\n  \"urgency\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/booking/flight",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "booking", "flight"]
+            }
+          }
+        },
+        {
+          "name": "Submit Hotel Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hotelDetails\": {\n    \"destination\": \"Dubai\",\n    \"checkInDate\": \"2024-12-15\",\n    \"checkOutDate\": \"2024-12-22\",\n    \"rooms\": 1,\n    \"adultGuests\": 2,\n    \"childGuests\": 0,\n    \"roomType\": \"deluxe\",\n    \"starRating\": \"4-star\",\n    \"amenities\": [\"pool\", \"gym\"]\n  },\n  \"contactEmail\": \"test@example.com\",\n  \"contactPhone\": \"+233123456789\",\n  \"specialRequests\": \"Test hotel booking from Postman\",\n  \"urgency\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/booking/hotel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "booking", "hotel"]
+            }
+          }
+        },
+        {
+          "name": "Get My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/booking/my-bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "booking", "my-bookings"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
