@@ -48,6 +48,11 @@
           class="hover:text-accent font-medium nav-link"
           >MY BOOKINGS</nuxt-link
         >
+        <nuxt-link
+          to="/track-quote"
+          class="hover:text-accent font-medium nav-link"
+          >TRACK QUOTE</nuxt-link
+        >
         <button
           @click="logout"
           class="px-4 py-2 text-red-600 hover:text-red-800 font-medium"
@@ -134,6 +139,13 @@
             to="/my-bookings"
             class="mobile-nav-link block py-2 hover:text-accent nav-link"
             >MY BOOKINGS</nuxt-link
+          >
+        </li>
+        <li class="mobile-nav-item">
+          <nuxt-link
+            to="/track-quote"
+            class="mobile-nav-link block py-2 hover:text-accent nav-link"
+            >TRACK QUOTE</nuxt-link
           >
         </li>
         <li v-if="isAuthenticated" class="mobile-nav-item">

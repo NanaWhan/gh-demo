@@ -38,10 +38,10 @@ export const validateNewsletterSubscription = (data: NewsletterSubscriptionReque
     errors.push('Source is required');
   }
 
-  // Phone validation (Ghana format)
-  const phoneRegex = /^\+233\d{9}$/;
+  // Phone validation (Ghana format - accept both +233xxxxxxxxx and 0xxxxxxxxx)
+  const phoneRegex = /^(\+233\d{9}|0\d{9})$/;
   if (data.phoneNumber && !phoneRegex.test(data.phoneNumber)) {
-    errors.push('Phone must be in Ghana format (+233xxxxxxxxx)');
+    errors.push('Phone must be in Ghana format (+233xxxxxxxxx or 0xxxxxxxxx)');
   }
 
   return errors;

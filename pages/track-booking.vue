@@ -11,10 +11,10 @@
       <div class="container mx-auto px-4 relative z-10">
         <div class="text-center text-white">
           <h1 class="text-4xl md:text-5xl font-bold mb-4">
-            Track Your Booking
+            My Confirmed Bookings
           </h1>
           <p class="text-xl md:text-2xl mb-8 opacity-90">
-            Secure booking tracking for registered users
+            Track your confirmed reservations and payments (login required)
           </p>
           <div class="flex justify-center items-center space-x-4">
             <span class="bg-white bg-opacity-20 px-4 py-2 rounded-full"
@@ -82,10 +82,10 @@
                 </svg>
               </div>
               <h2 class="text-2xl font-bold text-gray-800 mb-2">
-                Track Your Request
+                Track Your Confirmed Booking
               </h2>
               <p class="text-gray-600">
-                Enter the reference number from your booking confirmation
+                Enter the reference number from your confirmed booking (payments completed)
               </p>
             </div>
 
@@ -99,7 +99,7 @@
                   type="text"
                   required
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-center text-lg font-mono tracking-wider"
-                  placeholder="e.g., FL1234567890"
+                  placeholder="e.g., BFL1234567890, BHT1234567890"
                   @input="formatReferenceNumber"
                 />
                 <p class="text-sm text-gray-500 mt-2">
@@ -117,8 +117,7 @@
                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  Your reference number was sent via email and SMS when you
-                  submitted your booking
+                  Your booking reference was sent when you completed payment for your confirmed reservation
                 </p>
               </div>
 
@@ -139,23 +138,33 @@
               </p>
               <div class="flex flex-wrap gap-2">
                 <button
-                  @click="referenceNumber = 'FL1234567890'"
+                  @click="referenceNumber = 'BFL1234567890'"
                   class="text-xs bg-white border border-gray-200 hover:border-green-300 px-3 py-1 rounded-full transition-colors"
                 >
-                  FL1234567890 (Flight)
+                  BFL1234567890 (Flight Booking)
                 </button>
                 <button
-                  @click="referenceNumber = 'HT9876543210'"
+                  @click="referenceNumber = 'BHT9876543210'"
                   class="text-xs bg-white border border-gray-200 hover:border-green-300 px-3 py-1 rounded-full transition-colors"
                 >
-                  HT9876543210 (Hotel)
+                  BHT9876543210 (Hotel Booking)
                 </button>
                 <button
-                  @click="referenceNumber = 'TR5555666677'"
+                  @click="referenceNumber = 'BTR5555666677'"
                   class="text-xs bg-white border border-gray-200 hover:border-green-300 px-3 py-1 rounded-full transition-colors"
                 >
-                  TR5555666677 (Tour)
+                  BTR5555666677 (Tour Booking)
                 </button>
+              </div>
+            </div>
+            
+            <!-- Help distinguish quotes vs bookings -->
+            <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 class="text-sm font-semibold text-blue-800 mb-2">ℹ️ Need help finding your reference?</h4>
+              <div class="text-sm text-blue-700 space-y-1">
+                <p>• <strong>Quote references</strong> start with Q (QFL, QHT, etc.) - <nuxt-link to="/track-quote" class="text-blue-600 underline hover:text-blue-800">track quotes here</nuxt-link></p>
+                <p>• <strong>Booking references</strong> start with B (BFL, BHT, etc.) - track confirmed bookings here</p>
+                <p>• Only paid and confirmed reservations have booking references</p>
               </div>
             </div>
           </div>
@@ -391,12 +400,12 @@ definePageMeta({
 
 // Page meta
 useHead({
-  title: "Track Booking - Global Horizons Travel Services",
+  title: "My Confirmed Bookings - Global Horizons Travel Services",
   meta: [
     {
       name: "description",
       content:
-        "Securely track your booking status with Global Horizons Travel Services.",
+        "Track your confirmed booking reservations and travel documents with Global Horizons Travel Services.",
     },
   ],
 });
@@ -456,73 +465,76 @@ const getStatusMessage = (status) => {
   return messages[status] || "Status unknown";
 };
 
-// Status steps configuration
+// Status steps configuration for confirmed bookings
 const statusSteps = [
   {
     status: 1,
-    title: "Request Received",
+    title: "Payment Received",
     description:
-      "Your booking request has been received and logged in our system",
+      "Your payment has been confirmed and booking process initiated",
     timestamp: null,
   },
   {
     status: 2,
     title: "Processing",
     description:
-      "Our travel experts are working on your request and finding the best options",
+      "Our team is processing your booking and making arrangements",
     timestamp: null,
   },
   {
     status: 3,
-    title: "Quote Ready",
+    title: "Confirmed",
     description:
-      "We have prepared your options and will contact you with details",
+      "Your booking is confirmed with providers and documents are being prepared",
     timestamp: null,
   },
   {
     status: 4,
-    title: "Completed",
+    title: "Complete",
     description:
-      "Your booking has been confirmed and travel documents are being prepared",
+      "All documents issued - tickets, vouchers, and itinerary sent to you",
     timestamp: null,
   },
 ];
 
-// Mock tracking data (in real app, this would come from your admin API)
+// Mock tracking data for confirmed bookings (in real app, this would come from your authenticated booking API)
 const mockTrackingData = {
-  FL1234567890: {
-    reference: "FL1234567890",
+  BFL1234567890: {
+    reference: "BFL1234567890",
     serviceType: "Flight",
-    currentStatus: 3,
-    statusMessage: "Great news! We've found excellent flight options for you.",
+    currentStatus: 6,
+    statusMessage: "Your flight booking is confirmed! E-tickets have been issued.",
     estimatedTime:
-      "Our agent will call you within the next 2 hours with your personalized flight options.",
+      "All documents have been sent to your email. Check-in opens 24 hours before departure.",
     timestamps: {
       1: "2024-01-15 10:30 AM",
       2: "2024-01-15 10:45 AM",
       3: "2024-01-15 12:15 PM",
+      4: "2024-01-15 03:30 PM",
     },
   },
-  HT9876543210: {
-    reference: "HT9876543210",
+  BHT9876543210: {
+    reference: "BHT9876543210",
     serviceType: "Hotel",
-    currentStatus: 2,
+    currentStatus: 6,
     statusMessage:
-      "We're currently researching the best hotel options for your stay.",
+      "Your hotel reservation is confirmed! Booking voucher has been issued.",
     estimatedTime:
-      "Expected completion in 3-4 hours. We'll have multiple options ready for you.",
+      "Confirmation documents sent to your email. Enjoy your stay!",
     timestamps: {
       1: "2024-01-15 09:15 AM",
       2: "2024-01-15 09:30 AM",
+      3: "2024-01-15 11:45 AM",
+      4: "2024-01-15 02:15 PM",
     },
   },
-  TR5555666677: {
-    reference: "TR5555666677",
+  BTR5555666677: {
+    reference: "BTR5555666677",
     serviceType: "Tour Package",
-    currentStatus: 4,
-    statusMessage: "Congratulations! Your tour package has been confirmed.",
+    currentStatus: 7,
+    statusMessage: "Your tour booking is complete! All arrangements finalized.",
     estimatedTime:
-      "All documents have been sent to your email. Have an amazing trip!",
+      "Itinerary and vouchers sent to your email. Have an amazing trip!",
     timestamps: {
       1: "2024-01-14 02:00 PM",
       2: "2024-01-14 02:30 PM",
@@ -555,9 +567,12 @@ const trackBooking = async () => {
   isTracking.value = true;
 
   try {
-    // Use the public quote tracking endpoint
-    const response = await $fetch(`https://glohorizonapi.fly.dev/api/quote/track/${referenceNumber.value}`, {
-      method: 'GET'
+    // Use the authenticated booking tracking endpoint  
+    const response = await $fetch(`https://glohorizonapi.fly.dev/api/booking/track/${referenceNumber.value}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${authService.getToken()}`
+      }
     });
     
     const result = response;

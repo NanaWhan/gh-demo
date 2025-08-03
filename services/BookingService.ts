@@ -137,9 +137,13 @@ export class BookingService {
                         destination: legacyData.hotelDetails.destination,
                         checkInDate: this.formatDateToISO(legacyData.hotelDetails.checkInDate),
                         checkOutDate: this.formatDateToISO(legacyData.hotelDetails.checkOutDate),
-                        roomCount: legacyData.hotelDetails.rooms,
-                        guestCount: legacyData.hotelDetails.adultGuests + (legacyData.hotelDetails.childGuests || 0),
-                        roomType: this.mapRoomType(legacyData.hotelDetails.roomType)
+                        rooms: legacyData.hotelDetails.rooms,
+                        adultGuests: legacyData.hotelDetails.adultGuests,
+                        childGuests: legacyData.hotelDetails.childGuests || 0,
+                        roomType: this.mapRoomType(legacyData.hotelDetails.roomType),
+                        starRating: legacyData.hotelDetails.starRating,
+                        amenities: legacyData.hotelDetails.amenities,
+                        preferredHotel: legacyData.hotelDetails.preferredHotel
                     }
                 };
             }

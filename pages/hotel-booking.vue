@@ -11,10 +11,10 @@
       <div class="container mx-auto px-4 relative z-10">
         <div class="text-center text-white">
           <h1 class="text-4xl md:text-5xl font-bold mb-4">
-            Hotel Booking Request
+            Get Hotel Quote
           </h1>
           <p class="text-xl md:text-2xl mb-8 opacity-90">
-            Tell us your accommodation needs and we'll find the perfect stay
+            Tell us your needs and we'll provide instant pricing for your perfect stay
           </p>
           <div class="flex justify-center items-center space-x-4">
             <span class="bg-white bg-opacity-20 px-4 py-2 rounded-full"
@@ -35,23 +35,6 @@
     <section class="py-16 bg-gray-50">
       <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto">
-          <!-- Error Message -->
-          <div
-            v-if="errorMessage"
-            class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8"
-          >
-            <div class="flex items-center">
-              <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div class="ml-3">
-                <p class="text-sm font-medium text-red-800">{{ errorMessage }}</p>
-              </div>
-            </div>
-          </div>
-
           <!-- Success Message -->
           <div
             v-if="isSubmitted"
@@ -76,7 +59,7 @@
               </div>
               <div class="ml-4">
                 <h3 class="text-lg font-medium text-green-800">
-                  Hotel Request Submitted Successfully!
+                  Hotel Quote Request Submitted Successfully!
                 </h3>
                 <div class="mt-2 text-sm text-green-700">
                   <p>
@@ -86,598 +69,397 @@
                   <p>
                     We've sent confirmation details to your email and SMS. Our
                     hotel specialists will contact you within 2-4 hours with
-                    personalized recommendations.
+                    your personalized quote and pricing.
                   </p>
                   <p
                     class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-700"
                   >
-                    💡 <strong>Track your booking:</strong> Visit our
+                    💡 <strong>Track your quote:</strong> Visit our
                     <nuxt-link
                       to="/my-bookings"
                       class="underline font-medium hover:text-blue-800"
-                      >My Bookings</nuxt-link
+                      >My Quotes</nuxt-link
                     >
                     or
                     <nuxt-link
                       to="/track-booking"
                       class="underline font-medium hover:text-blue-800"
-                      >booking tracker</nuxt-link
+                      >quote tracker</nuxt-link
                     >
                     anytime using reference number {{ referenceNumber }}.
                   </p>
+                  <div class="mt-4 flex space-x-3">
+                    <nuxt-link
+                      to="/"
+                      class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      🏠 Return Home
+                    </nuxt-link>
+                    <nuxt-link
+                      to="/track-booking"
+                      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      📋 Track Quote
+                    </nuxt-link>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Booking Form -->
-          <form
+          <!-- Booking Wizard -->
+          <BookingWizard
             v-else
-            @submit.prevent="submitHotelRequest"
-            class="bg-white rounded-lg shadow-lg overflow-hidden"
+            title="Hotel Quote Request"
+            :steps="wizardSteps"
+            :form-data="formData"
+            :is-submitting="isSubmitting"
+            :submit-text="{ default: '💰 Get My Quote', loading: 'Getting Quote...' }"
+            storage-key="hotel-booking-progress"
+            @submit="submitHotelRequest"
+            @update-form-data="updateFormData"
           >
-            <!-- Form Header -->
-            <div
-              class="bg-gradient-to-r from-purple-500 to-indigo-600 p-6 text-white"
-            >
-              <h2 class="text-2xl font-bold mb-2">
-                Hotel Accommodation Request
-              </h2>
-              <p class="text-purple-100">
-                Fill out this form and our experts will find the perfect hotel
-                for your stay
-              </p>
-            </div>
-
-            <div class="p-8 space-y-8">
-              <!-- Personal Information -->
-              <div>
-                <h3
-                  class="text-lg font-bold text-gray-800 mb-4 flex items-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-2 text-purple-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  Personal Information
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Full Name *</label
-                    >
-                    <input
-                      v-model="formData.fullName"
-                      type="text"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Email Address *</label
-                    >
-                    <input
-                      v-model="formData.email"
-                      type="email"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Phone Number *</label
-                    >
-                    <input
-                      v-model="formData.phone"
-                      type="tel"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="+233 123 456 789"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Country of Residence</label
-                    >
-                    <input
-                      v-model="formData.country"
-                      type="text"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="Ghana"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Accommodation Details -->
-              <div>
-                <h3
-                  class="text-lg font-bold text-gray-800 mb-4 flex items-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-2 text-purple-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                    />
-                  </svg>
-                  Accommodation Details
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Destination City/Location *</label
-                    >
-                    <input
-                      v-model="formData.destination"
-                      type="text"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="Accra, Ghana"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Preferred Area/District</label
-                    >
-                    <input
-                      v-model="formData.area"
-                      type="text"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="Airport Area, East Legon, etc."
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Check-in Date *</label
-                    >
-                    <input
-                      v-model="formData.checkInDate"
-                      type="date"
-                      required
-                      :min="today"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Check-out Date *</label
-                    >
-                    <input
-                      v-model="formData.checkOutDate"
-                      type="date"
-                      required
-                      :min="formData.checkInDate || today"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Number of Rooms *</label
-                    >
-                    <select
-                      v-model="formData.numberOfRooms"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                      <option value="">Select rooms</option>
-                      <option value="1">1 Room</option>
-                      <option value="2">2 Rooms</option>
-                      <option value="3">3 Rooms</option>
-                      <option value="4">4 Rooms</option>
-                      <option value="5+">5+ Rooms</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Total Guests *</label
-                    >
-                    <select
-                      v-model="formData.totalGuests"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                      <option value="">Select guests</option>
-                      <option value="1">1 Guest</option>
-                      <option value="2">2 Guests</option>
-                      <option value="3">3 Guests</option>
-                      <option value="4">4 Guests</option>
-                      <option value="5">5 Guests</option>
-                      <option value="6+">6+ Guests</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Room Configuration -->
-                <div class="mt-6">
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Room Configuration Details</label
-                  >
-                  <textarea
-                    v-model="formData.roomConfiguration"
-                    rows="3"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="e.g., 1 double room for 2 adults, 1 twin room for 2 children, etc."
-                  ></textarea>
-                </div>
-              </div>
-
-              <!-- Preferences & Budget -->
-              <div>
-                <h3
-                  class="text-lg font-bold text-gray-800 mb-4 flex items-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-2 text-purple-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                    />
-                  </svg>
-                  Preferences & Budget
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Hotel Star Rating *</label
-                    >
-                    <select
-                      v-model="formData.starRating"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                      <option value="">Select rating</option>
-                      <option value="3-star">3-Star Hotels</option>
-                      <option value="4-star">4-Star Hotels</option>
-                      <option value="5-star">5-Star Hotels</option>
-                      <option value="luxury">Luxury/Boutique</option>
-                      <option value="any">No Preference</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Budget Range per Night *</label
-                    >
-                    <select
-                      v-model="formData.budgetRange"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                      <option value="">Select budget</option>
-                      <option value="budget">Under $100</option>
-                      <option value="mid-range">$100 - $250</option>
-                      <option value="premium">$250 - $500</option>
-                      <option value="luxury">$500+</option>
-                      <option value="flexible">Flexible</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Meal Plan Preference</label
-                    >
-                    <select
-                      v-model="formData.mealPlan"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                      <option value="">No preference</option>
-                      <option value="room-only">Room Only</option>
-                      <option value="breakfast">Breakfast Included</option>
-                      <option value="half-board">
-                        Half Board (Breakfast + Dinner)
-                      </option>
-                      <option value="full-board">Full Board (All Meals)</option>
-                      <option value="all-inclusive">All Inclusive</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Preferred Hotel Chain</label
-                    >
-                    <input
-                      v-model="formData.hotelChain"
-                      type="text"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="Marriott, Hilton, Kempinski, etc."
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Amenities & Services -->
-              <div>
-                <h3
-                  class="text-lg font-bold text-gray-800 mb-4 flex items-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-2 text-purple-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                    />
-                  </svg>
-                  Important Amenities & Services
-                </h3>
-
-                <!-- Amenities Checkboxes -->
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                  <label class="flex items-center">
-                    <input
-                      v-model="formData.amenities"
-                      type="checkbox"
-                      value="wifi"
-                      class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">Free WiFi</span>
-                  </label>
-                  <label class="flex items-center">
-                    <input
-                      v-model="formData.amenities"
-                      type="checkbox"
-                      value="parking"
-                      class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">Parking</span>
-                  </label>
-                  <label class="flex items-center">
-                    <input
-                      v-model="formData.amenities"
-                      type="checkbox"
-                      value="pool"
-                      class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700"
-                      >Swimming Pool</span
-                    >
-                  </label>
-                  <label class="flex items-center">
-                    <input
-                      v-model="formData.amenities"
-                      type="checkbox"
-                      value="gym"
-                      class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700"
-                      >Fitness Center</span
-                    >
-                  </label>
-                  <label class="flex items-center">
-                    <input
-                      v-model="formData.amenities"
-                      type="checkbox"
-                      value="spa"
-                      class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">Spa/Wellness</span>
-                  </label>
-                  <label class="flex items-center">
-                    <input
-                      v-model="formData.amenities"
-                      type="checkbox"
-                      value="restaurant"
-                      class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">Restaurant</span>
-                  </label>
-                  <label class="flex items-center">
-                    <input
-                      v-model="formData.amenities"
-                      type="checkbox"
-                      value="business"
-                      class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700"
-                      >Business Center</span
-                    >
-                  </label>
-                  <label class="flex items-center">
-                    <input
-                      v-model="formData.amenities"
-                      type="checkbox"
-                      value="beach"
-                      class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">Beach Access</span>
-                  </label>
-                  <label class="flex items-center">
-                    <input
-                      v-model="formData.amenities"
-                      type="checkbox"
-                      value="airport-shuttle"
-                      class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700"
-                      >Airport Shuttle</span
-                    >
-                  </label>
-                </div>
-
-                <!-- Additional Services -->
+            <!-- Step 0: Personal Information -->
+            <template #step-0>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Additional Services Needed</label
+                    >Full Name *</label
                   >
+                  <input
+                    v-model="formData.fullName"
+                    type="text"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Email Address *</label
+                  >
+                  <input
+                    v-model="formData.email"
+                    type="email"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Phone Number *</label
+                  >
+                  <input
+                    v-model="formData.phone"
+                    type="tel"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="+233 123 456 789"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Country of Residence</label
+                  >
+                  <input
+                    v-model="formData.country"
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Ghana"
+                  />
+                </div>
+              </div>
+            </template>
+
+            <!-- Step 1: Travel Details -->
+            <template #step-1>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Destination City/Location *</label
+                  >
+                  <input
+                    v-model="formData.destination"
+                    type="text"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Accra, Ghana"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Preferred Area/District</label
+                  >
+                  <input
+                    v-model="formData.area"
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Airport Area, East Legon, etc."
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Check-in Date *</label
+                  >
+                  <input
+                    v-model="formData.checkInDate"
+                    type="date"
+                    required
+                    :min="today"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Check-out Date *</label
+                  >
+                  <input
+                    v-model="formData.checkOutDate"
+                    type="date"
+                    required
+                    :min="formData.checkInDate || today"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Number of Rooms *</label
+                  >
+                  <select
+                    v-model="formData.numberOfRooms"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="">Select rooms</option>
+                    <option value="1">1 Room</option>
+                    <option value="2">2 Rooms</option>
+                    <option value="3">3 Rooms</option>
+                    <option value="4">4 Rooms</option>
+                    <option value="5+">5+ Rooms</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Total Guests *</label
+                  >
+                  <select
+                    v-model="formData.totalGuests"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="">Select guests</option>
+                    <option value="1">1 Guest</option>
+                    <option value="2">2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                    <option value="5">5 Guests</option>
+                    <option value="6+">6+ Guests</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Room Configuration -->
+              <div class="mt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Room Configuration Details</label
+                >
+                <textarea
+                  v-model="formData.roomConfiguration"
+                  rows="3"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="e.g., 1 double room for 2 adults, 1 twin room for 2 children, etc."
+                ></textarea>
+              </div>
+            </template>
+
+            <!-- Step 2: Preferences & Budget -->
+            <template #step-2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Hotel Star Rating *</label
+                  >
+                  <select
+                    v-model="formData.starRating"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="">Select rating</option>
+                    <option value="3-star">3-Star Hotels</option>
+                    <option value="4-star">4-Star Hotels</option>
+                    <option value="5-star">5-Star Hotels</option>
+                    <option value="luxury">Luxury/Boutique</option>
+                    <option value="any">No Preference</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Budget Range per Night *</label
+                  >
+                  <select
+                    v-model="formData.budgetRange"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="">Select budget</option>
+                    <option value="budget">Under $100</option>
+                    <option value="mid-range">$100 - $250</option>
+                    <option value="premium">$250 - $500</option>
+                    <option value="luxury">$500+</option>
+                    <option value="flexible">Flexible</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Meal Plan Preference</label
+                  >
+                  <select
+                    v-model="formData.mealPlan"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="">No preference</option>
+                    <option value="room-only">Room Only</option>
+                    <option value="breakfast">Breakfast Included</option>
+                    <option value="half-board">
+                      Half Board (Breakfast + Dinner)
+                    </option>
+                    <option value="full-board">Full Board (All Meals)</option>
+                    <option value="all-inclusive">All Inclusive</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Preferred Hotel Chain</label
+                  >
+                  <input
+                    v-model="formData.hotelChain"
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Marriott, Hilton, Kempinski, etc."
+                  />
+                </div>
+              </div>
+            </template>
+
+            <!-- Step 3: Special Requirements & Final Details -->
+            <template #step-3>
+              <div class="space-y-6">
+                <!-- Amenities -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-4">
+                    Important Amenities (select all that apply)
+                  </label>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <label class="flex items-center">
                       <input
-                        v-model="formData.additionalServices"
+                        v-model="formData.amenities"
                         type="checkbox"
-                        value="airport-transfer"
+                        value="wifi"
                         class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                       />
-                      <span class="ml-2 text-sm text-gray-700"
-                        >Airport Transfer</span
-                      >
+                      <span class="ml-2 text-sm text-gray-700">Free WiFi</span>
                     </label>
                     <label class="flex items-center">
                       <input
-                        v-model="formData.additionalServices"
+                        v-model="formData.amenities"
                         type="checkbox"
-                        value="tour-booking"
+                        value="parking"
                         class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                       />
-                      <span class="ml-2 text-sm text-gray-700"
-                        >Tour Booking</span
-                      >
+                      <span class="ml-2 text-sm text-gray-700">Parking</span>
                     </label>
                     <label class="flex items-center">
                       <input
-                        v-model="formData.additionalServices"
+                        v-model="formData.amenities"
                         type="checkbox"
-                        value="car-rental"
+                        value="pool"
                         class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                       />
-                      <span class="ml-2 text-sm text-gray-700">Car Rental</span>
+                      <span class="ml-2 text-sm text-gray-700">Swimming Pool</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input
+                        v-model="formData.amenities"
+                        type="checkbox"
+                        value="gym"
+                        class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                      />
+                      <span class="ml-2 text-sm text-gray-700">Fitness Center</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input
+                        v-model="formData.amenities"
+                        type="checkbox"
+                        value="spa"
+                        class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                      />
+                      <span class="ml-2 text-sm text-gray-700">Spa/Wellness</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input
+                        v-model="formData.amenities"
+                        type="checkbox"
+                        value="restaurant"
+                        class="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                      />
+                      <span class="ml-2 text-sm text-gray-700">Restaurant</span>
                     </label>
                   </div>
                 </div>
-              </div>
 
-              <!-- Special Requirements -->
-              <div>
-                <h3
-                  class="text-lg font-bold text-gray-800 mb-4 flex items-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-2 text-purple-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  Special Requirements & Notes
-                </h3>
-                <div class="space-y-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Special Requests</label
-                    >
-                    <textarea
-                      v-model="formData.specialRequests"
-                      rows="4"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="Any special accommodations, dietary requirements, accessibility needs, celebration arrangements, etc."
-                    ></textarea>
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Purpose of Stay</label
-                    >
-                    <select
-                      v-model="formData.purposeOfStay"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                      <option value="">Select purpose</option>
-                      <option value="leisure">Leisure/Vacation</option>
-                      <option value="business">Business Travel</option>
-                      <option value="conference">Conference/Event</option>
-                      <option value="wedding">Wedding/Celebration</option>
-                      <option value="family">Family Visit</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2"
-                      >Urgency Level *</label
-                    >
-                    <select
-                      v-model="formData.urgency"
-                      required
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                      <option value="">Select urgency</option>
-                      <option value="standard">Standard (48-72 hours)</option>
-                      <option value="urgent">Urgent (24 hours)</option>
-                      <option value="asap">ASAP (Same day)</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Terms and Submit -->
-              <div class="border-t pt-6">
-                <div class="flex items-start mb-6">
-                  <input
-                    v-model="formData.agreeToTerms"
-                    type="checkbox"
-                    required
-                    class="mt-1 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                  />
-                  <label class="ml-3 text-sm text-gray-600">
-                    I agree to the
-                    <a
-                      href="#"
-                      class="text-purple-600 hover:text-purple-800 underline"
-                      >Terms of Service</a
-                    >
-                    and
-                    <a
-                      href="#"
-                      class="text-purple-600 hover:text-purple-800 underline"
-                      >Privacy Policy</a
-                    >. I understand this is a booking request and final
-                    confirmation will come from Global Horizons staff.
+                <!-- Special Requests -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Special Requests & Requirements
                   </label>
+                  <textarea
+                    v-model="formData.specialRequests"
+                    rows="4"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Any special accommodations, dietary requirements, accessibility needs, celebration arrangements, etc."
+                  ></textarea>
                 </div>
 
-                <button
-                  type="submit"
-                  :disabled="isSubmitting"
-                  class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105"
-                >
-                  <span v-if="isSubmitting">Submitting Request...</span>
-                  <span v-else>Submit Hotel Request</span>
-                </button>
+                <!-- Urgency -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Urgency Level *
+                  </label>
+                  <select
+                    v-model="formData.urgency"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="">Select urgency</option>
+                    <option value="standard">Standard (48-72 hours)</option>
+                    <option value="urgent">Urgent (24 hours)</option>
+                    <option value="asap">ASAP (Same day)</option>
+                  </select>
+                </div>
 
-                <p class="text-center text-sm text-gray-500 mt-4">
-                  🔒 Your information is secure and will only be used to process
-                  your hotel booking request.
-                </p>
+                <!-- Terms -->
+                <div class="border-t pt-6">
+                  <div class="flex items-start">
+                    <input
+                      v-model="formData.agreeToTerms"
+                      type="checkbox"
+                      required
+                      class="mt-1 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                    />
+                    <label class="ml-3 text-sm text-gray-600">
+                      I agree to the
+                      <a href="#" class="text-purple-600 hover:text-purple-800 underline">Terms of Service</a>
+                      and
+                      <a href="#" class="text-purple-600 hover:text-purple-800 underline">Privacy Policy</a>.
+                      I understand this is a booking request and final confirmation will come from Global Horizons staff.
+                    </label>
+                  </div>
+                </div>
               </div>
-            </div>
-          </form>
+            </template>
+
+          </BookingWizard>
         </div>
       </div>
     </section>
@@ -701,12 +483,12 @@ import { forceRedirect } from '~/utils/navigation';
 
 // SEO Meta
 useHead({
-  title: "Hotel Booking Request - Global Horizons Travel Services",
+  title: "Get Hotel Quote - Global Horizons Travel Services",
   meta: [
     {
       name: "description",
       content:
-        "Request hotel accommodation with Global Horizons. Get personalized recommendations and exclusive rates.",
+        "Get instant hotel quotes from Global Horizons. Compare prices and get personalized recommendations with exclusive rates.",
     },
   ],
 });
@@ -715,13 +497,67 @@ useHead({
 const isSubmitting = ref(false);
 const isSubmitted = ref(false);
 const referenceNumber = ref("");
-const errorMessage = ref("");
-const successMessage = ref("");
 
 // Today's date for minimum date validation
 const today = computed(() => {
   return new Date().toISOString().split("T")[0];
 });
+
+// Wizard steps configuration
+const wizardSteps = [
+  {
+    id: 'personal',
+    title: 'Personal Info',
+    description: 'Your contact information',
+    required: true,
+    validation: (data: any) => {
+      const errors: string[] = [];
+      if (!data.fullName?.trim()) errors.push('Full name is required');
+      if (!data.email?.trim()) errors.push('Email is required');
+      if (!data.phone?.trim()) errors.push('Phone number is required');
+      return errors;
+    }
+  },
+  {
+    id: 'travel',
+    title: 'Travel Details',
+    description: 'Where and when you want to stay',
+    required: true,
+    validation: (data: any) => {
+      const errors: string[] = [];
+      if (!data.destination?.trim()) errors.push('Destination is required');
+      if (!data.checkInDate) errors.push('Check-in date is required');
+      if (!data.checkOutDate) errors.push('Check-out date is required');
+      if (!data.numberOfRooms) errors.push('Number of rooms is required');
+      if (!data.totalGuests) errors.push('Number of guests is required');
+      return errors;
+    }
+  },
+  {
+    id: 'preferences',
+    title: 'Preferences',
+    description: 'Your hotel preferences and budget',
+    required: true,
+    validation: (data: any) => {
+      const errors: string[] = [];
+      if (!data.starRating) errors.push('Star rating preference is required');
+      if (!data.budgetRange) errors.push('Budget range is required');
+      return errors;
+    }
+  },
+  {
+    id: 'requirements',
+    title: 'Requirements',
+    description: 'Special requests and final details',
+    required: true,
+    validation: (data: any) => {
+      const errors: string[] = [];
+      if (!data.urgency) errors.push('Urgency level is required');
+      if (!data.agreeToTerms) errors.push('You must agree to the terms');
+      return errors;
+    }
+  }
+];
 
 // Form data with proper TypeScript typing
 const formData = reactive({
@@ -778,104 +614,155 @@ onMounted(() => {
   }
 });
 
-// Helper functions
-const showMessage = (message: string, type: 'success' | 'error' = 'error') => {
-  if (type === 'success') {
-    successMessage.value = message;
-    errorMessage.value = '';
-  } else {
-    errorMessage.value = message;
-    successMessage.value = '';
-  }
+// Update form data from wizard
+const updateFormData = (newData: Record<string, any>) => {
+  Object.assign(formData, newData);
 };
 
-const validateForm = (): string[] => {
-  const errors: string[] = [];
-
-  if (!formData.destination.trim()) errors.push('Destination is required');
-  if (!formData.checkInDate) errors.push('Check-in date is required');
-  if (!formData.checkOutDate) errors.push('Check-out date is required');
-  if (!formData.contactEmail.trim()) errors.push('Contact email is required');
-  if (!formData.contactPhone.trim()) errors.push('Contact phone is required');
-  if (formData.rooms < 1) errors.push('At least 1 room is required');
-  if (formData.adultGuests < 1) errors.push('At least 1 adult guest is required');
-
-  return errors;
-};
-
-// Submit hotel booking using new API
+// Submit hotel booking using new Quote API
 const submitHotelRequest = async () => {
-  console.log('🏨 Starting hotel booking submission...');
-
-  // Note: Quote requests don't require authentication
-  console.log('📤 Submitting hotel quote request (no auth required)');
-
-  // Sync UI fields to API fields
-  formData.contactEmail = formData.email || formData.contactEmail;
-  formData.contactPhone = formData.phone || formData.contactPhone;
-  formData.destination = formData.destination;
-  formData.rooms = parseInt(formData.numberOfRooms) || 1;
-  formData.adultGuests = parseInt(formData.totalGuests) || 1;
-  formData.preferredHotel = formData.hotelChain;
-
-  // Map star rating
-  if (formData.starRating === "luxury") formData.starRating = "5-star";
-  if (formData.starRating === "any") formData.starRating = "4-star";
-
-  // Map urgency
-  if (formData.urgency === "standard") formData.urgency = 1;
-  else if (formData.urgency === "urgent") formData.urgency = 2;
-  else if (formData.urgency === "asap") formData.urgency = 3;
-
-  // Validate form
-  const validationErrors = validateForm();
-  if (validationErrors.length > 0) {
-    showMessage('Please fix the following errors: ' + validationErrors.join(', '));
-    return;
-  }
+  console.log('🏨 Starting hotel quote submission...');
 
   isSubmitting.value = true;
-  errorMessage.value = '';
-  successMessage.value = '';
 
   try {
-    // Prepare hotel booking data
-    const hotelDetails: HotelBookingDetails = {
-      destination: formData.destination,
+    // Auto-format phone number for Ghana
+    let phoneNumber = formData.phone || formData.contactPhone;
+    if (phoneNumber && !phoneNumber.startsWith('+233')) {
+      if (phoneNumber.startsWith('0')) {
+        phoneNumber = '+233' + phoneNumber.substring(1);
+      } else if (phoneNumber.match(/^\d{9}$/)) {
+        phoneNumber = '+233' + phoneNumber;
+      } else if (!phoneNumber.startsWith('+')) {
+        phoneNumber = '+233' + phoneNumber.replace(/\D/g, '').substring(-9);
+      }
+    }
+
+    // Format dates to ISO format (API expects YYYY-MM-DDTHH:mm:ssZ)
+    const formatDateToISO = (dateStr: string) => {
+      if (!dateStr) return '';
+      try {
+        // If dateStr is already in YYYY-MM-DD format, append time
+        if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          return dateStr + 'T14:00:00Z';
+        }
+        // Otherwise try to parse as Date and format
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return '';
+        return date.toISOString();
+      } catch (error) {
+        console.error('Date formatting error:', error);
+        return '';
+      }
+    };
+
+    // Get contact name from fullName field
+    const contactName = formData.fullName || `${formData.email?.split('@')[0] || 'Customer'}`;
+    
+    // Map urgency correctly (0=Standard, 1=Urgent, 2=Emergency) 
+    let urgencyLevel = 0;
+    if (formData.urgency === "urgent") urgencyLevel = 1;
+    else if (formData.urgency === "asap") urgencyLevel = 2;
+
+    // Map room type correctly (API expects lowercase)
+    let roomType = "standard";
+    const budgetMap: Record<string, string> = {
+      "budget": "standard",
+      "mid-range": "deluxe", 
+      "premium": "suite",
+      "luxury": "suite"
+    };
+    if (formData.budgetRange && budgetMap[formData.budgetRange]) {
+      roomType = budgetMap[formData.budgetRange];
+    }
+
+    // Create quote request matching API exactly
+    const quoteRequest = {
+      contactEmail: formData.email || formData.contactEmail,
+      contactPhone: phoneNumber,
+      contactName: contactName,
+      specialRequests: formData.specialRequests || formData.roomConfiguration || undefined,
+      urgency: urgencyLevel,
+      hotelDetails: {
+        destination: formData.destination,
+        checkInDate: formatDateToISO(formData.checkInDate),
+        checkOutDate: formatDateToISO(formData.checkOutDate),
+        rooms: parseInt(formData.numberOfRooms) || 1,
+        adultGuests: parseInt(formData.totalGuests) || 1,
+        childGuests: 0,
+        roomType: roomType,
+        starRating: formData.hotelCategory || undefined,
+        amenities: formData.amenities || [],
+        preferredHotel: formData.preferredHotel || undefined
+      }
+    };
+
+    console.log('📤 Submitting hotel quote request:', quoteRequest);
+    console.log('📋 Form data check:', {
       checkInDate: formData.checkInDate,
       checkOutDate: formData.checkOutDate,
-      rooms: formData.rooms,
-      adultGuests: formData.adultGuests,
-      childGuests: formData.childGuests,
-      roomType: formData.roomType,
-      preferredHotel: formData.preferredHotel || undefined,
-      starRating: formData.starRating,
-      amenities: formData.amenities
-    };
+      formattedCheckIn: formatDateToISO(formData.checkInDate),
+      formattedCheckOut: formatDateToISO(formData.checkOutDate),
+      numberOfRooms: formData.numberOfRooms,
+      totalGuests: formData.totalGuests
+    });
 
-    const submissionData: HotelBookingSubmissionDto = {
-      hotelDetails,
-      contactEmail: formData.contactEmail,
-      contactPhone: formData.contactPhone,
-      specialRequests: formData.specialRequests || undefined,
-      urgency: formData.urgency
-    };
+    // Validate required fields before API call
+    if (!quoteRequest.contactEmail) {
+      throw new Error('Email address is required');
+    }
+    if (!quoteRequest.contactPhone) {
+      throw new Error('Phone number is required');
+    }
+    if (!quoteRequest.contactName || quoteRequest.contactName.length < 2) {
+      throw new Error('Full name is required');
+    }
+    if (!quoteRequest.hotelDetails.destination) {
+      throw new Error('Destination is required');
+    }
+    if (!quoteRequest.hotelDetails.checkInDate) {
+      throw new Error('Check-in date is required');
+    }
+    if (!quoteRequest.hotelDetails.checkOutDate) {
+      throw new Error('Check-out date is required');
+    }
+    if (!quoteRequest.hotelDetails.rooms || quoteRequest.hotelDetails.rooms < 1) {
+      throw new Error('At least 1 room is required');
+    }
+    if (!quoteRequest.hotelDetails.adultGuests || quoteRequest.hotelDetails.adultGuests < 1) {
+      throw new Error('At least 1 adult guest is required');
+    }
+    if (!quoteRequest.hotelDetails.roomType) {
+      throw new Error('Room type is required');
+    }
 
-    console.log('📤 Submitting hotel booking data:', submissionData);
+    // Use QuoteService directly
+    const { quoteService } = await import('~/services/QuoteService');
+    const response = await quoteService.requestHotelQuote(quoteRequest);
 
-    // Submit to API
-    const response: BookingSubmissionResponse = await bookingService.submitHotelBooking(submissionData);
+    console.log('✅ Hotel quote submitted successfully:', response);
 
-    console.log('✅ Hotel booking submitted successfully:', response);
-
-    // Update UI with success
-    referenceNumber.value = response.referenceNumber;
-    isSubmitted.value = true;
-    showMessage(`Hotel booking submitted successfully! Your reference number is ${response.referenceNumber}`, 'success');
+    if (response.success && response.referenceNumber) {
+      // Update UI with success
+      referenceNumber.value = response.referenceNumber;
+      isSubmitted.value = true;
+    } else {
+      throw new Error(response.message || 'Quote submission failed');
+    }
 
   } catch (error: any) {
-    console.error('❌ Hotel booking submission failed:', error);
-    showMessage(error.message || 'Failed to submit hotel booking. Please try again.');
+    console.error('❌ Hotel quote submission failed:', error);
+    let errorMsg = error.message || 'Failed to submit hotel request. Please try again.';
+    
+    // Handle specific validation errors
+    if (errorMsg.includes('Phone must be in Ghana format')) {
+      errorMsg = 'Please enter a valid Ghana phone number (e.g., 0123456789 or +233123456789)';
+    }
+    if (errorMsg.includes('contactName') || errorMsg.includes('Contact name')) {
+      errorMsg = 'Please enter your full name';
+    }
+    
+    throw new Error(errorMsg);
   } finally {
     isSubmitting.value = false;
   }

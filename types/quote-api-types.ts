@@ -10,8 +10,8 @@ export type ServiceType = 1 | 2 | 3 | 4 | 5;  // Flight, Hotel, Tour, Visa, Pack
 export type TravelClass = "Economy" | "Premium Economy" | "Business" | "First";
 export type TripType = "OneWay" | "RoundTrip";
 export type RoomType = "Standard" | "Deluxe" | "Suite" | "Presidential";
-export type VisaType = "Tourist" | "Business" | "Student" | "Work" | "Transit";
-export type ProcessingTime = "Standard" | "Express" | "Emergency";
+export type VisaType = "Tourist Visa" | "Business Visa" | "Student Visa" | "Work Visa" | "Transit Visa";
+export type ProcessingTime = "standard" | "express" | "super-express";
 export type TourType = "Cultural" | "Adventure" | "Safari" | "Historical" | "Beach" | "City";
 export type AccommodationType = "Hotel" | "Resort" | "Guesthouse" | "Camping";
 export type TransportationType = "Bus" | "Van" | "Car" | "Flight";
@@ -33,14 +33,26 @@ export interface BaseQuoteRequest {
 // ✈️ FLIGHT QUOTE TYPES
 // ====================================================
 
+export interface PassengerInfo {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  passportNumber?: string;
+  nationality?: string;
+}
+
 export interface FlightDetails {
   departureCity: string;       // Required, e.g., "Accra"
   arrivalCity: string;         // Required, e.g., "Dubai"
   departureDate: string;       // Required, ISO format: "2025-09-01T08:00:00Z"
   returnDate?: string;         // Optional for one-way, required for round-trip
-  passengerCount: number;      // Required, min 1, max 50
+  adultPassengers: number;     // Required, min 1, max 50
+  childPassengers: number;     // Optional, default 0
+  infantPassengers: number;    // Optional, default 0
   travelClass: TravelClass;    // Required
   tripType: TripType;          // Required
+  preferredAirline?: string;   // Optional
+  passengers?: PassengerInfo[]; // Optional passenger details
 }
 
 export interface FlightQuoteRequest extends BaseQuoteRequest {
@@ -55,9 +67,13 @@ export interface HotelDetails {
   destination: string;         // Required, e.g., "Dubai" 
   checkInDate: string;         // Required, ISO format: "2025-09-01T14:00:00Z"
   checkOutDate: string;        // Required, ISO format: "2025-09-05T12:00:00Z"
-  roomCount: number;           // Required, min 1
-  guestCount: number;          // Required, min 1
-  roomType: RoomType;          // Required
+  rooms: number;               // Required, min 1
+  adultGuests: number;         // Required, min 1
+  childGuests?: number;        // Optional, default 0
+  roomType: string;            // Required, e.g., "suite", "deluxe"
+  starRating?: string;         // Optional, e.g., "5-star"
+  amenities?: string[];        // Optional, e.g., ["pool", "spa"]
+  preferredHotel?: string;     // Optional
 }
 
 export interface HotelQuoteRequest extends BaseQuoteRequest {
@@ -72,7 +88,7 @@ export interface VisaDetails {
   destinationCountry: string;        // Required, e.g., "Canada"
   visaType: VisaType;               // Required
   intendedTravelDate: string;        // Required, ISO format
-  processingTime: ProcessingTime;    // Required
+  processingType: ProcessingTime;    // Required
   passportNumber: string;            // Required
   nationality: string;               // Required, e.g., "Ghanaian"
   durationOfStay: number;            // Required, days (1-365)
@@ -241,10 +257,10 @@ export const validateQuoteRequest = (request: BaseQuoteRequest): string[] => {
     errors.push('Invalid email format');
   }
 
-  // Phone validation (Ghana format)
-  const phoneRegex = /^\+233\d{9}$/;
+  // Phone validation (Ghana format - accept both +233xxxxxxxxx and 0xxxxxxxxx)
+  const phoneRegex = /^(\+233\d{9}|0\d{9})$/;
   if (request.contactPhone && !phoneRegex.test(request.contactPhone)) {
-    errors.push('Phone must be in Ghana format (+233xxxxxxxxx)');
+    errors.push('Phone must be in Ghana format (+233xxxxxxxxx or 0xxxxxxxxx)');
   }
 
   // Urgency validation
@@ -261,8 +277,10 @@ export const validateFlightDetails = (details: FlightDetails): string[] => {
   if (!details.departureCity?.trim()) errors.push('Departure city is required');
   if (!details.arrivalCity?.trim()) errors.push('Arrival city is required');
   if (!details.departureDate?.trim()) errors.push('Departure date is required');
-  if (!details.passengerCount || details.passengerCount < 1) errors.push('At least 1 passenger required');
-  if (details.passengerCount > 50) errors.push('Maximum 50 passengers allowed');
+  if (!details.adultPassengers || details.adultPassengers < 1) errors.push('At least 1 adult passenger required');
+  
+  const totalPassengers = details.adultPassengers + details.childPassengers + details.infantPassengers;
+  if (totalPassengers > 50) errors.push('Maximum 50 passengers allowed');
 
   // Round trip validation
   if (details.tripType === 'RoundTrip' && !details.returnDate?.trim()) {
@@ -287,8 +305,9 @@ export const validateHotelDetails = (details: HotelDetails): string[] => {
   if (!details.destination?.trim()) errors.push('Destination is required');
   if (!details.checkInDate?.trim()) errors.push('Check-in date is required');
   if (!details.checkOutDate?.trim()) errors.push('Check-out date is required');
-  if (!details.roomCount || details.roomCount < 1) errors.push('At least 1 room required');
-  if (!details.guestCount || details.guestCount < 1) errors.push('At least 1 guest required');
+  if (!details.rooms || details.rooms < 1) errors.push('At least 1 room required');
+  if (!details.adultGuests || details.adultGuests < 1) errors.push('At least 1 adult guest required');
+  if (!details.roomType?.trim()) errors.push('Room type is required');
 
   // Date format validation
   const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;

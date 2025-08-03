@@ -81,15 +81,15 @@
               </div>
               <div class="ml-3">
                 <h3 class="text-sm font-medium text-green-800">
-                  Flight Booking Submitted Successfully!
+                  Flight Quote Request Submitted Successfully!
                 </h3>
                 <div class="mt-2 text-sm text-green-700">
                   <p v-if="referenceNumber">
-                    Your reference number is:
+                    Your quote reference number is:
                     <strong>{{ referenceNumber }}</strong>
                   </p>
                   <p>
-                    Your flight booking request has been submitted to our travel
+                    Your flight quote request has been submitted to our travel
                     experts. We'll contact you within 2-4 hours with flight
                     options and pricing.
                   </p>
@@ -633,12 +633,12 @@ import { ref, reactive, onMounted } from "vue";
 import bookingService from '~/services/BookingService';
 import authService from '~/services/AuthService';
 import {
-  FlightBookingSubmissionDto,
-  FlightBookingDetails,
+  FlightQuoteRequest,
+  FlightDetails,
   PassengerInfo,
-  URGENCY_OPTIONS,
-  BookingSubmissionResponse
-} from '~/types/booking-api-types';
+  URGENCY_OPTIONS
+} from '~/types/quote-api-types';
+import { BookingSubmissionResponse } from '~/types/booking-api-types';
 import { forceRedirect } from '~/utils/navigation';
 
 // SEO Meta
@@ -801,9 +801,8 @@ const submitBooking = async () => {
       specialRequestsParts.push(`Special requirements: ${checkedRequirements.join(', ')}`);
     }
 
-    // Prepare flight booking data according to API specification
-    const flightDetails: FlightBookingDetails = {
-      tripType: bookingData.tripType,
+    // Prepare flight quote data according to API specification
+    const flightDetails: FlightDetails = {
       departureCity: bookingData.departureCity,
       arrivalCity: bookingData.arrivalCity,
       departureDate: bookingData.departureDate + "T00:00:00Z",
@@ -811,29 +810,48 @@ const submitBooking = async () => {
       adultPassengers: bookingData.adultPassengers,
       childPassengers: bookingData.childPassengers,
       infantPassengers: bookingData.infantPassengers,
-      preferredClass: bookingData.preferredClass,
+      travelClass: bookingData.preferredClass as any,
+      tripType: bookingData.tripType === 'round-trip' ? 'RoundTrip' : 'OneWay',
       preferredAirline: bookingData.preferredAirline || undefined,
       passengers: bookingData.passengers.length > 0 ? bookingData.passengers : []
     };
 
-    const submissionData: FlightBookingSubmissionDto = {
+    const submissionData: FlightQuoteRequest = {
       flightDetails,
       contactEmail: bookingData.contactEmail,
       contactPhone: bookingData.contactPhone,
       contactName: bookingData.contactName || (bookingData.passengers.length > 0 ? `${bookingData.passengers[0].firstName} ${bookingData.passengers[0].lastName}` : "Traveler").trim(),
       specialRequests: specialRequestsParts.length > 0 ? specialRequestsParts.join('; ') : undefined,
-      urgency: urgencyMap[bookingData.urgency] || 1
+      urgency: (urgencyMap[bookingData.urgency] || 1) - 1 as 0 | 1 | 2  // Convert to 0,1,2 format
     };
 
-    console.log('📤 Submitting flight booking data:', submissionData);
+    // Auto-format phone number for Ghana
+    let phoneNumber = submissionData.contactPhone;
+    if (phoneNumber && !phoneNumber.startsWith('+233')) {
+      if (phoneNumber.startsWith('0')) {
+        phoneNumber = '+233' + phoneNumber.substring(1);
+      } else if (phoneNumber.match(/^\d{9}$/)) {
+        phoneNumber = '+233' + phoneNumber;
+      } else if (!phoneNumber.startsWith('+')) {
+        phoneNumber = '+233' + phoneNumber.replace(/\D/g, '').substring(-9);
+      }
+    }
+    submissionData.contactPhone = phoneNumber;
 
-    // Submit to API
-    const response: BookingSubmissionResponse = await bookingService.submitFlightBooking(submissionData);
+    console.log('📤 Submitting flight quote data:', submissionData);
 
-    console.log('✅ Flight booking submitted successfully:', response);
+    // Submit to Quote API
+    const { quoteService } = await import('~/services/QuoteService');
+    const response = await quoteService.requestFlightQuote(submissionData);
+
+    console.log('✅ Flight quote submitted successfully:', response);
 
     // Update UI with success
-    referenceNumber.value = response.referenceNumber;
+    if (response.success && response.referenceNumber) {
+      referenceNumber.value = response.referenceNumber;
+    } else {
+      throw new Error(response.message || 'Quote submission failed');
+    }
     bookingSubmitted.value = true;
     
     // Show success notification
@@ -843,8 +861,16 @@ const submitBooking = async () => {
     showMessage(`Flight booking submitted successfully! Your reference number is ${response.referenceNumber}`, 'success');
 
   } catch (error: any) {
-    console.error('❌ Flight booking submission failed:', error);
-    const errorMsg = error.message || error.data?.message || 'Failed to submit flight booking. Please try again.';
+    console.error('❌ Flight quote submission failed:', error);
+    let errorMsg = error.message || error.data?.message || 'Failed to submit flight quote. Please try again.';
+    
+    // Handle specific validation errors
+    if (errorMsg.includes('Phone must be in Ghana format')) {
+      errorMsg = 'Please enter a valid Ghana phone number (e.g., 0123456789 or +233123456789)';
+    }
+    if (errorMsg.includes('At least 1 adult passenger required')) {
+      errorMsg = 'Please specify at least 1 adult passenger';
+    }
     
     // Show notification and page message
     notifyQuoteError('Flight', errorMsg);
