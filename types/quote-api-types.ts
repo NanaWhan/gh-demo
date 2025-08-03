@@ -180,6 +180,13 @@ export interface QuoteTrackingResponse {
   quote: Quote;
 }
 
+export interface QuoteListResponse {
+  success: boolean;
+  message: string;
+  quotes: Quote[];
+  totalCount: number;
+}
+
 export interface ErrorResponse {
   success: false;
   message: string;

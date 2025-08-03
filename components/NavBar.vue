@@ -49,6 +49,11 @@
           >MY BOOKINGS</nuxt-link
         >
         <nuxt-link
+          to="/my-quotes"
+          class="hover:text-accent font-medium nav-link"
+          >MY QUOTES</nuxt-link
+        >
+        <nuxt-link
           to="/track-quote"
           class="hover:text-accent font-medium nav-link"
           >TRACK QUOTE</nuxt-link
@@ -139,6 +144,13 @@
             to="/my-bookings"
             class="mobile-nav-link block py-2 hover:text-accent nav-link"
             >MY BOOKINGS</nuxt-link
+          >
+        </li>
+        <li v-if="isAuthenticated" class="mobile-nav-item">
+          <nuxt-link
+            to="/my-quotes"
+            class="mobile-nav-link block py-2 hover:text-accent nav-link"
+            >MY QUOTES</nuxt-link
           >
         </li>
         <li class="mobile-nav-item">

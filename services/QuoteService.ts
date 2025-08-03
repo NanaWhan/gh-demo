@@ -10,6 +10,7 @@ import {
     CompletePackageRequest,
     QuoteResponse,
     QuoteTrackingResponse,
+    QuoteListResponse,
     QuoteResult,
     TrackingResult,
     validateQuoteRequest,
@@ -415,6 +416,68 @@ export class QuoteService {
             isValid: errors.length === 0,
             errors
         };
+    }
+
+    // ============================================================
+    // 📋 AUTHENTICATED QUOTE METHODS
+    // ============================================================
+
+    /**
+     * Get all quotes for authenticated user
+     */
+    async getMyQuotes(): Promise<QuoteListResponse> {
+        try {
+            console.log('📋 Fetching user quotes...');
+
+            const response = await this.makeAuthenticatedRequest<QuoteListResponse>('/quote/my-quotes', {
+                method: 'GET'
+            });
+
+            console.log('✅ User quotes fetched:', response);
+            return response;
+            
+        } catch (error: any) {
+            console.error('❌ Failed to fetch user quotes:', error);
+            throw new Error(error.message || 'Failed to fetch quotes');
+        }
+    }
+
+    /**
+     * Make authenticated API request (requires JWT token)
+     */
+    private async makeAuthenticatedRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+        try {
+            // Get JWT token from auth service
+            let authToken = '';
+            if (typeof window !== 'undefined') {
+                // Client-side: get from localStorage or auth service
+                const authService = await import('~/services/AuthService');
+                authToken = authService.default.getToken() || '';
+            }
+
+            if (!authToken) {
+                throw new Error('Authentication required. Please log in.');
+            }
+
+            const response = await $fetch<T>(`${this.baseUrl}${endpoint}`, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                    ...options.headers
+                }
+            });
+
+            return response;
+        } catch (error: any) {
+            console.error(`API Error (${endpoint}):`, error);
+            
+            if (error.status === 401) {
+                throw new Error('Authentication failed. Please log in again.');
+            }
+            
+            throw new Error(error.data?.message || error.message || 'Request failed');
+        }
     }
 }
 
