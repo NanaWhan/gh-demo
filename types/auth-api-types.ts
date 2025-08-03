@@ -4,13 +4,13 @@
 
 // 🔐 AUTHENTICATION REQUEST TYPES
 export interface RegisterRequest {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;  // Format: "+233XXXXXXXXX"
-    password: string;     // Minimum 8 characters
-    dateOfBirth?: string; // Format: "YYYY-MM-DD" or null
-    acceptMarketing: boolean;
+    firstName: string;           // Required, max 100 chars
+    lastName: string;            // Required, max 100 chars  
+    email: string;               // Required, valid email format
+    phoneNumber: string;         // Required, Ghanaian format (+233xxxxxxxxx)
+    password: string;            // Required, min 8 chars, include special chars
+    dateOfBirth: string;         // Required, ISO format: "1990-01-01T00:00:00Z"
+    acceptMarketing: boolean;    // Required, true/false
 }
 
 export interface LoginRequest {
@@ -41,8 +41,16 @@ export interface UserInfo {
 export interface AuthResponse {
     success: boolean;
     message: string;
-    token: string;
-    user: UserInfo;
+    token: string | null;        // JWT token if successful
+    user: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        phoneNumber: string;
+        role: string;              // "User" or "Admin"
+        createdAt: string;         // ISO date string
+    } | null;
 }
 
 export interface OtpResponse {

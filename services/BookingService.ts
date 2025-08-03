@@ -1,6 +1,17 @@
 // ============================================================
-// 🎯 GloHorizon Booking Service - Production Ready
+// 🎯 GloHorizon Booking Service - Updated for Quote API
 // ============================================================
+
+import {
+    FlightQuoteRequest,
+    HotelQuoteRequest,
+    TourQuoteRequest,
+    VisaQuoteRequest,
+    CompletePackageRequest,
+    QuoteResponse,
+    QuoteResult,
+    BaseQuoteRequest
+} from '~/types/quote-api-types';
 
 import {
     FlightBookingSubmissionDto,
@@ -17,6 +28,7 @@ import {
 } from '~/types/booking-api-types';
 
 import authService from '~/services/AuthService';
+import quoteService from '~/services/QuoteService';
 
 export class BookingService {
     private baseUrl: string;
@@ -57,41 +69,44 @@ export class BookingService {
     }
 
     // ============================================================
-    // ✈️ FLIGHT BOOKING
+    // ✈️ FLIGHT BOOKING (Uses Quote API)
     // ============================================================
 
-    async submitFlightBooking(data: FlightBookingSubmissionDto): Promise<BookingSubmissionResponse> {
+    async submitFlightBooking(data: FlightBookingSubmissionDto | FlightQuoteRequest): Promise<QuoteResult> {
         try {
-            console.log('🛫 Submitting flight booking:', data);
+            console.log('🛫 Submitting flight booking via quote API:', data);
 
-            // Validate contact information
-            const contactErrors = validateContactInfo(data);
-            if (contactErrors.length > 0) {
-                throw new Error(`Validation errors: ${contactErrors.join(', ')}`);
-            }
-
-            // Validate passenger information
-            if (data.flightDetails.passengers && data.flightDetails.passengers.length > 0) {
-                for (let i = 0; i < data.flightDetails.passengers.length; i++) {
-                    const passenger = data.flightDetails.passengers[i];
-                    const passengerErrors = validatePassengerInfo(passenger);
-                    if (passengerErrors.length > 0) {
-                        throw new Error(`Passenger ${i + 1} errors: ${passengerErrors.join(', ')}`);
+            // Convert old booking format to new quote format if needed
+            let quoteRequest: FlightQuoteRequest;
+            
+            if ('flightDetails' in data && 'contactEmail' in data) {
+                // New format - use directly
+                quoteRequest = data as FlightQuoteRequest;
+            } else {
+                // Legacy format - convert
+                const legacyData = data as FlightBookingSubmissionDto;
+                quoteRequest = {
+                    contactEmail: legacyData.contactEmail,
+                    contactPhone: legacyData.contactPhone,
+                    contactName: legacyData.contactName,
+                    specialRequests: legacyData.specialRequests,
+                    urgency: Math.max(0, (legacyData.urgency || 1) - 1) as 0 | 1 | 2, // Convert 1,2,3 to 0,1,2
+                    flightDetails: {
+                        departureCity: legacyData.flightDetails.departureCity,
+                        arrivalCity: legacyData.flightDetails.arrivalCity,
+                        departureDate: this.formatDateToISO(legacyData.flightDetails.departureDate),
+                        returnDate: legacyData.flightDetails.returnDate ? this.formatDateToISO(legacyData.flightDetails.returnDate) : undefined,
+                        passengerCount: legacyData.flightDetails.adultPassengers + (legacyData.flightDetails.childPassengers || 0) + (legacyData.flightDetails.infantPassengers || 0),
+                        travelClass: this.mapTravelClass(legacyData.flightDetails.preferredClass),
+                        tripType: legacyData.flightDetails.tripType === 'round-trip' ? 'RoundTrip' : 'OneWay'
                     }
-                }
+                };
             }
 
-            // Use quote endpoint for flight requests (as per API guide)
-            const response = await this.makePublicRequest<BookingSubmissionResponse>('/quote/flight', {
-                method: 'POST',
-                body: data
-            });
-
-            console.log('✅ Flight booking submitted successfully:', response);
-            return response;
+            return await quoteService.requestFlightQuote(quoteRequest);
         } catch (error: any) {
             console.error('❌ Flight booking submission failed:', error);
-            throw new Error(error.data?.message || error.message || 'Flight booking submission failed');
+            throw error;
         }
     }
 
@@ -99,27 +114,40 @@ export class BookingService {
     // 🏨 HOTEL BOOKING
     // ============================================================
 
-    async submitHotelBooking(data: HotelBookingSubmissionDto): Promise<BookingSubmissionResponse> {
+    async submitHotelBooking(data: HotelBookingSubmissionDto | HotelQuoteRequest): Promise<QuoteResult> {
         try {
-            console.log('🏨 Submitting hotel booking:', data);
+            console.log('🏨 Submitting hotel booking via quote API:', data);
 
-            // Validate contact information
-            const contactErrors = validateContactInfo(data);
-            if (contactErrors.length > 0) {
-                throw new Error(`Validation errors: ${contactErrors.join(', ')}`);
+            // Convert old booking format to new quote format if needed
+            let quoteRequest: HotelQuoteRequest;
+            
+            if ('hotelDetails' in data && 'contactEmail' in data) {
+                // New format - use directly
+                quoteRequest = data as HotelQuoteRequest;
+            } else {
+                // Legacy format - convert
+                const legacyData = data as HotelBookingSubmissionDto;
+                quoteRequest = {
+                    contactEmail: legacyData.contactEmail,
+                    contactPhone: legacyData.contactPhone,
+                    contactName: legacyData.contactName,
+                    specialRequests: legacyData.specialRequests,
+                    urgency: Math.max(0, (legacyData.urgency || 1) - 1) as 0 | 1 | 2,
+                    hotelDetails: {
+                        destination: legacyData.hotelDetails.destination,
+                        checkInDate: this.formatDateToISO(legacyData.hotelDetails.checkInDate),
+                        checkOutDate: this.formatDateToISO(legacyData.hotelDetails.checkOutDate),
+                        roomCount: legacyData.hotelDetails.rooms,
+                        guestCount: legacyData.hotelDetails.adultGuests + (legacyData.hotelDetails.childGuests || 0),
+                        roomType: this.mapRoomType(legacyData.hotelDetails.roomType)
+                    }
+                };
             }
 
-            // Use quote endpoint for hotel requests (as per API guide)
-            const response = await this.makePublicRequest<BookingSubmissionResponse>('/quote/hotel', {
-                method: 'POST',
-                body: data
-            });
-
-            console.log('✅ Hotel booking submitted successfully:', response);
-            return response;
+            return await quoteService.requestHotelQuote(quoteRequest);
         } catch (error: any) {
             console.error('❌ Hotel booking submission failed:', error);
-            throw new Error(error.data?.message || error.message || 'Hotel booking submission failed');
+            throw error;
         }
     }
 
@@ -314,6 +342,102 @@ export class BookingService {
         if (!this.isAuthenticated()) {
             throw new Error('Authentication required. Please login to make bookings.');
         }
+    }
+
+    // ============================================================
+    // 🔄 FORMAT CONVERSION HELPERS
+    // ============================================================
+
+    /**
+     * Convert date to ISO format required by API
+     */
+    private formatDateToISO(dateInput: string): string {
+        try {
+            // If already in ISO format, return as-is
+            if (dateInput.includes('T') && dateInput.includes('Z')) {
+                return dateInput;
+            }
+
+            // If in YYYY-MM-DD format, convert to ISO
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
+                return `${dateInput}T08:00:00Z`;
+            }
+
+            // Try to parse and convert
+            const date = new Date(dateInput);
+            if (isNaN(date.getTime())) {
+                throw new Error(`Invalid date format: ${dateInput}`);
+            }
+            
+            return date.toISOString();
+        } catch (error) {
+            console.error('Date conversion error:', error);
+            throw new Error(`Failed to convert date to ISO format: ${dateInput}`);
+        }
+    }
+
+    /**
+     * Map legacy travel class to API format
+     */
+    private mapTravelClass(legacyClass: string): "Economy" | "Premium Economy" | "Business" | "First" {
+        const classMap: Record<string, "Economy" | "Premium Economy" | "Business" | "First"> = {
+            'economy': 'Economy',
+            'business': 'Business',
+            'first': 'First',
+            'premium': 'Premium Economy',
+            'premium economy': 'Premium Economy'
+        };
+
+        return classMap[legacyClass.toLowerCase()] || 'Economy';
+    }
+
+    /**
+     * Map legacy room type to API format
+     */
+    private mapRoomType(legacyType: string): "Standard" | "Deluxe" | "Suite" | "Presidential" {
+        const roomMap: Record<string, "Standard" | "Deluxe" | "Suite" | "Presidential"> = {
+            'standard': 'Standard',
+            'deluxe': 'Deluxe',
+            'suite': 'Suite',
+            'presidential': 'Presidential',
+            'luxury': 'Suite',
+            'premium': 'Deluxe'
+        };
+
+        return roomMap[legacyType.toLowerCase()] || 'Standard';
+    }
+
+    /**
+     * Map legacy visa type to API format
+     */
+    private mapVisaType(legacyType: string): "Tourist" | "Business" | "Student" | "Work" | "Transit" {
+        const visaMap: Record<string, "Tourist" | "Business" | "Student" | "Work" | "Transit"> = {
+            'tourist': 'Tourist',
+            'tourism': 'Tourist',
+            'business': 'Business',
+            'student': 'Student',
+            'work': 'Work',
+            'employment': 'Work',
+            'transit': 'Transit'
+        };
+
+        return visaMap[legacyType.toLowerCase()] || 'Tourist';
+    }
+
+    /**
+     * Map legacy processing time to API format
+     */
+    private mapProcessingTime(legacyTime: string): "Standard" | "Express" | "Emergency" {
+        const timeMap: Record<string, "Standard" | "Express" | "Emergency"> = {
+            'standard': 'Standard',
+            'express': 'Express',
+            'super-express': 'Emergency',
+            'emergency': 'Emergency',
+            'urgent': 'Express',
+            'fast': 'Express'
+        };
+
+        return timeMap[legacyTime.toLowerCase()] || 'Standard';
     }
 }
 
