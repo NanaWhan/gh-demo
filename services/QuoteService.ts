@@ -34,6 +34,28 @@ export class QuoteService {
     // 🔐 PRIVATE HELPERS
     // ============================================================
 
+    /**
+     * Smart request - uses authentication if user is logged in, otherwise public
+     */
+    private async makeSmartRequest<T>(endpoint: string, options: any = {}): Promise<T> {
+        try {
+            // Check if user is authenticated
+            const authService = await import('~/services/AuthService');
+            const isAuthenticated = authService.default.isAuthenticated();
+            
+            if (isAuthenticated) {
+                console.log('🔒 User is authenticated - using authenticated request for better quote tracking');
+                return await this.makeAuthenticatedRequest<T>(endpoint, options);
+            } else {
+                console.log('👤 Guest user - using public request');
+                return await this.makePublicRequest<T>(endpoint, options);
+            }
+        } catch (error: any) {
+            console.error(`❌ Smart request failed [${endpoint}]:`, error);
+            throw error;
+        }
+    }
+
     private async makePublicRequest<T>(endpoint: string, options: any = {}): Promise<T> {
         try {
             const response = await $fetch<T>(`${this.baseUrl}${endpoint}`, {
@@ -92,7 +114,8 @@ export class QuoteService {
                 flightDetails: data.flightDetails
             };
 
-            const response = await this.makePublicRequest<QuoteResponse>('/quote/flight', {
+            // Use authenticated request if user is logged in, otherwise public
+            const response = await this.makeSmartRequest<QuoteResponse>('/quote/flight', {
                 method: 'POST',
                 body: payload
             });
@@ -127,7 +150,7 @@ export class QuoteService {
                 hotelDetails: data.hotelDetails
             };
 
-            const response = await this.makePublicRequest<QuoteResponse>('/quote/hotel', {
+            const response = await this.makeSmartRequest<QuoteResponse>('/quote/hotel', {
                 method: 'POST',
                 body: payload
             });
@@ -162,7 +185,7 @@ export class QuoteService {
                 visaDetails: data.visaDetails
             };
 
-            const response = await this.makePublicRequest<QuoteResponse>('/quote/visa', {
+            const response = await this.makeSmartRequest<QuoteResponse>('/quote/visa', {
                 method: 'POST',
                 body: payload
             });
@@ -197,7 +220,7 @@ export class QuoteService {
                 tourDetails: data.tourDetails
             };
 
-            const response = await this.makePublicRequest<QuoteResponse>('/quote/tour', {
+            const response = await this.makeSmartRequest<QuoteResponse>('/quote/tour', {
                 method: 'POST',
                 body: payload
             });
@@ -240,7 +263,7 @@ export class QuoteService {
                 packageDetails: data.packageDetails
             };
 
-            const response = await this.makePublicRequest<QuoteResponse>('/quote/complete-package', {
+            const response = await this.makeSmartRequest<QuoteResponse>('/quote/complete-package', {
                 method: 'POST',
                 body: payload
             });
