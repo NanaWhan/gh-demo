@@ -3,16 +3,20 @@
   <footer id="contact" class="bg-gray-900 text-white py-16">
     <div class="max-w-7xl mx-auto px-4">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div>
+        <!-- Company Info -->
+        <div class="bg-gray-900">
           <div class="flex items-center mb-4">
             <img src="/glo.png" alt="Global Horizons Logo" class="h-10 mr-3" />
-            <h3 class="text-xl font-bold">Global Horizons</h3>
+            <h3 class="text-xl font-bold text-white">Global Horizons</h3>
           </div>
           <p class="text-gray-400 mb-4">
             Your trusted partner for global travel and visa solutions.
           </p>
           <div class="flex space-x-4">
-            <a href="#" class="text-gray-400 hover:text-white transition">
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors duration-200"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6"
@@ -24,7 +28,10 @@
                 />
               </svg>
             </a>
-            <a href="#" class="text-gray-400 hover:text-white transition">
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors duration-200"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6"
@@ -36,7 +43,10 @@
                 />
               </svg>
             </a>
-            <a href="#" class="text-gray-400 hover:text-white transition">
+            <a
+              href="#"
+              class="text-gray-400 hover:text-white transition-colors duration-200"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6"
@@ -50,53 +60,57 @@
             </a>
           </div>
         </div>
-        <div>
-          <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+
+        <!-- Quick Links -->
+        <div class="bg-gray-900">
+          <h4 class="text-lg font-semibold mb-4 text-white">Quick Links</h4>
           <ul class="space-y-2">
             <li>
               <nuxt-link
                 to="/"
-                class="text-gray-400 hover:text-white transition"
+                class="text-gray-400 hover:text-white transition-colors duration-200"
                 >HOME</nuxt-link
               >
             </li>
             <li>
               <nuxt-link
                 to="/visas"
-                class="text-gray-400 hover:text-white transition"
+                class="text-gray-400 hover:text-white transition-colors duration-200"
                 >VISAS</nuxt-link
               >
             </li>
             <li>
               <nuxt-link
                 to="/tours"
-                class="text-gray-400 hover:text-white transition"
+                class="text-gray-400 hover:text-white transition-colors duration-200"
                 >TOUR PACKAGES</nuxt-link
               >
             </li>
             <li>
               <nuxt-link
                 to="/flights"
-                class="text-gray-400 hover:text-white transition"
+                class="text-gray-400 hover:text-white transition-colors duration-200"
                 >FLIGHTS</nuxt-link
               >
             </li>
             <li>
               <nuxt-link
                 to="/hotels"
-                class="text-gray-400 hover:text-white transition"
+                class="text-gray-400 hover:text-white transition-colors duration-200"
                 >HOTELS</nuxt-link
               >
             </li>
           </ul>
         </div>
-        <div>
-          <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
-          <ul class="space-y-2 text-gray-400">
+
+        <!-- Contact Info -->
+        <div class="bg-gray-900">
+          <h4 class="text-lg font-semibold mb-4 text-white">Contact Us</h4>
+          <ul class="space-y-3 text-gray-400">
             <li class="flex items-start">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 mr-2 mt-0.5 text-accent"
+                class="h-5 w-5 mr-3 mt-0.5 text-accent flex-shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -114,7 +128,7 @@
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              <span
+              <span class="text-gray-400 leading-relaxed"
                 >5 Cormorant Cl, Community 11, Tema, Accra, Greater Accra
                 Region, Ghana</span
               >
@@ -122,7 +136,7 @@
             <li class="flex items-start">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 mr-2 mt-0.5 text-accent"
+                class="h-5 w-5 mr-3 mt-0.5 text-accent flex-shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -134,12 +148,12 @@
                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                 />
               </svg>
-              <span>info@glohorizonsgh.com</span>
+              <span class="text-gray-400">info@glohorizonsgh.com</span>
             </li>
             <li class="flex items-start">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 mr-2 mt-0.5 text-accent"
+                class="h-5 w-5 mr-3 mt-0.5 text-accent flex-shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -151,23 +165,29 @@
                   d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                 />
               </svg>
-              <span>+233 (0)20 507 8908</span>
+              <span class="text-gray-400">+233 (0)20 507 8908</span>
             </li>
           </ul>
         </div>
-        <div>
-          <h4 class="text-lg font-semibold mb-4">Business Hours</h4>
+
+        <!-- Business Hours -->
+        <div class="bg-gray-900">
+          <h4 class="text-lg font-semibold mb-4 text-white">Business Hours</h4>
           <ul class="space-y-2 text-gray-400">
-            <li>Monday - Friday: 9:00 AM - 6:00 PM</li>
-            <li>Saturday: 10:00 AM - 4:00 PM</li>
-            <li>Sunday: Closed</li>
+            <li class="bg-gray-900">Monday - Friday: 9:00 AM - 6:00 PM</li>
+            <li class="bg-gray-900">Saturday: 10:00 AM - 4:00 PM</li>
+            <li class="bg-gray-900">Sunday: Closed</li>
           </ul>
         </div>
       </div>
+
+      <!-- Copyright Section -->
       <div
-        class="border-t border-gray-800 mt-10 pt-6 text-center text-sm text-gray-400"
+        class="border-t border-gray-800 mt-10 pt-6 text-center text-sm text-gray-400 bg-gray-900"
       >
-        <p>&copy; Global Horizons. All rights reserved.</p>
+        <p class="text-gray-400">
+          &copy; Global Horizons. All rights reserved.
+        </p>
         <p class="mt-2">
           Designed by
           <a
@@ -183,3 +203,142 @@
     </div>
   </footer>
 </template>
+
+<style scoped>
+/* Ensure footer maintains consistent background on all devices */
+footer {
+  background-color: #111827 !important;
+  color: white !important;
+}
+
+footer * {
+  background-color: transparent !important;
+}
+
+footer .bg-gray-900 {
+  background-color: #111827 !important;
+}
+
+/* Explicit mobile styling to prevent any overrides */
+@media (max-width: 768px) {
+  footer {
+    background-color: #111827 !important;
+    color: white !important;
+  }
+
+  footer * {
+    background-color: transparent !important;
+  }
+
+  footer div,
+  footer ul,
+  footer li,
+  footer p,
+  footer h3,
+  footer h4 {
+    background-color: transparent !important;
+    color: inherit !important;
+  }
+
+  /* Exclude ZediTech spans from color inheritance */
+  footer span:not([style*="color"]):not(.text-blue-400) {
+    color: inherit !important;
+  }
+
+  footer .text-white {
+    color: white !important;
+  }
+
+  footer .text-gray-400 {
+    color: #9ca3af !important;
+  }
+
+  footer .text-accent {
+    color: #ff7a59 !important;
+  }
+
+  /* Ensure contact info sections don't have white backgrounds */
+  footer .space-y-3 li,
+  footer .space-y-2 li {
+    background-color: transparent !important;
+  }
+}
+
+/* Mobile-specific grid adjustments */
+@media (max-width: 767px) {
+  .grid {
+    gap: 2rem !important;
+  }
+
+  .grid > div {
+    background-color: transparent !important;
+    padding: 1rem 0 !important;
+    border: none !important;
+  }
+}
+
+/* Enhanced contact info styling for mobile */
+@media (max-width: 640px) {
+  footer ul li {
+    padding: 0.5rem 0 !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+  }
+
+  footer ul li span {
+    background-color: transparent !important;
+    color: #9ca3af !important;
+    border: none !important;
+    outline: none !important;
+  }
+
+  footer ul li svg {
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+  }
+}
+
+/* Remove any borders from contact items on all devices */
+footer ul li {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+footer ul li span {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure ZediTech colors are preserved - BULLETPROOF */
+footer a span[style*="color: #ff7a59"] {
+  color: #ff7a59 !important;
+  font-weight: bold !important;
+}
+
+footer a span.text-blue-400 {
+  color: #60a5fa !important;
+  font-weight: bold !important;
+}
+
+/* Even more specific selectors for ZediTech */
+footer p a span[style] {
+  color: #ff7a59 !important;
+}
+
+footer p a span.text-blue-400.font-bold {
+  color: #60a5fa !important;
+}
+
+/* Override any possible Tailwind inheritance */
+.text-gray-400 a span[style*="color"] {
+  color: #ff7a59 !important;
+}
+
+.text-gray-400 a span.text-blue-400 {
+  color: #60a5fa !important;
+}
+</style>

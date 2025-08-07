@@ -126,6 +126,7 @@
                 </div>
               </div>
               <button
+                @click="openVisaModal('tourist')"
                 class="w-full px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-semibold"
               >
                 Learn More
@@ -193,6 +194,7 @@
                 </div>
               </div>
               <button
+                @click="openVisaModal('student')"
                 class="w-full px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-semibold"
               >
                 Learn More
@@ -258,6 +260,7 @@
                 </div>
               </div>
               <button
+                @click="openVisaModal('work')"
                 class="w-full px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors font-semibold"
               >
                 Learn More
@@ -325,6 +328,7 @@
                 </div>
               </div>
               <button
+                @click="openVisaModal('business')"
                 class="w-full px-6 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition-colors font-semibold"
               >
                 Learn More
@@ -334,6 +338,236 @@
         </div>
       </div>
     </section>
+
+    <!-- Visa Information Modal -->
+    <div
+      v-if="showModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click="closeModal"
+    >
+      <div
+        class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100"
+        @click.stop
+      >
+        <div
+          class="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-3xl"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div
+                :class="[
+                  'w-16 h-16 rounded-full flex items-center justify-center mr-4',
+                  modalData.bgColor,
+                ]"
+              >
+                <svg
+                  :class="['w-8 h-8', modalData.iconColor]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    :d="modalData.iconPath"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-gray-800">
+                  {{ modalData.title }}
+                </h2>
+                <p class="text-gray-600">{{ modalData.subtitle }}</p>
+              </div>
+            </div>
+            <button
+              @click="closeModal"
+              class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+            >
+              <svg
+                class="w-6 h-6 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="p-6 space-y-8">
+          <!-- Overview -->
+          <div
+            class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6"
+          >
+            <h3 class="text-xl font-bold mb-3 text-gray-800">Overview</h3>
+            <p class="text-gray-700 leading-relaxed">
+              {{ modalData.overview }}
+            </p>
+          </div>
+
+          <!-- Requirements Grid -->
+          <div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">
+              Requirements & Documents
+            </h3>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-green-50 rounded-xl p-6">
+                <h4 class="font-semibold text-green-800 mb-3 flex items-center">
+                  <svg
+                    class="w-5 h-5 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Required Documents
+                </h4>
+                <ul class="space-y-2">
+                  <li
+                    v-for="doc in modalData.requiredDocs"
+                    :key="doc"
+                    class="text-sm text-green-700 flex items-start"
+                  >
+                    <span
+                      class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"
+                    ></span>
+                    {{ doc }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="bg-orange-50 rounded-xl p-6">
+                <h4
+                  class="font-semibold text-orange-800 mb-3 flex items-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Important Notes
+                </h4>
+                <ul class="space-y-2">
+                  <li
+                    v-for="note in modalData.importantNotes"
+                    :key="note"
+                    class="text-sm text-orange-700 flex items-start"
+                  >
+                    <span
+                      class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"
+                    ></span>
+                    {{ note }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Processing Timeline -->
+          <div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">
+              Processing Timeline
+            </h3>
+            <div class="bg-gray-50 rounded-xl p-6">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-2xl font-bold text-accent">{{
+                  modalData.processingTime
+                }}</span>
+                <span
+                  class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
+                >
+                  {{ modalData.successRate }}% Success Rate
+                </span>
+              </div>
+              <div class="grid md:grid-cols-3 gap-4">
+                <div
+                  v-for="step in modalData.timeline"
+                  :key="step.step"
+                  class="text-center"
+                >
+                  <div
+                    class="w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center mx-auto mb-2 text-lg font-bold"
+                  >
+                    {{ step.step }}
+                  </div>
+                  <h4 class="font-semibold text-gray-800 mb-1">
+                    {{ step.title }}
+                  </h4>
+                  <p class="text-sm text-gray-600">{{ step.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Popular Destinations -->
+          <div>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">
+              Popular Destinations
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div
+                v-for="destination in modalData.destinations"
+                :key="destination.name"
+                class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition-shadow"
+              >
+                <img
+                  :src="destination.flag"
+                  :alt="destination.name"
+                  class="w-8 h-6 mx-auto mb-2 rounded"
+                />
+                <h4 class="font-medium text-gray-800 text-sm">
+                  {{ destination.name }}
+                </h4>
+                <p class="text-xs text-gray-500">{{ destination.price }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Call to Action -->
+          <div
+            class="bg-gradient-to-r from-accent to-blue-600 rounded-2xl p-8 text-center text-white"
+          >
+            <h3 class="text-2xl font-bold mb-4">Ready to Apply?</h3>
+            <p class="mb-6 opacity-90">
+              Get personalized assistance for your
+              {{ modalData.title.toLowerCase() }} application
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                @click="startApplication"
+                class="px-8 py-3 bg-white text-accent font-semibold rounded-xl hover:bg-gray-100 transition-colors"
+              >
+                Start Application
+              </button>
+              <button
+                @click="scheduleConsultation"
+                class="px-8 py-3 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-white/30 transition-colors border border-white/30"
+              >
+                Free Consultation
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Popular Destinations -->
     <section class="py-16 bg-white">
@@ -981,13 +1215,347 @@ const form = ref({
   message: "",
 });
 
+// Modal state
+const showModal = ref(false);
+const modalData = ref({});
+
+// Open modal
+const openVisaModal = (type) => {
+  // Define modalData based on type
+  switch (type) {
+    case "tourist":
+      modalData.value = {
+        title: "Tourist Visa",
+        subtitle:
+          "Short-term stays up to 90 days for vacation, sightseeing, and visiting friends & family.",
+        overview:
+          "The Tourist Visa (B1/B2) is ideal for individuals traveling to the United States for tourism, sightseeing, visiting friends and family, or attending short-term courses or conferences. This visa allows for multiple entries and stays up to 180 days (6 months) in the United States.",
+        requiredDocs: [
+          "Valid passport with at least 6 months validity from the date of entry.",
+          "Proof of travel itinerary (flight tickets, hotel reservations, etc.).",
+          "Proof of sufficient funds for travel and stay.",
+          "Evidence of ties to the home country (e.g., employment contract, property ownership, etc.).",
+          "Evidence of a clear intent to return to the home country.",
+          "Application fee payment receipt.",
+        ],
+        importantNotes: [
+          "Visa validity is typically 10 years for B1/B2, but can be shorter depending on the embassy.",
+          "Multiple entries are allowed, but the total stay cannot exceed 180 days (6 months) within any 180-day period.",
+          "Visa fees and processing times can vary by country and embassy.",
+          "Applicants must be in the United States for the duration of the visa.",
+        ],
+        processingTime: "5-15 days",
+        successRate: 98,
+        timeline: [
+          {
+            step: "1",
+            title: "Consultation",
+            description:
+              "Free consultation to understand your travel needs and choose the right visa type.",
+          },
+          {
+            step: "2",
+            title: "Documentation",
+            description:
+              "We help you gather and prepare all required documents with our detailed checklist.",
+          },
+          {
+            step: "3",
+            title: "Application",
+            description:
+              "We submit your application and schedule appointments on your behalf.",
+          },
+          {
+            step: "4",
+            title: "Approval",
+            description:
+              "Receive your approved visa and start planning your amazing journey!",
+          },
+        ],
+        destinations: [
+          {
+            name: "USA",
+            flag: "https://flagcdn.com/us.svg",
+            price: "From $299",
+          },
+          {
+            name: "UK",
+            flag: "https://flagcdn.com/gb.svg",
+            price: "From $249",
+          },
+          {
+            name: "Schengen",
+            flag: "https://flagcdn.com/eu.svg",
+            price: "From $199",
+          },
+          {
+            name: "Canada",
+            flag: "https://flagcdn.com/ca.svg",
+            price: "From $350",
+          },
+        ],
+        iconPath:
+          "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h.5A2.5 2.5 0 0020 5.5v-1.5",
+        iconColor: "text-blue-600",
+        bgColor: "bg-blue-100",
+      };
+      break;
+    case "student":
+      modalData.value = {
+        title: "Student Visa",
+        subtitle:
+          "Study abroad programs, university admissions, and academic exchange programs worldwide.",
+        overview:
+          "The Student Visa (F1) is for individuals coming to the United States to pursue academic studies. This visa is valid for the duration of the student's program, plus 60 days after the program ends. The visa allows for employment on campus and off-campus with specific restrictions.",
+        requiredDocs: [
+          "Valid passport with at least 6 months validity from the date of entry.",
+          "Acceptance letter from a U.S. educational institution.",
+          "Proof of financial support (bank statements, scholarships, etc.).",
+          "Evidence of ties to the home country (e.g., employment contract, property ownership, etc.).",
+          "Evidence of a clear intent to return to the home country.",
+          "Application fee payment receipt.",
+        ],
+        importantNotes: [
+          "Visa validity is typically 1 year for F1, but can be longer for certain programs.",
+          "Multiple entries are allowed, but the total stay cannot exceed the duration of the program plus 60 days.",
+          "Visa fees and processing times can vary by country and embassy.",
+          "Applicants must be enrolled in a full-time academic program.",
+        ],
+        processingTime: "2-8 weeks",
+        successRate: 95,
+        timeline: [
+          {
+            step: "1",
+            title: "Consultation",
+            description:
+              "Free consultation to understand your study plans and choose the right program.",
+          },
+          {
+            step: "2",
+            title: "Documentation",
+            description:
+              "We help you gather and prepare all required documents for your university application.",
+          },
+          {
+            step: "3",
+            title: "Application",
+            description:
+              "We submit your application and manage the university admissions process.",
+          },
+          {
+            step: "4",
+            title: "Approval",
+            description:
+              "Receive your approved visa and start your amazing study journey!",
+          },
+        ],
+        destinations: [
+          {
+            name: "USA",
+            flag: "https://flagcdn.com/us.svg",
+            price: "From $299",
+          },
+          {
+            name: "UK",
+            flag: "https://flagcdn.com/gb.svg",
+            price: "From $249",
+          },
+          {
+            name: "Canada",
+            flag: "https://flagcdn.com/ca.svg",
+            price: "From $350",
+          },
+          {
+            name: "Australia",
+            flag: "https://flagcdn.com/au.svg",
+            price: "From $400",
+          },
+        ],
+        iconPath:
+          "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+        iconColor: "text-green-600",
+        bgColor: "bg-green-100",
+      };
+      break;
+    case "work":
+      modalData.value = {
+        title: "Work Visa",
+        subtitle:
+          "Employment opportunities abroad with proper work authorization and permit documentation.",
+        overview:
+          "The Work Visa (H1B) is for individuals coming to the United States to work on a temporary basis. This visa is valid for up to 3 years, with the possibility of extension. The visa allows for employment in a specific occupation and employer.",
+        requiredDocs: [
+          "Valid passport with at least 6 months validity from the date of entry.",
+          "Employment offer letter from a U.S. employer.",
+          "Proof of financial support (bank statements, sponsorship, etc.).",
+          "Evidence of ties to the home country (e.g., employment contract, property ownership, etc.).",
+          "Evidence of a clear intent to return to the home country.",
+          "Application fee payment receipt.",
+        ],
+        importantNotes: [
+          "Visa validity is typically 3 years for H1B, but can be longer for certain roles.",
+          "Multiple entries are allowed, but the total stay cannot exceed the duration of the visa.",
+          "Visa fees and processing times can vary by country and embassy.",
+          "Applicants must be employed by a U.S. employer.",
+        ],
+        processingTime: "2-8 weeks",
+        successRate: 97,
+        timeline: [
+          {
+            step: "1",
+            title: "Consultation",
+            description:
+              "Free consultation to understand your work plans and employer.",
+          },
+          {
+            step: "2",
+            title: "Documentation",
+            description:
+              "We help you gather and prepare all required documents for your employer sponsorship.",
+          },
+          {
+            step: "3",
+            title: "Application",
+            description:
+              "We submit your application and manage the U.S. Department of Labor certification process.",
+          },
+          {
+            step: "4",
+            title: "Approval",
+            description:
+              "Receive your approved visa and start your amazing work journey!",
+          },
+        ],
+        destinations: [
+          {
+            name: "USA",
+            flag: "https://flagcdn.com/us.svg",
+            price: "From $299",
+          },
+          {
+            name: "UK",
+            flag: "https://flagcdn.com/gb.svg",
+            price: "From $249",
+          },
+          {
+            name: "Canada",
+            flag: "https://flagcdn.com/ca.svg",
+            price: "From $350",
+          },
+          {
+            name: "Australia",
+            flag: "https://flagcdn.com/au.svg",
+            price: "From $400",
+          },
+        ],
+        iconPath:
+          "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+        iconColor: "text-purple-600",
+        bgColor: "bg-purple-100",
+      };
+      break;
+    case "business":
+      modalData.value = {
+        title: "Business Visa",
+        subtitle:
+          "Corporate travel, conferences, meetings, and business expansion opportunities worldwide.",
+        overview:
+          "The Business Visa (L1) is for individuals coming to the United States to manage or direct an enterprise, branch, subsidiary, or affiliate of an overseas employer. This visa is valid for up to 7 years, with the possibility of extension.",
+        requiredDocs: [
+          "Valid passport with at least 6 months validity from the date of entry.",
+          "Employment offer letter from a U.S. employer (for L1A).",
+          "Proof of financial support (bank statements, sponsorship, etc.).",
+          "Evidence of ties to the home country (e.g., employment contract, property ownership, etc.).",
+          "Evidence of a clear intent to return to the home country.",
+          "Application fee payment receipt.",
+        ],
+        importantNotes: [
+          "Visa validity is typically 7 years for L1, but can be longer for certain roles.",
+          "Multiple entries are allowed, but the total stay cannot exceed the duration of the visa.",
+          "Visa fees and processing times can vary by country and embassy.",
+          "Applicants must be employed by a U.S. employer.",
+        ],
+        processingTime: "5-10 days",
+        successRate: 99,
+        timeline: [
+          {
+            step: "1",
+            title: "Consultation",
+            description:
+              "Free consultation to understand your business plans and employer.",
+          },
+          {
+            step: "2",
+            title: "Documentation",
+            description:
+              "We help you gather and prepare all required documents for your employer sponsorship.",
+          },
+          {
+            step: "3",
+            title: "Application",
+            description:
+              "We submit your application and manage the U.S. Department of Labor certification process.",
+          },
+          {
+            step: "4",
+            title: "Approval",
+            description:
+              "Receive your approved visa and start your amazing business journey!",
+          },
+        ],
+        destinations: [
+          {
+            name: "USA",
+            flag: "https://flagcdn.com/us.svg",
+            price: "From $299",
+          },
+          {
+            name: "UK",
+            flag: "https://flagcdn.com/gb.svg",
+            price: "From $249",
+          },
+          {
+            name: "Canada",
+            flag: "https://flagcdn.com/ca.svg",
+            price: "From $350",
+          },
+          {
+            name: "Australia",
+            flag: "https://flagcdn.com/au.svg",
+            price: "From $400",
+          },
+        ],
+        iconPath:
+          "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+        iconColor: "text-orange-600",
+        bgColor: "bg-orange-100",
+      };
+      break;
+    default:
+      modalData.value = {};
+  }
+  showModal.value = true;
+};
+
+// Close modal
+const closeModal = () => {
+  showModal.value = false;
+  modalData.value = {};
+};
+
 // Form submission handler
 const handleFormSubmit = async () => {
-  const { notifyQuoteSuccess, notifyQuoteError, notifyError } = useNotifications();
-  
+  const { notifyQuoteSuccess, notifyQuoteError, notifyError } =
+    useNotifications();
+
   try {
     // Validate required fields
-    if (!form.value.fullName || !form.value.email || !form.value.phone || !form.value.destination) {
+    if (
+      !form.value.fullName ||
+      !form.value.email ||
+      !form.value.phone ||
+      !form.value.destination
+    ) {
       notifyError("Validation Error", "Please fill in all required fields.");
       return;
     }
@@ -998,30 +1566,35 @@ const handleFormSubmit = async () => {
         visaType: form.value.visaType || "Tourist Visa",
         destinationCountry: form.value.destination,
         processingType: "standard",
-        intendedTravelDate: form.value.travelDate ? form.value.travelDate + "T00:00:00Z" : "2025-12-31T00:00:00Z",
+        intendedTravelDate: form.value.travelDate
+          ? form.value.travelDate + "T00:00:00Z"
+          : "2025-12-31T00:00:00Z",
         durationOfStay: 30,
         purposeOfVisit: "Tourism",
         passportNumber: "TBD", // Will be provided later
         passportExpiryDate: "2030-12-31T00:00:00Z", // Placeholder
         nationality: form.value.nationality || "Not specified",
         hasPreviousVisa: false,
-        requiredDocuments: []
+        requiredDocuments: [],
       },
       contactEmail: form.value.email,
       contactPhone: form.value.phone,
       contactName: form.value.fullName,
       specialRequests: form.value.message || "Initial inquiry",
-      urgency: 1
+      urgency: 1,
     };
 
     // Submit to the visa quote API
-    const response = await $fetch('https://glohorizonapi.fly.dev/api/quote/visa', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: visaData
-    });
+    const response = await $fetch(
+      "https://glohorizonapi.fly.dev/api/quote/visa",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: visaData,
+      }
+    );
 
     if (response.success) {
       notifyQuoteSuccess(response.referenceNumber, "Visa");
@@ -1033,7 +1606,10 @@ const handleFormSubmit = async () => {
     }
   } catch (error) {
     console.error("Visa application submission failed:", error);
-    notifyQuoteError("Visa", "There was an error submitting your application. Please try again.");
+    notifyQuoteError(
+      "Visa",
+      "There was an error submitting your application. Please try again."
+    );
   }
 };
 
@@ -1041,11 +1617,32 @@ const handleFormSubmit = async () => {
 const applyForVisa = (destination) => {
   // Pre-fill the form with the selected destination
   form.value.destination = destination;
-  
+
   // Scroll to the visa application form
-  const formElement = document.querySelector('#application-form');
+  const formElement = document.querySelector("#application-form");
   if (formElement) {
-    formElement.scrollIntoView({ behavior: 'smooth' });
+    formElement.scrollIntoView({ behavior: "smooth" });
+  }
+};
+
+// Function to start the application process (redirect to application form)
+const startApplication = () => {
+  closeModal();
+  const formElement = document.querySelector("#application-form");
+  if (formElement) {
+    formElement.scrollIntoView({ behavior: "smooth" });
+  }
+};
+
+// Function to schedule a consultation
+const scheduleConsultation = () => {
+  closeModal();
+  // Open contact form or redirect to contact page
+  const contactForm = document.querySelector("#application-form");
+  if (contactForm) {
+    contactForm.scrollIntoView({ behavior: "smooth" });
+    // Pre-fill form with consultation request
+    form.value.message = `I would like to schedule a free consultation for ${modalData.value.title.toLowerCase()} services. Please contact me to discuss my options.`;
   }
 };
 
