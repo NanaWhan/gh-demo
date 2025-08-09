@@ -1,5 +1,5 @@
 <template>
-  <section class="relative h-screen pt-16 overflow-hidden">
+  <section class="relative h-screen lg:pt-16 overflow-hidden">
     <!-- Hero Slides -->
     <div class="hero-slider relative h-full">
       <!-- Slide 1 - London -->

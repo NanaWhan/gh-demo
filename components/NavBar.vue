@@ -414,27 +414,29 @@
     </div>
   </nav>
 
-  <!-- Mobile Overlay Menu -->
+  <!-- Mobile Full Screen Menu -->
   <div
     v-if="mobileMenuOpen"
-    class="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex items-end"
-    @click="closeMobileMenu"
-    @touchmove.prevent
+    class="lg:hidden fixed inset-0 z-50 bg-white overflow-y-auto"
   >
-    <div
-      class="w-full bg-white rounded-t-2xl max-h-[70vh] flex flex-col mobile-modal-container"
-      @click.stop
-      @touchmove.stop
-    >
-      <div class="p-4 border-b border-gray-200 flex-shrink-0">
-        <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
-        <h2 class="text-xl font-semibold text-center">
+    <div class="min-h-screen">
+      <!-- Header -->
+      <div class="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+        <h2 class="text-xl font-semibold">
           {{ isAuthenticated ? "My Account" : "Menu" }}
         </h2>
+        <button
+          @click="closeMobileMenu"
+          class="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto mobile-scroll-area" @touchmove.stop="handleScrollTouch">
-        <div class="p-4 space-y-6">
+      <!-- Content -->
+      <div class="p-4 space-y-6 pb-32">
         <!-- Services Section -->
         <div class="space-y-2">
           <h3
@@ -651,7 +653,6 @@
             Sign Out
           </button>
         </div>
-        </div>
       </div>
     </div>
   </div>
@@ -705,8 +706,6 @@ onMounted(() => {
   onUnmounted(() => {
     clearInterval(authInterval);
     document.removeEventListener('click', handleClickOutside);
-    // Restore body scroll if component unmounts while modal is open
-    document.body.classList.remove('modal-open');
   });
 });
 
@@ -727,18 +726,11 @@ const toggleMobileMenu = () => {
   // Close user dropdown when mobile menu opens
   if (mobileMenuOpen.value) {
     userDropdownOpen.value = false;
-    // Prevent body scroll when modal is open
-    document.body.classList.add('modal-open');
-  } else {
-    // Restore body scroll when modal is closed
-    document.body.classList.remove('modal-open');
   }
 };
 
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false;
-  // Restore body scroll when modal is closed
-  document.body.classList.remove('modal-open');
 };
 
 // User dropdown functions
@@ -754,11 +746,6 @@ const closeUserDropdown = () => {
   userDropdownOpen.value = false;
 };
 
-// Handle touch scrolling in modal
-const handleScrollTouch = (event) => {
-  // Allow touch scrolling within the scroll area
-  event.stopPropagation();
-};
 
 // Logout function
 const logout = async () => {
@@ -917,41 +904,5 @@ onMounted(() => {
   height: 40px;
 }
 
-/* Fix mobile scrolling in overlay */
-.mobile-modal-container {
-  position: relative;
-  z-index: 50;
-}
-
-.mobile-scroll-area {
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-  overscroll-behavior: contain;
-  position: relative;
-}
-
-/* Ensure scroll works on iOS and Android */
-@supports (-webkit-appearance: none) {
-  .mobile-scroll-area {
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-/* Additional mobile scroll fixes */
-.mobile-scroll-area {
-  /* Prevent bounce on scroll */
-  overscroll-behavior-y: contain;
-  /* Enable hardware acceleration */
-  transform: translateZ(0);
-  will-change: scroll-position;
-  /* Ensure minimum height for scrolling */
-  min-height: 200px;
-}
-
-/* Prevent body scroll when modal is open */
-body.modal-open {
-  overflow: hidden !important;
-  position: fixed !important;
-  width: 100% !important;
-}
+/* Simple mobile menu - no complex modal behavior needed */
 </style>
