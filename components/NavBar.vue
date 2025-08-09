@@ -419,10 +419,12 @@
     v-if="mobileMenuOpen"
     class="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex items-end"
     @click="closeMobileMenu"
+    @touchmove.prevent
   >
     <div
       class="w-full bg-white rounded-t-2xl max-h-[70vh] flex flex-col mobile-modal-container"
       @click.stop
+      @touchmove.stop
     >
       <div class="p-4 border-b border-gray-200 flex-shrink-0">
         <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
@@ -431,7 +433,7 @@
         </h2>
       </div>
 
-      <div class="flex-1 overflow-y-auto mobile-scroll-area">
+      <div class="flex-1 overflow-y-auto mobile-scroll-area" @touchmove.stop="handleScrollTouch">
         <div class="p-4 space-y-6">
         <!-- Services Section -->
         <div class="space-y-2">
@@ -703,6 +705,8 @@ onMounted(() => {
   onUnmounted(() => {
     clearInterval(authInterval);
     document.removeEventListener('click', handleClickOutside);
+    // Restore body scroll if component unmounts while modal is open
+    document.body.classList.remove('modal-open');
   });
 });
 
@@ -723,11 +727,18 @@ const toggleMobileMenu = () => {
   // Close user dropdown when mobile menu opens
   if (mobileMenuOpen.value) {
     userDropdownOpen.value = false;
+    // Prevent body scroll when modal is open
+    document.body.classList.add('modal-open');
+  } else {
+    // Restore body scroll when modal is closed
+    document.body.classList.remove('modal-open');
   }
 };
 
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false;
+  // Restore body scroll when modal is closed
+  document.body.classList.remove('modal-open');
 };
 
 // User dropdown functions
@@ -741,6 +752,12 @@ const toggleUserDropdown = () => {
 
 const closeUserDropdown = () => {
   userDropdownOpen.value = false;
+};
+
+// Handle touch scrolling in modal
+const handleScrollTouch = (event) => {
+  // Allow touch scrolling within the scroll area
+  event.stopPropagation();
 };
 
 // Logout function
@@ -927,5 +944,14 @@ onMounted(() => {
   /* Enable hardware acceleration */
   transform: translateZ(0);
   will-change: scroll-position;
+  /* Ensure minimum height for scrolling */
+  min-height: 200px;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
 }
 </style>
