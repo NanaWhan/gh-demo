@@ -4,7 +4,7 @@
     <NavBar />
 
     <!-- Page Header with Gradient Background -->
-    <section class="relative pt-24 pb-16 bg-gradient-brand">
+    <section class="relative pt-28 lg:pt-32 pb-16 bg-gradient-brand">
       <div class="relative z-10 text-center text-white px-4">
         <h1
           class="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 leading-tight"

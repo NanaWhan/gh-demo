@@ -4,7 +4,7 @@
     <NavBar />
 
     <!-- Hero Section -->
-    <section class="relative h-screen pt-16 overflow-hidden">
+    <section class="relative h-screen pt-20 lg:pt-24 overflow-hidden">
       <div
         class="absolute inset-0 bg-cover bg-center"
         style="

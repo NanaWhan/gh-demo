@@ -4,7 +4,7 @@
   >
     <!-- Hero Section -->
     <section
-      class="relative py-12 md:py-20 bg-gradient-to-r from-blue-600 to-blue-800"
+      class="relative py-12 md:py-20 pt-20 lg:pt-24 bg-gradient-to-r from-blue-600 to-blue-800"
     >
       <div class="absolute inset-0 bg-black opacity-20"></div>
       <div class="relative max-w-7xl mx-auto px-4 text-center">

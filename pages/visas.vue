@@ -4,7 +4,7 @@
     <NavBar />
 
     <!-- Hero Section -->
-    <section class="relative h-screen pt-16 overflow-hidden">
+    <section class="relative h-screen pt-20 lg:pt-24 overflow-hidden">
       <div
         class="absolute inset-0 bg-cover bg-center"
         style="
@@ -1065,77 +1065,6 @@
       </div>
     </section>
 
-    <!-- Success Stories -->
-    <section class="py-16 bg-gray-50">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-12">
-          <h2 class="text-3xl md:text-4xl font-bold mb-4">Success Stories</h2>
-          <p class="text-xl text-gray-600">
-            Join thousands of satisfied travelers who achieved their visa dreams
-            with us.
-          </p>
-        </div>
-
-        <div class="visa-card-grid grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="bg-white rounded-3xl p-8 shadow-xl">
-            <div class="flex items-center mb-6">
-              <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
-                alt="Sarah K."
-                class="w-16 h-16 rounded-full mr-4"
-              />
-              <div>
-                <h4 class="font-bold">Sarah K.</h4>
-                <p class="text-sm text-gray-600">USA Tourist Visa</p>
-                <div class="flex text-yellow-400 mt-1">⭐⭐⭐⭐⭐</div>
-              </div>
-            </div>
-            <p class="text-gray-600 italic">
-              "Amazing service! They handled everything perfectly and I got my
-              US visa approved in just 12 days. Highly recommended!"
-            </p>
-          </div>
-
-          <div class="bg-white rounded-3xl p-8 shadow-xl">
-            <div class="flex items-center mb-6">
-              <img
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
-                alt="James M."
-                class="w-16 h-16 rounded-full mr-4"
-              />
-              <div>
-                <h4 class="font-bold">James M.</h4>
-                <p class="text-sm text-gray-600">UK Student Visa</p>
-                <div class="flex text-yellow-400 mt-1">⭐⭐⭐⭐⭐</div>
-              </div>
-            </div>
-            <p class="text-gray-600 italic">
-              "Professional team that guided me through my student visa
-              application. Now I'm studying at Oxford University!"
-            </p>
-          </div>
-
-          <div class="bg-white rounded-3xl p-8 shadow-xl">
-            <div class="flex items-center mb-6">
-              <img
-                src="https://images.unsplash.com/photo-1626814559338-e4721e75494b?q=80&w=1750&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Grace A."
-                class="w-16 h-16 rounded-full mr-4"
-              />
-              <div>
-                <h4 class="font-bold">Grace A.</h4>
-                <p class="text-sm text-gray-600">Schengen Visa</p>
-                <div class="flex text-yellow-400 mt-1">⭐⭐⭐⭐⭐</div>
-              </div>
-            </div>
-            <p class="text-gray-600 italic">
-              "Excellent support throughout the process. Visited 8 European
-              countries with the Schengen visa they helped me get!"
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- FAQ Section -->
     <section class="py-16 bg-white">

@@ -4,7 +4,9 @@
     <NavBar />
 
     <!-- Hero Slider -->
-    <HeroSlider />
+    <div class="-mt-20 lg:-mt-24">
+      <HeroSlider />
+    </div>
 
     <!-- Services -->
     <section id="services" class="py-12 sm:py-16 bg-gray-50">

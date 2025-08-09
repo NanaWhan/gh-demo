@@ -14,7 +14,7 @@
 
     <!-- Page Header -->
     <section
-      class="relative pt-24 pb-16 bg-cover bg-center"
+      class="relative pt-28 lg:pt-32 pb-16 bg-cover bg-center"
       style="
         background-image: url('https://images.unsplash.com/photo-1621508654686-809f23efdabc?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
       "
