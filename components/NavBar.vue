@@ -421,7 +421,7 @@
     @click="closeMobileMenu"
   >
     <div
-      class="fixed bottom-0 w-full bg-white rounded-t-2xl max-h-[70vh] overflow-y-auto"
+      class="fixed bottom-0 w-full bg-white rounded-t-2xl max-h-[70vh] overflow-y-auto mobile-scroll-container"
       @click.stop
     >
       <div class="p-4 border-b border-gray-200">
@@ -896,5 +896,19 @@ onMounted(() => {
 .mobile-nav-item:active::before {
   width: 40px;
   height: 40px;
+}
+
+/* Fix mobile scrolling in overlay */
+.mobile-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+/* Ensure scroll works on iOS */
+@supports (-webkit-appearance: none) {
+  .mobile-scroll-container {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 </style>
