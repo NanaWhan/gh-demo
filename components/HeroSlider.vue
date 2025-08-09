@@ -1,5 +1,5 @@
 <template>
-  <section class="relative h-screen lg:pt-16 overflow-hidden">
+  <section class="relative h-screen overflow-hidden">
     <!-- Hero Slides -->
     <div class="hero-slider relative h-full">
       <!-- Slide 1 - London -->
@@ -68,7 +68,7 @@
       class="absolute inset-0 z-10 flex flex-col justify-between text-center text-white px-4 sm:px-6"
     >
       <!-- Desktop: Slide-specific content at top -->
-      <div class="hidden md:block pt-24 lg:pt-32">
+      <div class="hidden md:block pt-4 lg:pt-6">
         <div class="transition-opacity duration-1000">
           <!-- Content will be dynamically updated by JavaScript -->
           <div
