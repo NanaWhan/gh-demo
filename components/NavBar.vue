@@ -417,21 +417,22 @@
   <!-- Mobile Overlay Menu -->
   <div
     v-if="mobileMenuOpen"
-    class="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+    class="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex items-end"
     @click="closeMobileMenu"
   >
     <div
-      class="fixed bottom-0 w-full bg-white rounded-t-2xl max-h-[70vh] overflow-y-auto mobile-scroll-container"
+      class="w-full bg-white rounded-t-2xl max-h-[70vh] flex flex-col mobile-modal-container"
       @click.stop
     >
-      <div class="p-4 border-b border-gray-200">
+      <div class="p-4 border-b border-gray-200 flex-shrink-0">
         <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
         <h2 class="text-xl font-semibold text-center">
           {{ isAuthenticated ? "My Account" : "Menu" }}
         </h2>
       </div>
 
-      <div class="p-4 space-y-6">
+      <div class="flex-1 overflow-y-auto mobile-scroll-area">
+        <div class="p-4 space-y-6">
         <!-- Services Section -->
         <div class="space-y-2">
           <h3
@@ -647,6 +648,7 @@
             </svg>
             Sign Out
           </button>
+        </div>
         </div>
       </div>
     </div>
@@ -899,16 +901,31 @@ onMounted(() => {
 }
 
 /* Fix mobile scrolling in overlay */
-.mobile-scroll-container {
+.mobile-modal-container {
+  position: relative;
+  z-index: 50;
+}
+
+.mobile-scroll-area {
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   overscroll-behavior: contain;
+  position: relative;
 }
 
-/* Ensure scroll works on iOS */
+/* Ensure scroll works on iOS and Android */
 @supports (-webkit-appearance: none) {
-  .mobile-scroll-container {
+  .mobile-scroll-area {
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Additional mobile scroll fixes */
+.mobile-scroll-area {
+  /* Prevent bounce on scroll */
+  overscroll-behavior-y: contain;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  will-change: scroll-position;
 }
 </style>
