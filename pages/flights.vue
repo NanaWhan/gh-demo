@@ -1,7 +1,5 @@
 <template>
   <div class="font-sans antialiased text-gray-800">
-    <!-- Navbar -->
-    <NavBar />
 
     <!-- Page Header with Gradient Background -->
     <section class="relative pt-28 lg:pt-32 pb-16 bg-gradient-brand">

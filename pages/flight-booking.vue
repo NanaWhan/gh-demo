@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- Navigation -->
-    <NavBar />
 
     <!-- Page Header -->
     <section

@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- Navigation -->
-    <NavBar />
 
     <!-- Page Header -->
     <section class="relative pt-32 pb-16 bg-gradient-to-r from-purple-900 via-blue-800 to-indigo-700">

@@ -1,7 +1,5 @@
 <template>
   <div class="font-sans antialiased text-gray-800">
-    <!-- Navbar -->
-    <NavBar />
 
     <!-- Hero Section -->
     <section class="relative h-screen pt-20 lg:pt-24 overflow-hidden">

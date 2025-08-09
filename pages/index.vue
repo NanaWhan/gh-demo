@@ -1,8 +1,5 @@
 <template>
   <div class="font-sans antialiased text-gray-800">
-    <!-- Navbar -->
-    <NavBar />
-
     <!-- Hero Slider -->
     <div class="-mt-20 lg:-mt-24">
       <HeroSlider />
