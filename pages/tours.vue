@@ -1076,17 +1076,17 @@ onMounted(() => {
 // Tour pricing data (like Adansi's system!)
 const tourPricing = reactive({
   "london-paris": {
-    adults: 2,
+    adults: 0,
     children: 0,
     basePrice: { adult: 1299, child: 899 },
   },
   dubai: {
-    adults: 2,
+    adults: 0,
     children: 0,
     basePrice: { adult: 1899, child: 1299 },
   },
   "singapore-malaysia": {
-    adults: 2,
+    adults: 0,
     children: 0,
     basePrice: { adult: 999, child: 699 },
   },

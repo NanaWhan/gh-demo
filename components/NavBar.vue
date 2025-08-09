@@ -1,5 +1,6 @@
 <template>
-  <nav class="w-full glass-nav fixed top-0 z-50">
+  <!-- Desktop Navigation -->
+  <nav class="w-full glass-nav fixed top-0 z-50 hidden lg:block">
     <div
       class="max-w-7xl mx-auto px-4 py-1 flex items-center justify-between overflow-visible"
     >
@@ -14,33 +15,40 @@
         <div class="flex items-center space-x-6">
           <nuxt-link
             to="/"
-            class="nav-link font-medium text-accent hover:text-accent-dark transition-colors"
+            class="nav-link font-medium transition-colors"
+            style="color: #ff7a59;"
           >
             Home
           </nuxt-link>
           <nuxt-link
             to="/visas"
-            class="nav-link font-medium hover:text-accent transition-colors"
+            class="nav-link font-medium transition-colors text-gray-700 hover:text-orange-500"
           >
             Visas
           </nuxt-link>
           <nuxt-link
             to="/tours"
-            class="nav-link font-medium hover:text-accent transition-colors"
+            class="nav-link font-medium transition-colors text-gray-700 hover:text-orange-500"
           >
             Tours
           </nuxt-link>
           <nuxt-link
             to="/flights"
-            class="nav-link font-medium hover:text-accent transition-colors"
+            class="nav-link font-medium transition-colors text-gray-700 hover:text-orange-500"
           >
             Flights
           </nuxt-link>
           <nuxt-link
             to="/hotels"
-            class="nav-link font-medium hover:text-accent transition-colors"
+            class="nav-link font-medium transition-colors text-gray-700 hover:text-orange-500"
           >
             Hotels
+          </nuxt-link>
+          <nuxt-link
+            to="/travel-news"
+            class="nav-link font-medium transition-colors text-gray-700 hover:text-orange-500"
+          >
+            Travel News
           </nuxt-link>
         </div>
 
@@ -229,262 +237,392 @@
           <nuxt-link
             v-if="!isOnAuthPage"
             to="/login"
-            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-accent transition-colors"
+            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-orange-500 transition-colors"
           >
             Login
           </nuxt-link>
           <nuxt-link
             to="/booking"
-            class="px-6 py-2.5 bg-accent text-white text-sm font-semibold rounded-lg hover:bg-accent-dark transition-all duration-200 hover:transform hover:scale-105 shadow-md"
+            class="px-6 py-2.5 text-white text-sm font-semibold rounded-lg transition-all duration-200 hover:transform hover:scale-105 shadow-md"
+            style="background-color: #ff7a59;"
           >
             Book Now
           </nuxt-link>
         </div>
       </div>
+    </div>
+  </nav>
 
-      <!-- Mobile Menu Button -->
+  <!-- Mobile Logo Header -->
+  <div
+    class="lg:hidden fixed top-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 z-40 px-4 py-3"
+  >
+    <div class="flex items-center justify-center">
+      <nuxt-link to="/" class="flex items-center">
+        <img src="/glo.png" alt="Global Horizons" class="h-10" />
+      </nuxt-link>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav
+    class="lg:hidden fixed bottom-0 w-full bg-white/98 backdrop-blur-lg border-t border-gray-200 z-50 px-2 py-1 mobile-nav-bottom"
+  >
+    <div class="flex items-center justify-around max-w-md mx-auto">
+      <!-- Home -->
+      <nuxt-link
+        to="/"
+        class="mobile-nav-item"
+        :class="{ active: isCurrentRoute('/') }"
+      >
+        <div class="flex flex-col items-center py-2">
+          <svg
+            class="w-6 h-6 mb-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
+          </svg>
+          <span class="text-xs font-medium">Home</span>
+        </div>
+      </nuxt-link>
+
+      <!-- Tours -->
+      <nuxt-link
+        to="/tours"
+        class="mobile-nav-item"
+        :class="{ active: isCurrentRoute('/tours') }"
+      >
+        <div class="flex flex-col items-center py-2">
+          <svg
+            class="w-6 h-6 mb-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+          <span class="text-xs font-medium">Tours</span>
+        </div>
+      </nuxt-link>
+
+      <!-- Flights -->
+      <nuxt-link
+        to="/flights"
+        class="mobile-nav-item"
+        :class="{ active: isCurrentRoute('/flights') }"
+      >
+        <div class="flex flex-col items-center py-2">
+          <svg
+            class="w-6 h-6 mb-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            />
+          </svg>
+          <span class="text-xs font-medium">Flights</span>
+        </div>
+      </nuxt-link>
+
+      <!-- Travel News -->
+      <nuxt-link
+        to="/travel-news"
+        class="mobile-nav-item"
+        :class="{ active: isCurrentRoute('/travel-news') }"
+      >
+        <div class="flex flex-col items-center py-2">
+          <svg
+            class="w-6 h-6 mb-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            />
+          </svg>
+          <span class="text-xs font-medium">News</span>
+        </div>
+      </nuxt-link>
+
+      <!-- Account/More -->
       <button
         @click="toggleMobileMenu"
-        class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        :class="{ 'bg-gray-100': mobileMenuOpen }"
+        class="mobile-nav-item"
+        :class="{ active: mobileMenuOpen }"
       >
-        <div class="hamburger-icon" :class="{ open: mobileMenuOpen }">
-          <span></span>
-          <span></span>
-          <span></span>
+        <div class="flex flex-col items-center py-2">
+          <svg
+            v-if="!mobileMenuOpen"
+            class="w-6 h-6 mb-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+          <svg
+            v-else
+            class="w-6 h-6 mb-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+          <span class="text-xs font-medium">{{
+            mobileMenuOpen ? "Close" : isAuthenticated ? "Account" : "More"
+          }}</span>
         </div>
       </button>
     </div>
+  </nav>
 
-    <!-- Mobile Menu -->
+  <!-- Mobile Overlay Menu -->
+  <div
+    v-if="mobileMenuOpen"
+    class="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+    @click="closeMobileMenu"
+  >
     <div
-      v-if="mobileMenuOpen"
-      class="lg:hidden bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-lg"
+      class="fixed bottom-0 w-full bg-white rounded-t-2xl max-h-[70vh] overflow-y-auto"
+      @click.stop
     >
-      <div class="max-w-7xl mx-auto px-4 py-4">
-        <!-- Main Navigation -->
-        <div class="space-y-1 mb-6">
+      <div class="p-4 border-b border-gray-200">
+        <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
+        <h2 class="text-xl font-semibold text-center">
+          {{ isAuthenticated ? "My Account" : "Menu" }}
+        </h2>
+      </div>
+
+      <div class="p-4 space-y-6">
+        <!-- Services Section -->
+        <div class="space-y-2">
           <h3
-            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3"
+            class="text-sm font-semibold text-gray-500 uppercase tracking-wider"
           >
-            Navigation
+            Services
           </h3>
           <nuxt-link
-            to="/"
-            class="flex items-center px-3 py-3 rounded-lg text-accent font-medium transition-colors"
+            to="/travel-news"
+            class="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors"
             @click="closeMobileMenu"
           >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <div
+              class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mr-3"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-            Home
+              <svg
+                class="w-5 h-5 text-indigo-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="font-medium text-gray-900">Travel News</p>
+              <p class="text-sm text-gray-500">Latest updates & tips</p>
+            </div>
           </nuxt-link>
           <nuxt-link
             to="/visas"
-            class="flex items-center px-3 py-3 rounded-lg text-gray-700 hover:text-accent hover:bg-gray-50 transition-colors"
+            class="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors"
             @click="closeMobileMenu"
           >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <div
+              class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            Visas
-          </nuxt-link>
-          <nuxt-link
-            to="/tours"
-            class="flex items-center px-3 py-3 rounded-lg text-gray-700 hover:text-accent hover:bg-gray-50 transition-colors"
-            @click="closeMobileMenu"
-          >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-            Tours
-          </nuxt-link>
-          <nuxt-link
-            to="/flights"
-            class="flex items-center px-3 py-3 rounded-lg text-gray-700 hover:text-accent hover:bg-gray-50 transition-colors"
-            @click="closeMobileMenu"
-          >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-              />
-            </svg>
-            Flights
-          </nuxt-link>
-          <nuxt-link
-            to="/hotels"
-            class="flex items-center px-3 py-3 rounded-lg text-gray-700 hover:text-accent hover:bg-gray-50 transition-colors"
-            @click="closeMobileMenu"
-          >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-              />
-            </svg>
-            Hotels
+              <svg
+                class="w-5 h-5 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="font-medium text-gray-900">Visas</p>
+              <p class="text-sm text-gray-500">Get your travel documents</p>
+            </div>
           </nuxt-link>
         </div>
 
-        <!-- User Account Section (Mobile) -->
-        <div v-if="isAuthenticated" class="space-y-1 mb-6">
+        <!-- Account Section (for authenticated users) -->
+        <div v-if="isAuthenticated" class="space-y-2">
           <h3
-            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3"
+            class="text-sm font-semibold text-gray-500 uppercase tracking-wider"
           >
             My Account
           </h3>
           <nuxt-link
             to="/dashboard"
-            class="flex items-center px-3 py-3 rounded-lg text-gray-700 hover:text-accent hover:bg-gray-50 transition-colors"
+            class="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors"
             @click="closeMobileMenu"
           >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <div
+              class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 5a2 2 0 012-2h2a2 2 0 012 2v2H8V5z"
-              />
-            </svg>
-            Dashboard
+              <svg
+                class="w-5 h-5 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 5a2 2 0 012-2h2a2 2 0 012 2v2H8V5z"
+                />
+              </svg>
+            </div>
+            <p class="font-medium text-gray-900">Dashboard</p>
           </nuxt-link>
+
           <nuxt-link
             to="/my-bookings"
-            class="flex items-center px-3 py-3 rounded-lg text-gray-700 hover:text-accent hover:bg-gray-50 transition-colors"
+            class="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors"
             @click="closeMobileMenu"
           >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <div
+              class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-              />
-            </svg>
-            My Bookings
+              <svg
+                class="w-5 h-5 text-purple-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+            </div>
+            <p class="font-medium text-gray-900">My Bookings</p>
           </nuxt-link>
+
           <nuxt-link
             to="/my-quotes"
-            class="flex items-center px-3 py-3 rounded-lg text-gray-700 hover:text-accent hover:bg-gray-50 transition-colors"
+            class="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors"
             @click="closeMobileMenu"
           >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <div
+              class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mr-3"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            My Quotes
+              <svg
+                class="w-5 h-5 text-orange-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <p class="font-medium text-gray-900">My Quotes</p>
           </nuxt-link>
+
           <nuxt-link
             to="/track-quote"
-            class="flex items-center px-3 py-3 rounded-lg text-gray-700 hover:text-accent hover:bg-gray-50 transition-colors"
+            class="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors"
             @click="closeMobileMenu"
           >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <div
+              class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center mr-3"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-              />
-            </svg>
-            Track Quote
+              <svg
+                class="w-5 h-5 text-teal-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                />
+              </svg>
+            </div>
+            <p class="font-medium text-gray-900">Track Quote</p>
           </nuxt-link>
         </div>
 
-        <!-- Actions Section -->
-        <div class="space-y-3 pt-4 border-t border-gray-200">
+        <!-- Actions -->
+        <div class="space-y-3 pt-4">
           <nuxt-link
             v-if="!isAuthenticated && !isOnAuthPage"
             to="/login"
-            class="flex items-center justify-center w-full px-4 py-3 text-gray-700 font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            class="flex items-center justify-center w-full px-4 py-3 text-gray-700 font-medium border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
             @click="closeMobileMenu"
           >
-            Login
+            Sign In
           </nuxt-link>
           <nuxt-link
             to="/booking"
-            class="flex items-center justify-center w-full px-4 py-3 bg-accent text-white font-semibold rounded-lg hover:bg-accent-dark transition-colors"
+            class="flex items-center justify-center w-full px-4 py-3 text-white font-semibold rounded-xl transition-all transform hover:scale-105 shadow-lg"
+            style="background-color: #ff7a59;"
             @click="closeMobileMenu"
           >
             Book Now
@@ -492,7 +630,7 @@
           <button
             v-if="isAuthenticated"
             @click="logout"
-            class="flex items-center justify-center w-full px-4 py-3 text-red-600 font-medium border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
+            class="flex items-center justify-center w-full px-4 py-3 text-red-600 font-medium border-2 border-red-200 rounded-xl hover:bg-red-50 transition-colors"
           >
             <svg
               class="w-5 h-5 mr-2"
@@ -507,12 +645,12 @@
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
               />
             </svg>
-            Logout
+            Sign Out
           </button>
         </div>
       </div>
     </div>
-  </nav>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -572,6 +710,11 @@ const isOnAuthPage = computed(() => {
   return ["/login", "/register"].includes(route.path);
 });
 
+// Helper function to check current route for active state
+const isCurrentRoute = (path: string) => {
+  return route.path === path;
+};
+
 // Mobile menu functions
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -624,51 +767,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Hamburger icon styles */
-.hamburger-icon {
-  width: 20px;
-  height: 16px;
-  position: relative;
-  cursor: pointer;
-}
-
-.hamburger-icon span {
-  display: block;
-  position: absolute;
-  height: 2px;
-  width: 100%;
-  background: #374151;
-  border-radius: 1px;
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-.hamburger-icon span:nth-child(1) {
-  top: 0;
-}
-
-.hamburger-icon span:nth-child(2) {
-  top: 7px;
-}
-
-.hamburger-icon span:nth-child(3) {
-  top: 14px;
-}
-
-.hamburger-icon.open span:nth-child(1) {
-  transform: rotate(45deg);
-  top: 7px;
-}
-
-.hamburger-icon.open span:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger-icon.open span:nth-child(3) {
-  transform: rotate(-45deg);
-  top: 7px;
-}
-
-/* Glass effect */
+/* Glass effect for desktop */
 .glass-nav {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -690,5 +789,112 @@ onMounted(() => {
 
 .nav-link:hover {
   transform: translateY(-1px);
+}
+
+/* Mobile navigation styles */
+.mobile-nav-item {
+  @apply text-gray-600 transition-all duration-200 transform hover:scale-110 active:scale-95;
+  position: relative;
+  text-decoration: none;
+  min-width: 60px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.mobile-nav-item:hover {
+  color: #ff7a59;
+}
+
+.mobile-nav-item.active {
+  color: #ff7a59;
+}
+
+.mobile-nav-item.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+}
+
+/* Mobile overlay animation */
+.mobile-overlay-enter-active,
+.mobile-overlay-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.mobile-overlay-enter-from,
+.mobile-overlay-leave-to {
+  opacity: 0;
+}
+
+/* Bottom sheet animation */
+.bottom-sheet-enter-active {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bottom-sheet-leave-active {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bottom-sheet-enter-from,
+.bottom-sheet-leave-to {
+  transform: translateY(100%);
+}
+
+/* Safe area padding for devices with home indicator */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobile-nav-bottom {
+    padding-bottom: calc(0.25rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Mobile layout adjustments */
+@media (max-width: 1023px) {
+  .mobile-nav-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+}
+
+/* Smooth transitions for icons */
+.mobile-nav-item svg {
+  transition: all 0.2s ease;
+}
+
+.mobile-nav-item:hover svg {
+  transform: scale(1.1);
+}
+
+.mobile-nav-item.active svg {
+  transform: scale(1.05);
+}
+
+/* Ripple effect for mobile nav items */
+.mobile-nav-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-nav-item::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(var(--accent-rgb, 59, 130, 246), 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+  z-index: -1;
+}
+
+.mobile-nav-item:active::before {
+  width: 40px;
+  height: 40px;
 }
 </style>
