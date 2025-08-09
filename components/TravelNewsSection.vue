@@ -221,28 +221,35 @@
       </div>
 
       <!-- Travel Tips Quick Cards -->
-      <div class="bg-white rounded-3xl shadow-lg p-8 mb-12">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center gap-3">
+      <div class="bg-gradient-to-br from-white via-blue-50/30 to-orange-50/30 rounded-3xl shadow-xl border border-gray-100/50 p-8 mb-12 backdrop-blur-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+          <div class="flex items-center gap-4">
             <div
-              class="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center"
+              class="w-14 h-14 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg"
             >
               <svg
-                class="w-5 h-5 text-white"
-                fill="currentColor"
+                class="w-7 h-7 text-white"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path
-                  d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                 />
               </svg>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">Quick Travel Tips</h3>
+            <div>
+              <h3 class="text-3xl font-bold text-gray-900">Quick Travel Tips</h3>
+              <p class="text-gray-600 mt-1">Expert advice for smart travelers</p>
+            </div>
           </div>
-          <div class="flex gap-4">
+          <div class="flex flex-wrap gap-3">
             <button
               @click="refreshTips"
-              class="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-2"
+              class="px-4 py-2 bg-white/80 hover:bg-white border border-blue-200 text-blue-700 hover:text-blue-800 font-medium rounded-xl flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md backdrop-blur-sm"
             >
               <svg
                 class="w-4 h-4"
@@ -257,26 +264,7 @@
                   d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                 />
               </svg>
-              Refresh Tips
-            </button>
-            <button
-              @click="refreshWeather"
-              class="text-green-600 hover:text-green-700 font-semibold flex items-center gap-2"
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              Refresh Weather
+              <span class="hidden sm:inline">Refresh</span>
             </button>
           </div>
         </div>
@@ -285,86 +273,135 @@
           <div
             v-for="tip in travelTips.slice(0, 4)"
             :key="tip.id"
-            class="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl hover:shadow-md transition-shadow"
+            class="group relative bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-gray-200/50 hover:border-orange-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
           >
-            <div class="flex items-center mb-3">
-              <span class="mr-3" v-html="getTipIcon(tip.category)"></span>
-              <div>
-                <h4 class="font-semibold text-gray-900 text-sm">
-                  {{ tip.title }}
-                </h4>
-                <span class="text-xs text-gray-500 capitalize">{{
-                  tip.category
-                }}</span>
+            <!-- Icon and Category Badge -->
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-orange-100 group-hover:to-orange-200 transition-colors duration-300">
+                  <span v-html="getTipIcon(tip.category)"></span>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-bold text-gray-900 text-base leading-tight group-hover:text-orange-700 transition-colors">
+                    {{ tip.title }}
+                  </h4>
+                  <span class="inline-block mt-1 px-2 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-600 rounded-full text-xs font-medium capitalize">
+                    {{ tip.category }}
+                  </span>
+                </div>
               </div>
             </div>
-            <p class="text-sm text-gray-600 line-clamp-2">{{ tip.content }}</p>
+            
+            <p class="text-sm text-gray-700 line-clamp-3 mb-4 leading-relaxed">{{ tip.content }}</p>
 
-            <!-- Rating -->
-            <div class="flex items-center mt-2">
-              <div class="flex text-yellow-400 text-xs">
-                <svg
-                  v-for="star in 5"
-                  :key="star"
-                  class="w-3 h-3"
-                  :class="
-                    star <= tip.rating ? 'text-yellow-400' : 'text-gray-300'
-                  "
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
+            <!-- Enhanced Rating Display -->
+            <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+              <div class="flex items-center gap-2">
+                <div class="flex">
+                  <svg
+                    v-for="star in 5"
+                    :key="star"
+                    class="w-4 h-4 transition-colors"
+                    :class="star <= tip.rating ? 'text-yellow-400' : 'text-gray-300'"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                    />
+                  </svg>
+                </div>
+                <span class="text-sm font-semibold text-gray-900">{{ tip.rating }}</span>
               </div>
-              <span class="text-xs text-gray-500 ml-2">{{ tip.rating }}/5</span>
+              <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Weather Widget for Popular Destinations -->
-      <div class="bg-white rounded-3xl shadow-lg p-8">
-        <div class="flex items-center gap-3 mb-6">
-          <div
-            class="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <div class="bg-gradient-to-br from-white via-sky-50/40 to-blue-50/60 rounded-3xl shadow-xl border border-gray-100/50 p-8 backdrop-blur-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+          <div class="flex items-center gap-4">
+            <div
+              class="w-14 h-14 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-              />
-            </svg>
+              <svg
+                class="w-7 h-7 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-3xl font-bold text-gray-900">Destination Weather</h3>
+              <p class="text-gray-600 mt-1">Live weather updates worldwide</p>
+            </div>
           </div>
-          <h3 class="text-2xl font-bold text-gray-900">Destination Weather</h3>
+          <div class="flex flex-wrap gap-3">
+            <button
+              @click="refreshWeather"
+              class="px-4 py-2 bg-white/80 hover:bg-white border border-blue-200 text-blue-700 hover:text-blue-800 font-medium rounded-xl flex items-center gap-2 transition-all duration-200 shadow-sm hover:shadow-md backdrop-blur-sm"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              <span class="hidden sm:inline">Refresh</span>
+            </button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           <div
             v-for="weather in destinationWeather"
             :key="weather.destination"
-            class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl"
+            class="group relative bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-gray-200/50 hover:border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 text-center"
           >
-            <h4 class="font-semibold text-gray-900 mb-2">
+            <!-- City Name -->
+            <h4 class="font-bold text-gray-900 text-lg mb-3 group-hover:text-blue-700 transition-colors">
               {{ weather.destination }}
             </h4>
-            <div
-              class="mb-2 flex justify-center"
-              v-html="getWeatherIcon(weather.condition)"
-            ></div>
-            <div class="text-2xl font-bold text-gray-900 mb-1">
-              {{ Math.round(weather.temperature) }}°C
+            
+            <!-- Weather Icon -->
+            <div class="mb-4 flex justify-center">
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-100 to-sky-200 flex items-center justify-center group-hover:from-blue-200 group-hover:to-sky-300 transition-colors duration-300">
+                <span v-html="getWeatherIcon(weather.condition)"></span>
+              </div>
             </div>
-            <div class="text-xs text-gray-600 capitalize">
-              {{ weather.description }}
+            
+            <!-- Temperature -->
+            <div class="mb-3">
+              <div class="text-3xl font-bold text-gray-900 mb-1">
+                {{ Math.round(weather.temperature) }}°
+              </div>
+              <div class="text-sm text-gray-600 capitalize font-medium">
+                {{ weather.description }}
+              </div>
+            </div>
+            
+            <!-- Additional Info -->
+            <div class="pt-3 border-t border-gray-100 flex items-center justify-center">
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                <span class="text-xs text-gray-500 font-medium">Live Update</span>
+              </div>
             </div>
           </div>
         </div>
@@ -551,13 +588,15 @@ const getCategoryLabel = (category: string): string => {
 
 const getTipIcon = (category: string): string => {
   const icons: Record<string, string> = {
-    budget: `<svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z"/></svg>`,
-    packing: `<svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M12,4A6,6 0 0,0 6,10C6,13.31 8.69,16 12.1,16L11.22,18.39L12.78,19.61L14.5,16H18V14H14.5L12.78,10.39L11.22,11.61L12.1,14C10.31,14 8.91,12.62 8.91,10.91C8.91,9.2 10.31,7.82 12.1,7.82A3.09,3.09 0 0,1 15.19,10.91H17.1A5,5 0 0,0 12.1,5.91A5,5 0 0,0 7.1,10.91C7.1,13.71 9.29,15.9 12.1,15.9V18H6V4H12M15,5V7H17V5H15Z"/></svg>`,
-    safety: `<svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z"/></svg>`,
-    cultural: `<svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
-    transportation: `<svg class="w-6 h-6 text-indigo-600" fill="currentColor" viewBox="0 0 24 24"><path d="M5,11L6.5,6.5H17.5L19,11M17.5,16A1.5,1.5 0 0,1 16,14.5A1.5,1.5 0 0,1 17.5,13A1.5,1.5 0 0,1 19,14.5A1.5,1.5 0 0,1 17.5,16M6.5,16A1.5,1.5 0 0,1 5,14.5A1.5,1.5 0 0,1 6.5,13A1.5,1.5 0 0,1 8,14.5A1.5,1.5 0 0,1 6.5,16M18.92,6C18.72,5.42 18.16,5 17.5,5H6.5C5.84,5 5.28,5.42 5.08,6L3,12V20A1,1 0 0,0 4,21H5A1,1 0 0,0 6,20V19H18V20A1,1 0 0,0 19,21H20A1,1 0 0,0 21,20V12L18.92,6Z"/></svg>`
+    budget: `<svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+    packing: `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 12l6-3m-4 9l4-2"/></svg>`,
+    safety: `<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>`,
+    cultural: `<svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>`,
+    transportation: `<svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>`,
+    food: `<svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m-2.4 8l1.6 8h12.8M7 13v8m5-8v8m5-8v8M9 7h1m4 0h1"/></svg>`,
+    health: `<svg class="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`
   }
-  return icons[category] || `<svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>`
+  return icons[category] || `<svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>`
 }
 
 const getWeatherIcon = (condition: string): string => {
